@@ -2,8 +2,16 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="creative-medium" content="mini-game">
+<meta name="theme-color" content="#a93226">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="世家模拟器">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <title>世家模拟器 · 百年诗书</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700;900&family=Ma+Shan+Zheng&display=swap">
 <style>
@@ -17,14 +25,14 @@
 }
 *{box-sizing:border-box}
 body{margin:0;color:var(--ink);font-family:"Noto Serif SC","Songti SC",serif;min-height:100vh;padding:14px;
-  background:linear-gradient(180deg,#f7f2e4 0%,var(--bg) 40%,var(--bg2) 100%)}
+  background:linear-gradient(180deg,#faf5e7 0%,var(--bg) 45%,#e7dabd 100%)}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
   background:radial-gradient(ellipse 60% 40% at 15% 0%,rgba(193,154,90,.14),transparent),
              radial-gradient(ellipse 50% 35% at 90% 15%,rgba(127,179,176,.12),transparent)}
 .paper-grain{display:none}
 .container{max-width:1020px;margin:0 auto}
-.panel{background:linear-gradient(180deg,#fffef9,var(--paper2));border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(150,125,70,.12)}
-.panel-title{color:var(--vermilion-dk);font-size:16px;margin:0 0 10px;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.panel{background:linear-gradient(180deg,#fffef9,var(--paper2));border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:4px 4px 12px 12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(150,125,70,.12)}
+.panel-title{color:var(--vermilion-dk);font-size:16px;margin:0 0 10px;border-bottom:1px dashed var(--line);padding-bottom:6px;letter-spacing:2px}
 .muted{color:var(--muted);font-size:13px}
 .panel-hint{margin:-4px 0 10px}
 h1.hero-title{font-family:"Ma Shan Zheng",cursive;letter-spacing:8px}
@@ -40,7 +48,7 @@ h1.hero-title{font-family:"Ma Shan Zheng",cursive;letter-spacing:8px}
 .field{display:flex;align-items:center;gap:6px}
 input[type=text],input[type=number],select{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:14px;color:var(--ink);max-width:170px}
 input:focus,select:focus{outline:2px solid rgba(192,57,43,.25);border-color:var(--vermilion)}
-button.btn{background:#fff;border:1px solid #cdbd97;color:#5a4a33;padding:7px 13px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;margin:3px 4px 3px 0;box-shadow:0 1px 3px rgba(150,125,70,.15)}
+button.btn{background:linear-gradient(180deg,#fffefb,#f6ecd4);border:1px solid #c9b489;color:#5a4a33;padding:7px 13px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;margin:3px 4px 3px 0;box-shadow:0 1px 3px rgba(150,125,70,.15)}
 button.btn:hover:not(:disabled){border-color:var(--vermilion);color:var(--vermilion-dk)}
 button.btn:disabled{opacity:.4;cursor:not-allowed}
 button.btn-primary{background:linear-gradient(180deg,#cf4433,#a93226);border-color:#a93226;color:#fff;font-weight:700}
@@ -72,7 +80,7 @@ button.btn-ghost{background:transparent;box-shadow:none}
 .act-hint{font-size:12px;color:var(--muted)}
 .tab-nav{display:flex;gap:6px;margin-bottom:12px;position:sticky;top:0;z-index:5;background:rgba(250,244,230,.94);padding:8px;border-radius:12px;border:1px solid var(--line)}
 .tab-btn{flex:1;background:transparent;color:#6b5a40;border:1px solid transparent;border-radius:8px;padding:9px;font-size:15px;cursor:pointer}
-.tab-btn.active{background:var(--vermilion);color:#fff}
+.tab-btn.active{background:linear-gradient(180deg,#cf4433,#a93226);color:#fff;box-shadow:0 2px 8px rgba(169,50,38,.35)}
 .tab-pane{display:none}
 .tab-pane.active{display:block}
 .grid-top,.grid-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -171,6 +179,25 @@ dt-stat,.dt-stats{display:block}
 .genchar-row input{width:70px;text-align:center}
 .genchar-badge{display:inline-block;background:#8a6d2f;color:#fff;border-radius:6px;padding:1px 8px;font-size:12px;margin-left:4px}
 
+/* 月度账单 */
+.bill-table{display:flex;flex-direction:column;gap:4px;margin:10px 0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.bill-row{display:flex;justify-content:space-between;font-size:14px;padding:2px 0;border-bottom:1px dashed #eee0bd}
+.bill-row.total{border-bottom:none;font-weight:700}
+.bill-logs{margin:4px 0 8px 18px;font-size:13px;line-height:1.7;max-height:150px;overflow-y:auto}
+.bill-logs .bad{color:#a93226}.bill-logs .good{color:#1e7d4f}
+/* 价格走势 */
+.spark em{font-style:normal;letter-spacing:1px;font-size:15px}
+.spark em.up{color:#2e7d6f}.spark em.dn{color:#a93226}
+.price-trend{font-size:12px;margin:2px 0 6px}
+
+/* 喜报：大红底描金，锣鼓喧天 */
+.xibao{text-align:center;background:linear-gradient(180deg,#b3201c 0%,#8f1414 100%);border:3px solid #e8b64c;border-radius:14px;padding:22px 16px 16px;color:#f7e8c3}
+.xibao-seal{width:74px;height:74px;margin:0 auto 10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a8,#d99a2b 70%);color:#8f1414;font-size:44px;font-weight:900;line-height:74px;box-shadow:0 0 0 4px #8f1414,0 0 0 6px #e8b64c}
+.xibao-title{font-size:20px;font-weight:900;color:#ffe9a8;margin:0 0 10px;letter-spacing:2px}
+.xibao-text{font-size:14px;line-height:1.8;margin:6px 0;color:#f7e8c3}
+.xibao .modal-choices{margin-top:14px}
+.xibao .modal-choices .btn{background:#e8b64c;border-color:#b57f1f;color:#5c1a10;font-weight:800}
+
 </style>
 </head>
 <body>
@@ -218,6 +245,8 @@ dt-stat,.dt-stats{display:block}
         <button class="btn btn-primary btn-lg" id="startBtn">开启家族新卷</button>
         <button class="btn" id="randomBtn">随机姓名</button>
         <button class="btn btn-ghost hidden" id="continueBtn">续写旧档</button>
+        <button class="btn btn-ghost" id="exportBtn">导出存档</button>
+        <button class="btn btn-ghost" id="importBtn">导入存档</button>
       </div>
       <div class="best-record muted" id="bestRecord"></div>
     </div>
@@ -259,6 +288,7 @@ dt-stat,.dt-stats{display:block}
     <div class="panel action-panel">
       <div class="action-main">
         <button class="btn btn-primary btn-lg" id="nextBtn">度　月</button>
+        <button class="btn btn-lg" id="nextYearBtn" title="连度十二个月：经济照常结算，逢抉择、丧事自动停下">度　年</button>
         <div class="ap-box">
           <span class="muted">精力</span>
           <span class="ap-pips" id="apPips"></span>
@@ -274,6 +304,7 @@ dt-stat,.dt-stats{display:block}
       <button class="tab-btn" data-tab="trade">商　事</button>
       <button class="tab-btn" data-tab="office">仕　学</button>
       <button class="tab-btn" data-tab="contacts">人　际</button>
+      <button class="tab-btn" data-tab="kin">族　亲</button>
     </nav>
 
     <!-- ========== 页签一：家宅 ========== -->
@@ -290,6 +321,7 @@ dt-stat,.dt-stats{display:block}
             <button class="btn btn-xs" data-genchar-random="1">随机</button>
           </div>
           <p class="muted" style="font-size:12px;margin:4px 0 0;">新生儿取名首字从此字，继承时自动顺进一位，可随时改定。</p>
+          <div id="genPoemRow"></div>
         </div>
         <div class="panel">
           <h2 class="panel-title">宅院</h2>
@@ -301,7 +333,13 @@ dt-stat,.dt-stats{display:block}
       <div class="panel">
         <h2 class="panel-title">全家在册</h2>
         <p class="muted panel-hint">长幼同居于此宅，点击任一人可看资质、功名、营生与月用。</p>
+        <div class="btn-row" id="autoDoctorRow" style="margin-bottom:8px;"></div>
+        <div class="btn-row" id="heirRow" style="margin-bottom:8px;"></div>
         <div class="member-list" id="membersArea"></div>
+        <div class="btn-row" style="margin-top:8px;">
+          <button class="btn btn-xs" id="exportBtn2">导出存档（换手机用）</button>
+          <button class="btn btn-xs" id="importBtn2">导入存档</button>
+        </div>
       </div>
 
       <div class="panel" data-candidate-host>
@@ -349,6 +387,12 @@ dt-stat,.dt-stats{display:block}
       </div>
 
       <div class="panel">
+        <h2 class="panel-title">庄头掌柜</h2>
+        <p class="muted panel-hint">雇一位庄头，月领工钱，按播种计划自动下种（种子工本照支），你只管收成。手动播种依然可用。</p>
+        <div id="stewardArea"></div>
+      </div>
+
+      <div class="panel">
         <h2 class="panel-title">田亩分派</h2>
         <p class="muted panel-hint"><span id="landAllocInfo"></span>。佃租夏、秋两季收银；余四者须循农时——于播月下种、到收月方熟入仓，一岁一熟至三熟不等。在田之稼未收不得改派。</p>
         <div class="landuse-list" id="landUseList"></div>
@@ -380,9 +424,16 @@ dt-stat,.dt-stats{display:block}
     <div class="tab-pane" data-pane="trade">
       <div class="panel">
         <h2 class="panel-title">开张铺号</h2>
-        <p class="muted panel-hint"><span id="bizInfo2">尚无铺面</span></p>
+        <p class="muted panel-hint"><span id="bizInfo2">尚无铺面</span>
+          <button class="btn btn-xs" id="upgradeAllBtn" data-upgrade-all="1" style="margin-left:8px;">一键升级</button></p>
         <div class="shop-open" id="shopOpenRow"></div>
         <div class="shop-list" id="shopList"></div>
+      </div>
+
+      <div class="panel">
+        <h2 class="panel-title">钱庄</h2>
+        <p class="muted panel-hint">存款吃月息一分，借贷月息五分（欠账至多300两）。钱要流动起来才是钱。</p>
+        <div id="bankArea"></div>
       </div>
     </div>
 
@@ -424,6 +475,15 @@ dt-stat,.dt-stats{display:block}
         <h2 class="panel-title">人际往来</h2>
         <p class="muted panel-hint">元宵、清明、七夕、中秋易遇新人，平时度月亦有机缘。拜访耗1精力+3两，赠礼加好感，好感80可提亲。高门子弟天赋更高，娶回家后代受益。名帖最多存8人，好感每月-1。</p>
         <div id="contactsArea"></div>
+      </div>
+    </div>
+
+    <!-- ========== 页签六：族亲（离家的人） ========== -->
+    <div class="tab-pane" data-pane="kin">
+      <div class="panel">
+        <h2 class="panel-title">族亲远近</h2>
+        <p class="muted panel-hint">分家另过的支、出阁的女儿、宫中的女儿都列在此处，找得到、看得见。分家一般喊不回；若家中再无男丁，方可迎一支归宗。</p>
+        <div id="kinArea"></div>
       </div>
     </div>
   </section>
@@ -540,6 +600,61 @@ dt-stat,.dt-stats{display:block}
     { kind: "mingsu", name: "乡野名宿", gift: 20, stipend: 6, skill: [50, 72],
       needRep: 0, needLand: 15, desc: "隐居不仕的饱学老者，喜庄田清静，无田难致" }
   ];
+
+  /* ---------- 女官体系（女儿入宫两条路） ----------
+   * 宫女线：送入宫为小宫女，逐年考课晋升，28岁放出归家
+   * 妃嫔线：选秀入宫为秀女，凭姿容晋位，高位者荫家（加商额） */
+  Game.PALACE_MAID_RANKS = [
+    { name: "小宫女", salary: 2 },
+    { name: "掌灯宫女", salary: 3 },
+    { name: "司寝宫女", salary: 4 },
+    { name: "尚宫", salary: 6 },
+    { name: "尚仪", salary: 8 }
+  ];
+  Game.PALACE_CONSORT_RANKS = [
+    { name: "秀女", salary: 5 },
+    { name: "答应", salary: 6 },
+    { name: "常在", salary: 8 },
+    { name: "贵人", salary: 12 },
+    { name: "嫔", salary: 16, shopCap: 1 },
+    { name: "妃", salary: 25, shopCap: 2 }
+  ];
+  Game.PALACE_RELEASE_AGE = 28;   /* 宫女年至二十八放出归家 */
+  Game.palaceSalary = function (p) {
+    if (!p || !p.palace) return 0;
+    const ranks = p.palace.track === "consort" ? Game.PALACE_CONSORT_RANKS : Game.PALACE_MAID_RANKS;
+    return (ranks[p.palace.grade] || {}).salary || 0;
+  };
+  Game.palaceName = function (p) {
+    if (!p || !p.palace) return "";
+    const ranks = p.palace.track === "consort" ? Game.PALACE_CONSORT_RANKS : Game.PALACE_MAID_RANKS;
+    return (ranks[p.palace.grade] || {}).name || "";
+  };
+
+  /* ---------- 田庄掌柜（雇工自动播种，月领工钱，另有增产） ---------- */
+  Game.STEWARDS = [
+    { kind: "honest", name: "本分庄户", wage: 2, bonus: 0, needRep: 0,
+      desc: "老实肯干，按你的播种计划下种，不偷懒也不多事" },
+    { kind: "veteran", name: "老把式", wage: 4, bonus: 0.08, needRep: 20,
+      desc: "种了三十年地，看天看土有一手，收成+8%" },
+    { kind: "shrewd", name: "精明庄头", wage: 7, bonus: 0.15, needRep: 60,
+      desc: "调理佃户、积肥看水样样精，收成+15%，声望六十方肯来" }
+  ];
+
+  /* ---------- 高门世家（固定五姓，旧时王谢堂前燕） ----------
+   * 阖族共用一个好感，每月-2（比寻常往来难维持）
+   * 高门子弟天赋更佳；娶其女聘礼极重，嫁女过去要倒贴嫁妆、却添声望，只是皇帝猜忌 */
+  Game.GREAT_CLANS = [
+    { key: "wang", name: "琅琊王氏", motto: "书圣家风", tilt: "智", surname: "王", family: [120, 150], favor0: [10, 25], desc: "书圣之后，代代三槐，子弟多俊彦" },
+    { key: "xie", name: "陈郡谢氏", motto: "风流隽永", tilt: "魅", surname: "谢", family: [110, 140], favor0: [10, 25], desc: "东山风流，淝水之誉，子弟多风流" },
+    { key: "zheng", name: "荥阳郑氏", motto: "经学传家", tilt: "衡", surname: "郑", family: [100, 130], favor0: [12, 28], desc: "经学传家，孝友著闻，子弟多端方" },
+    { key: "lu", name: "范阳卢氏", motto: "幽燕气骨", tilt: "武", surname: "卢", family: [100, 130], favor0: [12, 28], desc: "幽燕气骨，文武兼资，子弟多英武" },
+    { key: "cui", name: "清河崔氏", motto: "清河望族", tilt: "体", surname: "崔", family: [95, 125],  favor0: [15, 30], desc: "清河望族，婚宦两盛，子弟多康健" }
+  ];
+
+  /* ---------- 夺嫡（皇嗣线）：女儿诞下皇子，即入夺嫡大局 ---------- */
+  Game.RIVAL_HOUSES = ["镇北侯府", "安国公府", "宰相府", "江南盐商甄家"];
+  Game.DEpose_P = 0.06;   /* 皇嗣母家每年被波及退位的基准概率（站错队则升） */
 
   /* ---------- 门第 ---------- */
   Game.RANKS = [
@@ -719,7 +834,19 @@ dt-stat,.dt-stats{display:block}
 
   /* ---------- 字辈（世代排行） ---------- */
   Game.GEN_CHARS = ["承","德","永","继","光","昭","显","扬","振","家","声","贻","谋","燕","翼","钟","毓","贤","良","克"];
+  /* 字辈诗预设：通天谱为孔孟颜曾御赐五十字，其余为民间通用；亦可自填整首 */
+  Game.GEN_POEMS = [
+    { name: "通天谱·御赐五十字", chars: "希言公彦承宏闻贞尚衍兴毓传继广昭宪庆繁祥令德维垂佑钦绍念显扬建道敦安定懋修肇彝常裕文焕景瑞永锡世绪昌" },
+    { name: "忠孝传家", chars: "忠孝传家远诗书继世长" },
+    { name: "仁义礼智", chars: "仁义礼智信温良恭俭让" }
+  ];
   Game.nextGenChar = function (cur) {
+    const poem = window.Game.G && window.Game.G.family && window.Game.G.family.genPoem;
+    if (poem) {
+      const arr = poem.split("");
+      const i = arr.indexOf(cur);
+      if (i >= 0) return arr[(i + 1) % arr.length];   /* 诗尽则循环 */
+    }
     const seq = Game.GEN_CHARS;
     const i = seq.indexOf(cur);
     if (i >= 0 && i < seq.length - 1) return seq[i + 1];
@@ -871,8 +998,32 @@ dt-stat,.dt-stats{display:block}
 
   /* 为一个 stats 已 roll 好的人补全天赋、词条；applyBorn 时一并应用出生禀赋
      （新生与开家用 true，旧档迁移补字段用 false，免得给成年人凭空涨属性） */
+  /* 生育率 1~100：人人有之，隐于体质；受孕看夫妻双方，难产可伤之 */
+  Game.rollFertility = function () {
+    let f = rand(20, 90);
+    const r = Math.random();
+    if (r < 0.05) f = rand(1, 19);
+    else if (r < 0.10) f = rand(91, 100);
+    return f;
+  };
+  Game.fertilityOf = function (p) {
+    if (!p) return 50;
+    if (p.infertile) return 0;
+    if (p.fertility == null) return 50;
+    return p.fertility;
+  };
+  Game.fertilityWord = function (p) {
+    const f = Game.fertilityOf(p);
+    if (p && p.infertile) return "难有孕";
+    if (f >= 85) return "极易得子";
+    if (f >= 65) return "旺盛";
+    if (f >= 40) return "平常";
+    if (f >= 25) return "偏弱";
+    return "艰难";
+  };
   Game.decoratePerson = function (p, a, b, applyBorn) {
     if (!p) return p;
+    if (p.fertility == null && !p.infertile) p.fertility = Game.rollFertility();
     if (applyBorn == null) applyBorn = true;
     if (!p.apt) {
       p.apt = {};
@@ -940,15 +1091,28 @@ dt-stat,.dt-stats{display:block}
   }
 
   /* 新生婴儿：属性承父母雏形，天赋(1~100)定终身学习倍率，词条自父母遗传或罕见降生 */
-  function makeChild(gender, parentA, parentB, surname, relation) {
+  function makeChild(gender, parentA, parentB, surname, relation, parentId) {
     const stats = {};
+    /* 优生：子肖父母，取双亲平均再上下浮动三成（天赋词条另有随机与遗传） */
     ["体力", "智力", "武力", "魅力"].forEach(k => {
-      const base = parentA && parentB
-        ? (parentA.stats[k] + parentB.stats[k]) / 2
-        : rand(25, 45);
-      stats[k] = clamp(Math.round(base * 0.28) + rand(4, 12), 5, 60);
+      let avg = 45;
+      if (parentA && parentB) avg = (parentA.stats[k] + parentB.stats[k]) / 2;
+      else if (parentA) avg = parentA.stats[k];
+      else if (parentB) avg = parentB.stats[k];
+      stats[k] = clamp(Math.round(avg * (0.7 + Math.random() * 0.6)), 5, 95);
     });
-    const lead = (window.Game.G && window.Game.G.family && window.Game.G.family.genChar) || null;
+    /* 字辈按辈分取：儿子辈用当前字，孙辈顺进一位，曾孙辈再进一位（可循环） */
+    const lead = (function () {
+      const G = window.Game.G;
+      const base = (G && G.family && G.family.genChar) || null;
+      if (!base) return null;
+      let depth = 1, cur = parentId, guard = 0;
+      const kids = (G && G.children) || [];
+      while (cur && guard < 6) { depth++; const pp = kids.find(x => x.id === cur); cur = pp ? pp.parentId : null; guard++; }
+      let ch = base;
+      for (let i = 1; i < depth && window.Game.nextGenChar; i++) ch = window.Game.nextGenChar(ch);
+      return ch;
+    })();
     const child = {
       id: "c" + Date.now() + rand(100, 999),
       name: makeName(gender, surname, lead),
@@ -958,6 +1122,9 @@ dt-stat,.dt-stats{display:block}
       apt: null,                 // 四维先天资质 1~100（学习倍率）
       traits: null,              // 禀赋词条 key 列表
       relation: relation || (gender === "男" ? "子" : "女"),
+      parentId: parentId || null,   // 孙辈记生父/生母 id
+      fatherName: (parentA && parentA.gender === "男" ? parentA : (parentB && parentB.gender === "男" ? parentB : null)) ? (parentA.gender === "男" ? parentA.name : parentB.name) : "不详",
+      motherName: (parentA && parentA.gender === "女" ? parentA : (parentB && parentB.gender === "女" ? parentB : null)) ? (parentA.gender === "女" ? parentA.name : parentB.name) : "不详",
       married: false,
       alive: true,
       title: null,               // 功名 key
@@ -982,11 +1149,18 @@ dt-stat,.dt-stats{display:block}
       fields: null,                 // 在田作物 {crop:{lots:[{mu,hm,hy,bear}]}}，建号时初始化
       granary: { rice: 12, wheat: 6, veg: 8, fruit: 3 },  // 粮仓（斗）
       market: null,                 // 当月集市粮价 {rice,wheat,veg,fruit}（两/斗）
+      trends: null,                // 六业行市倍率 {antique:1,...}，逐月浮动 0.6~1.4
+      bank: null,                  // 钱庄 {deposit:0, loan:0}
+      priceHist: null,              // 近月价格走势 {land:[],rice:[],wheat:[],veg:[],fruit:[]}
       house: { rooms: 3 },          // 宅院房间数，每间住两人
       manor: "hut",               // 宅邸等级 hut/tile/courtyard/mansion/palace，卡家族上限
       contacts: [],              // 人际往来 [{id,name,gender,age,type,family,stats,apt,traits,favor}]
       shops: [],                    // 铺号：{id,type,fame,months,lastProfit}
       autoLand: 0,                  // 每月自动买入亩数（0=关闭）
+      steward: null,                // 田庄掌柜 {kind,name,wage,bonus}
+      sowPlan: null,                // 播种计划（已废，庄头按分派种满；留存兼容）
+      autoDoctor: null,             // 自动延医档位 null|itinerant|local|master
+      branches: [],              // 分出去的支（{id,headId,headName,sinceYear,sinceMonth}，成员出标识 branch）
       academy: { teacher: null },   // 族学：{ kind,id,name,age,skill,fee,gift,desc }
       academyCandidates: null,      // 外访待聘的西席名单
       spouse: null,
@@ -1006,6 +1180,9 @@ dt-stat,.dt-stats{display:block}
         bestPost: null,
         founder: surname,
         genChar: null,         // 字辈：子孙取名首字
+        genPoem: null,         // 字辈诗全文（设了就按诗循环，不设则单字顺进）
+        clan: 50,               // 宗族情分 0~100（祭祖/周济族人涨，刻薄寡恩跌；高则岁加声望，低则生事）
+        clanFavor: null,         // 高门世家好感 {key:0~100}，每月-2
         history: []            // 族谱镜像，与顶层 history 同步
       },
       char: {
@@ -1022,6 +1199,7 @@ dt-stat,.dt-stats{display:block}
         isSick: false,
         title: null,           // 功名 key
         office: null,          // {grade, track, diligence}
+        fatherName: "不知道", motherName: "不知道",   // 开宗第一代，父母不详
         retired: false
       },
       history: [],             // 历代家主：{gen,name,age,title,post,years,reputation}
@@ -1033,6 +1211,12 @@ dt-stat,.dt-stats{display:block}
     Game.G.fields = {};
     Game.CROPS.forEach(c => { Game.G.fields[c.key] = { lots: [] }; });
     Game.G.market = Game.rollMarket ? Game.rollMarket() : { rice: 0.8, wheat: 0.6, veg: 0.25, fruit: 0.9 };
+    Game.G.priceHist = { land: [Game.G.landPrice], rice: [Game.G.market.rice], wheat: [Game.G.market.wheat], veg: [Game.G.market.veg], fruit: [Game.G.market.fruit] };
+    Game.G.family.clanFavor = {}; (Game.GREAT_CLANS || []).forEach(t => { Game.G.family.clanFavor[t.key] = rand(t.favor0[0], t.favor0[1]); });
+    Game.G.heirId = null;   /* 嗣位：直系后代中指定继承人 */
+    Game.G.clanRec = {};
+    Game.G.trends = {}; Object.keys(Game.SHOP_TYPES).forEach(k => { Game.G.trends[k] = 1; });
+    Game.G.bank = { deposit: 0, loan: 0 };
     Game.G.family.genChar = (genChar || Game.GEN_CHARS[Math.floor(Math.random() * Game.GEN_CHARS.length)]);
     Game.decoratePerson(Game.G.char, null, null);   /* 开家家主的先天资质与禀赋 */
     /* 开局家主即有营生兜底，免得零收入饿死 */
@@ -1069,10 +1253,30 @@ dt-stat,.dt-stats{display:block}
         if (Game.decoratePerson && !ct.apt) Game.decoratePerson(ct, null, null, false);
       });
       if (!g.family.genChar) g.family.genChar = (Game.GEN_CHARS || ["承"])[Math.floor(Math.random() * (Game.GEN_CHARS || ["承"]).length)];
+      if (g.family.genPoem === undefined) g.family.genPoem = null;
+      if (g.autoDoctor === undefined) g.autoDoctor = null;
+      if (g.branches === undefined) g.branches = [];
+      if (g.family.clan === undefined || g.family.clan == null) g.family.clan = 50;
+      if (!g.family.clanFavor) { g.family.clanFavor = {}; (Game.GREAT_CLANS || []).forEach(t => { g.family.clanFavor[t.key] = rand(t.favor0[0], t.favor0[1]); }); }
+      if (!g.clanRec) g.clanRec = {};
+      if (g.steward === undefined) g.steward = null;
+      if (g.sowPlan === undefined) g.sowPlan = null;
+      if (!g.priceHist) g.priceHist = { land: [], rice: [], wheat: [], veg: [], fruit: [] };
+      if (!g.trends) { g.trends = {}; Object.keys(Game.SHOP_TYPES).forEach(k => { g.trends[k] = 1; }); }
+      if (!g.bank) g.bank = { deposit: 0, loan: 0 };
       if (!g.history) g.history = [];
       if (!g.family.history || !g.family.history.length) g.family.history = g.history;
       else if (g.family.history.length && !g.history.length) g.history = g.family.history;
       if (!g.spouse) g.pregnancy = null;   /* 旧档无配偶则无身孕 */
+      /* 生育率与嗣位迁移：旧档人人补生育率，新档嗣位默认空 */
+      if (g.heirId === undefined) g.heirId = null;
+      if (Game.decoratePerson) {
+        [g.char, g.spouse].forEach(x => { if (x && x.fertility == null && !x.infertile) { try { Game.decoratePerson(x, null, null, false); } catch (e) {} } });
+        (g.children || []).forEach(ch => {
+          if (ch.fertility == null && !ch.infertile) { try { Game.decoratePerson(ch, null, null, false); } catch (e) {} }
+          if (ch.spouse && ch.spouse.fertility == null && !ch.spouse.infertile) { try { Game.decoratePerson(ch.spouse, null, null, false); } catch (e) {} }
+        });
+      }
       /* 迁移旧档：单一产业折算为一间铺号 */
       if (g.business && !g.shops) {
         const map = { "古董商": "antique", "丝绸商": "silk", "畜牧业": "butcher" };
@@ -1086,9 +1290,36 @@ dt-stat,.dt-stats{display:block}
       if (!g.landUse) g.landUse = { rent: g.land || 0, rice: 0, wheat: 0, veg: 0, fruit: 0 };
       if (!g.market) g.market = { rice: 0.8, wheat: 0.6, veg: 0.25, fruit: 0.9 };
       if (Game.migrateFields) Game.migrateFields(g);   /* 旧档补在田作物，纳入农时 */
+      /* 旧档补父母名：有parentId按生父查，无则按称谓推（子辈归现任家主，余者不详） */
+      (g.children || []).forEach(ch => {
+        if (ch.fatherName === undefined) {
+          if (ch.parentId) {
+            const pp = (g.children || []).find(x => x.id === ch.parentId);
+            if (pp) {
+              ch.fatherName = pp.gender === "男" ? pp.name : ((pp.spouse && pp.spouse.joined) ? pp.spouse.name : "不详");
+              ch.motherName = pp.gender === "女" ? pp.name : ((pp.spouse && pp.spouse.joined) ? pp.spouse.name : "不详");
+            } else { ch.fatherName = "不详"; ch.motherName = "不详"; }
+          } else if (ch.relation === "子" || ch.relation === "女" || !ch.relation) {
+            ch.fatherName = g.char.gender === "男" ? g.char.name : ((g.spouse && g.spouse.name) || "不详");
+            ch.motherName = g.char.gender === "女" ? g.char.name : ((g.spouse && g.spouse.name) || "不详");
+          } else if (ch.relation === "兄" || ch.relation === "弟" || ch.relation === "姊" || ch.relation === "妹") {
+            const prev = (g.history && g.history.length) ? g.history[g.history.length - 1] : null;
+            ch.fatherName = (prev && prev.name) || "不详";
+            ch.motherName = (prev && prev.spouse) || "不详";
+          } else { ch.fatherName = ch.fatherName || "不详"; ch.motherName = ch.motherName || "不详"; }
+        }
+        if (ch.fatherName === undefined) ch.fatherName = "不详";
+        if (ch.motherName === undefined) ch.motherName = "不详";
+      });
+      if (g.char && g.char.fatherName === undefined) {
+        g.char.fatherName = (g.gen <= 1) ? "不知道" : ((g.history && g.history.length && g.history[g.history.length-1].name) || "不详");
+        g.char.motherName = (g.gen <= 1) ? "不知道" : ((g.history && g.history.length && g.history[g.history.length-1].spouse) || "不详");
+      }
       /* 旧档族人补职业、功名字段，并补先天资质与禀赋 */
       if (g.char && Game.decoratePerson) Game.decoratePerson(g.char, null, null, false);
       (g.children || []).forEach(ch => {
+        /* 旧档已出嫁女迁出户口：不再计口粮月耗、不承祧 */
+        if (ch.gender === "女" && ch.married && !ch.palace && !ch.uxori && !ch.out) ch.out = "married";
         if (ch.title === undefined) ch.title = null;
         if (ch.job === undefined && ch.alive && ch.age >= 16) ch.job = Game.pickJob ? Game.pickJob(ch) : "farmhand";
         if (Game.decoratePerson && ch.alive) Game.decoratePerson(ch, g.char, g.spouse, false);
@@ -1113,6 +1344,28 @@ dt-stat,.dt-stats{display:block}
   };
   Game.clearSave = function () {
     try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+  };
+
+  /* ---------- 存档导入导出（换手机/备份，base64单行码） ---------- */
+  Game.exportSave = function () {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return "";
+      return btoa(unescape(encodeURIComponent(raw)));
+    } catch (e) { return ""; }
+  };
+  Game.importSave = function (code) {
+    try {
+      code = (code || "").trim().replace(/\s+/g, "");
+      if (!code) return { ok: false, msg: "请先粘贴存档码。" };
+      const raw = decodeURIComponent(escape(atob(code)));
+      const g = JSON.parse(raw);
+      if (!g || g.version !== 1 || !g.char || !g.surname) return { ok: false, msg: "存档码不对，读不出来。" };
+      try { localStorage.setItem(SAVE_KEY, raw); } catch (e) {}
+      const loaded = Game.load();
+      if (!loaded) return { ok: false, msg: "存档太旧或已损坏，读不出来。" };
+      return { ok: true };
+    } catch (e) { return { ok: false, msg: "存档码不对，读不出来。" }; }
   };
 
   /* ---------- 家族最佳纪录 ---------- */
@@ -1400,11 +1653,13 @@ dt-stat,.dt-stats{display:block}
         choices: [
           { label: "念及宗情，借出三十两", act: (l) => {
               g.money -= 30; rep(5);
+              g.family.clan = Math.min(100, (g.family.clan == null ? 50 : g.family.clan) + 6);
+              l("周济族亲，宗族情分+6。", "");
               g.loansOut = g.loansOut || [];
               g.loansOut.push({ name: "族叔", amount: 30, back: rand(35, 45), left: 3, repayP: 0.6 });
               l("念及一笔写不出两个姓氏，借银三十两与他，约三月而还。", "");
             } },
-          { label: "托词手紧，不借", act: (l) => { rep(-3); l("托词家计亦艰，族叔悻悻而去，背后颇有怨言。", "bad"); } }
+          { label: "托词手紧，不借", act: (l) => { rep(-3); g.family.clan = Math.max(0, (g.family.clan == null ? 50 : g.family.clan) - 4); l("托词家计亦艰，族叔悻悻而去，背后颇有怨言（宗族情分-4）。", "bad"); } }
         ] }) },
     { id: "plea_help", type: "choice", w: 5, cond: g => !!(g.char.office || (g.char.title === "juren" || g.char.title === "jinshi" || g.char.title === "gongshi")),
       build: g => ({
@@ -1549,6 +1804,255 @@ dt-stat,.dt-stats{display:block}
         else if (r < 0.67) { const n = Game.gainStat(c, "魅力", 5); log(`${c.name}抓周独爱算盘，拨得哗哗响，众人道“好个精明孩子”（魅力+${n}）。`, "good"); }
         else { const n = Game.gainStat(c, "体力", 5); log(`${c.name}抓周抱住小弓不撒手，祖父大笑“是将门之种”（体力+${n}）。`, "good"); }
       } },
+    /* ---------- 女官线：选秀与宫中 ---------- */
+    { id: "imperial_draft", type: "choice", w: 5,
+      cond: g => g.family.reputation >= 60 && g.children.some(x => x.alive && x.gender === "女" && !x.married && !x.palace && !x.out && x.age >= 14 && x.age <= 19),
+      build: g => {
+        const c = g.children.find(x => x.alive && x.gender === "女" && !x.married && !x.palace && !x.out && x.age >= 14 && x.age <= 19);
+        return {
+          title: "选秀之年",
+          text: `三年一度的选秀到了。宫中放出话来，${c.name}年方${c.age}岁，容色${c.stats.魅力 >= 70 ? "出众" : "尚可"}，街坊都劝你送她一试——选上了阖家荣耀，落选也不丢人。`,
+          choices: [
+            { label: `送${c.name}应选`, act: (l) => { Game.palaceDraft(c.id); } },
+            { label: "不忍骨肉分离", act: (l) => l("将帖子压下，只当没这回事，留女儿在家议亲。", "") }
+          ] };
+      } },
+    { id: "palace_ripple", type: "choice", w: 4,
+      cond: g => g.children.some(x => x.alive && x.out === "palace"),
+      build: g => {
+        const c = g.children.find(x => x.alive && x.out === "palace");
+        return {
+          title: "宫中风波",
+          text: `宫里递出信来：${c.name}（${Game.palaceName(c)}）卷进了一场口舌是非，管事嬷嬷暗示，花二十两打点便可大事化小。`,
+          choices: [
+            { label: "花银二十两打点", act: (l) => {
+                if (g.money < 20) { l("一时凑不出银子，只得写信叫她忍耐。", "bad"); rep(-1); return; }
+                g.money -= 20;
+                if (c.palace.track === "consort" && c.palace.grade < 5 && chance(0.4)) {
+                  c.palace.grade += 1; rep(4);
+                  l(`银子送到，事情平息，对方反失了势，${c.name}反晋一级为${Game.palaceName(c)}！`, "good");
+                } else l("银子送到，风波平息，她来信道谢。", "");
+              } },
+            { label: "宫廷事不便插手", act: (l) => {
+                if (chance(0.35)) {
+                  if (c.palace.track === "consort" && c.palace.grade > 0) { c.palace.grade -= 1; l(`${c.name}受了牵连，被降了一级。`, "bad"); }
+                  else l(`${c.name}受了些委屈，写信来哭诉。`, "bad");
+                } else l("她机灵应对，竟自己化解了。", "good");
+              } }
+          ] };
+      } },
+    /* ---------- 官场风波（关系不好就要挨打） ---------- */
+    { id: "censor_wind", type: "choice", w: 5,
+      cond: g => !!(g.char.office) && ((g.char.office.rel || {}).emperor ?? 50) < 45,
+      build: g => ({
+        title: "台谏风闻",
+        text: "御史弹劾你的折子递到了御前，罪名无非是“骄纵不法、殃及地方”。圣上虽未表态，吏部已来问话。",
+        choices: [
+          { label: "花银三十两上下打点", act: (l) => {
+              if (g.money < 30) { l("凑不出打点的银子，只得听参。", "bad"); }
+              else {
+                g.money -= 30;
+                if (chance(0.6)) { l("银子递到，言官改口，这场风波算揭过去了。", ""); Game.adjustRel && Game.adjustRel(g, { emperor: -2 }); }
+                else {
+                  const o = g.char.office, ng = Math.max(0, o.grade - 1);
+                  Game.appoint(o.track, ng); rep(-4);
+                  l("银子花了，官还是被降了一级。", "bad");
+                }
+                return;
+              }
+              const o = g.char.office, ng = Math.max(0, o.grade - 1);
+              Game.appoint(o.track, ng); rep(-5);
+              l("无人说项，降一级留用，罚俸三月。", "bad");
+            } },
+          { label: "上疏自辩，不花分文", act: (l) => {
+              if ((g.char.stats.智力 || 50) + rand(-10, 10) > 62) { l("辩疏写得恳切，圣上看了说“知道了”，事情淡了下去。", "good"); }
+              else {
+                const o = g.char.office;
+                if (o.grade > 0) { const ng = o.grade - 1; Game.appoint(o.track, ng); rep(-5); l("自辩无力，反落个“强辩”之名，降一级。", "bad"); }
+                else { o.merit = 0; rep(-8); l("圣上一怒，虽保住差使，考语却极难看（政绩清零、声望-8）。", "bad"); }
+              }
+            } }
+        ] }) },
+    { id: "eunuch_ask", type: "choice", w: 5,
+      cond: g => !!(g.char.office) && ((g.char.office.rel || {}).eunuch ?? 50) < 50,
+      build: g => ({
+        title: "中官索礼",
+        text: "宫里管采买的公公捎话来：年节将至，“孝敬”二十两，以后圣前面上好说话。",
+        choices: [
+          { label: "备银二十两孝敬", act: (l) => {
+              if (g.money < 20) { l("连二十两都拿不出，公公干笑两声走了。", "bad"); Game.adjustRel && Game.adjustRel(g, { eunuch: -4 }); return; }
+              g.money -= 20; Game.adjustRel && Game.adjustRel(g, { eunuch: 8 });
+              l("公公掂了掂分量，笑说“咱家记着你了”。", "");
+            } },
+          { label: "不吃这一套", act: (l) => {
+              Game.adjustRel && Game.adjustRel(g, { eunuch: -6 });
+              g.char.office.merit = Math.max(0, g.char.office.merit - 10);
+              l("公公皮笑肉不笑：年轻人有骨气。转头你的考语就难看了（政绩-10）。", "bad");
+            } }
+        ] }) },
+    { id: "people_petition", type: "choice", w: 5,
+      cond: g => !!(g.char.office) && ((g.char.office.rel || {}).people ?? 50) < 40,
+      build: g => ({
+        title: "百姓击鼓",
+        text: "一群百姓抬着状子跪在衙门口，告的是你治下欠收还催科太急。围观的人越来越多。",
+        choices: [
+          { label: "赔银安抚，缓征半月（25两）", act: (l) => {
+              if (g.money < 25) { l("拿不出银子安抚，人群久久不散。", "bad"); rep(-4); return; }
+              g.money -= 25; Game.adjustRel && Game.adjustRel(g, { people: 8 }); rep(2);
+              l("开仓平粜、缓征半月，百姓散去，还立了块“仁厚”小碑。", "good");
+            } },
+          { label: "升堂问案，依法处置", act: (l) => {
+              if (chance(0.5)) { Game.adjustRel && Game.adjustRel(g, { people: 4, emperor: 2 }); l("查明确有胥吏作弊，杖责胥吏，百姓心服。", "good"); }
+              else {
+                const o = g.char.office;
+                Game.adjustRel && Game.adjustRel(g, { people: -6, emperor: -4 }); rep(-5);
+                if (o.grade > 0 && chance(0.5)) { const ng = o.grade - 1; Game.appoint(o.track, ng); l("事情闹大，上宪震怒，降一级以平民愤。", "bad"); }
+                else l("案子越审越僵，民怨未平，上宪记了你一笔。", "bad");
+              }
+            } }
+        ] }) },
+    { id: "peer_squeeze", type: "choice", w: 5,
+      cond: g => !!(g.char.office) && ((g.char.office.rel || {}).gentry ?? 50) < 40,
+      build: g => ({
+        title: "同僚倾轧",
+        text: "同僚在上峰面前给你上了眼药，说你“年轻识浅、独断专行”。年终考语眼看要吃亏。",
+        choices: [
+          { label: "设宴修好（15两）", act: (l) => {
+              if (g.money < 15) { l("连顿和头酒都摆不起。", "bad"); return; }
+              g.money -= 15; Game.adjustRel && Game.adjustRel(g, { gentry: 8 });
+              l("一席酒吃到半夜，误会说开，同僚拍胸脯说考语的事他去分说。", "good");
+            } },
+          { label: "据理力争", act: (l) => {
+              if ((g.char.stats.智力 || 50) + rand(-12, 12) > 60) { g.char.office.merit += 5; l("当面把账算清，上峰点头：到底是谁搬弄是非，一目了然（政绩+5）。", "good"); }
+              else { g.char.office.merit = Math.max(0, g.char.office.merit - 8); l("争赢了道理，输了人缘，考语更难看了（政绩-8）。", "bad"); }
+            } }
+        ] }) },
+
+    /* ---------- 宫里要钱（只出不进，位分越高越敢开口） ---------- */
+    { id: "palace_need", type: "choice", w: 5,
+      cond: g => {
+        const ds = (g.children || []).filter(x => x.alive && x.out === "palace" && x.palace);
+        if (!ds.length) return false;
+        const top = ds.some(x => x.palace.track === "consort") ? 0.30 : ds.some(x => x.palace.track === "maid" && x.palace.grade >= 3) ? 0.08 : 0.05;
+        return chance(top);
+      },
+      build: g => {
+        const ds = (g.children || []).filter(x => x.alive && x.out === "palace" && x.palace);
+        ds.sort((a, b) => {
+          const ta = a.palace.track === "consort" ? 1 : 0, tb = b.palace.track === "consort" ? 1 : 0;
+          if (ta !== tb) return tb - ta;
+          return b.palace.grade - a.palace.grade;
+        });
+        const c = ds[0];
+        const isCon = c.palace.track === "consort";
+        const amt = isCon ? (c.palace.grade >= 3 ? rand(50, 80) : rand(30, 50)) : rand(10, 20);
+        const why = isCon
+          ? (chance(0.5) ? "圣眷正浓，打点上下、裁制新衣都要银子" : "近来有些失宠，想备份厚礼挽回圣心")
+          : "宫中使费渐多，月例不够开销";
+        return {
+          title: "宫里来信要钱",
+          text: Game.palaceName(c) + c.name + "捎信回家：" + why + "，想家里接济" + amt + "两。",
+          choices: [
+            { label: "给" + amt + "两（家书报平安）", act: (l) => {
+                if (g.money < amt) { l("翻箱倒柜也凑不齐，只得回信让她再忍忍。", "bad"); rep(-1); return; }
+                g.money -= Math.round(amt * 100) / 100; rep(2);
+                l("银子送进宫，" + c.name + "回信说一切安好，家中有孝名，声望+2。", "good");
+              } },
+            { label: "实在接济不起", act: (l) => {
+                rep(-2);
+                if (isCon && chance(0.35)) {
+                  if (c.palace.grade > 0) { c.palace.grade -= 1; l(c.name + "失了打点，在宫中愈发艰难，竟被降了一级。", "bad"); }
+                  else l(c.name + "的日子更难过了，来信只有叹气。", "bad");
+                } else if (!isCon && chance(0.08)) {
+                  c.palace = null; c.out = null;
+                  l(c.name + "熬不下去，自请出宫归家。", "bad");
+                } else l("回信好言宽慰，只盼她自己争气。", "");
+              } }
+          ] };
+      } },
+
+    /* ---------- 家常倒霉 ---------- */
+    { id: "night_thief", type: "choice", w: 5,
+      cond: g => g.money >= 50,
+      build: g => ({
+        title: "夜半贼影",
+        text: "更鼓三下，院墙外似有人影晃动。家丁抄起棍棒，说追还是守，请你拿个主意。",
+        choices: [
+          { label: "率众追打（赌武力）", act: (l) => {
+              if ((g.char.stats.武力 || 40) + rand(-12, 12) > 55) { l("追出二里擒住毛贼，搜出赃物还倒贴了酒钱。", "good"); money(8); }
+              else { const s = Math.min(g.money, rand(8, 20)); g.money -= s; l("追出去反中了调虎离山计，屋里被顺走银" + s + "两。", "bad"); }
+            } },
+          { label: "闭门持守", act: (l) => { const s = Math.min(g.money, rand(5, 12)); g.money -= s; l("贼人撬了仓房一角，失银" + s + "两，好在人没事。", "bad"); } }
+        ] }) },
+    { id: "clan_feud", type: "choice", w: 4,
+      cond: g => g.family.reputation >= 60 && g.children.filter(x => x.alive).length >= 2,
+      build: g => {
+        const c = g.children.find(x => x.alive);
+        return {
+          title: "族亲争产",
+          text: "远房族亲指着你家新置的田亩，说是占了他们祖上的地界，闹到族长面前，要你表态。",
+          choices: [
+            { label: "破财消灾（20两）", act: (l) => {
+                if (g.money < 20) { l("拿不出钱，族长只得判你让出二亩田。", "bad"); g.land = Math.max(0, g.land - 2); Game.syncLand && Game.syncLand(); return; }
+                g.money -= 20; rep(3); l("花二十两摆酒请族老作证，地界勘定，再无异议（声望+3）。", "");
+              } },
+            { label: "对簿族祠", act: (l) => {
+                if ((g.char.stats.智力 || 50) + rand(-12, 12) + g.family.reputation / 60 > 65) { rep(6); l("当众拿出地契鱼鳞册，族亲哑口无言，反敬你家规矩（声望+6）。", "good"); }
+                else { g.land = Math.max(0, g.land - 2); rep(-3); Game.syncLand && Game.syncLand(); l("吵到最后各打五十大板，让出二亩田了事。", "bad"); }
+              } }
+          ] };
+      } },
+    /* ---------- 关系 comb：恩厚有赏，情分是攒出来的 ---------- */
+    { id: "imperial_grace", type: "auto", w: 4,
+      cond: g => !!(g.char.office) && ((g.char.office.rel || {}).emperor ?? 50) >= 75,
+      run: (g, ctx, log) => {
+        const s = rand(20, 40); money(s); g.char.office.merit += 3;
+        log(`圣上念你忠勤，内库特赏银${s}两，政绩+3。君恩是攒出来的，也是会用完的。`, "good");
+      } },
+    { id: "eunuch_return", type: "auto", w: 4,
+      cond: g => !!(g.char.office) && ((g.char.office.rel || {}).eunuch ?? 50) >= 75,
+      run: (g, ctx, log) => {
+        g.char.office.merit += 3; Game.adjustRel && Game.adjustRel(g, { gentry: -2 });
+        log("宫里那位公公在御前又替你说了好话（政绩+3），只是这份人情，清议那边记了一笔。", "");
+      } },
+    { id: "gentry_recommend", type: "auto", w: 4,
+      cond: g => !!(g.char.office) && ((g.char.office.rel || {}).gentry ?? 50) >= 75,
+      run: (g, ctx, log) => {
+        const c = (g.children || []).find(x => x.alive && x.age >= 6 && x.age <= 15);
+        if (c) { const n = Game.gainStat(c, "智力", 4); log(`缙绅慕你之名，延名师指点你家${c.name}，其智力+${n}。人脉，就是这么用的。`, "good"); }
+        else { rep(3); log("缙绅在乡约会上盛赞你家门风，声望+3。", "good"); }
+      } },
+    { id: "people_plaque", type: "auto", w: 4,
+      cond: g => !!(g.char.office) && ((g.char.office.rel || {}).people ?? 50) >= 75,
+      run: (g, ctx, log) => {
+        rep(6); log("治下百姓凑钱打了一块“青天镜”匾送到衙门，锣鼓喧天（声望+6）。", "good");
+      } },
+
+    /* ---------- 宗族情分（不做官也有） ---------- */
+    { id: "kinsman_plea", type: "choice", w: 5,
+      build: g => ({
+        title: "族人请托",
+        text: "没出五服的族弟想送儿子进城读书，缺束脩十五两，求到你门上。帮是不帮，族里都看着。",
+        choices: [
+          { label: "解囊十五两（宗族+5）", act: (l) => {
+              if (g.money < 15) { l("囊中实在周转不开，族弟失望而去。", "bad"); g.family.clan = Math.max(0, (g.family.clan || 50) - 2); return; }
+              g.money -= 15; g.family.clan = Math.min(100, (g.family.clan || 50) + 5);
+              l("十五两束脩送到，族弟千恩万谢（宗族情分+5）。", "good");
+            } },
+          { label: "自家也紧，婉拒", act: (l) => { g.family.clan = Math.max(0, (g.family.clan || 50) - 5); l("一口回绝，族里闲话不少（宗族情分-5）。", "bad"); } }
+        ] }) },
+    { id: "clan_field", type: "choice", w: 4, cond: g => g.family.reputation >= 60 && g.money >= 50,
+      build: g => ({
+        title: "宗族祭田",
+        text: "族老提议：合族出资置二十亩祭田，收成供春秋两祭并周济孤寡。你家是头面，认捐二十两，认还是不认？",
+        choices: [
+          { label: "认捐二十两", act: (l) => {
+              if (g.money < 20) { l("实在拿不出，族老面露失望。", "bad"); return; }
+              g.money -= 20; g.family.clan = Math.min(100, (g.family.clan || 50) + 8); rep(4);
+              l("二十两认捐，碑上刻你家名讳居首（宗族情分+8、声望+4）。", "good");
+            } },
+          { label: "不认", act: (l) => l("托词推了，族老没再说什么。", "") }
+        ] }) },
     { id: "banquet", type: "choice", w: 4, cond: g => g.family.reputation >= 160 && g.money >= 20,
       build: g => ({
         title: "夜宴之邀",
@@ -1624,6 +2128,7 @@ dt-stat,.dt-stats{display:block}
   /* 族人月入：有官身领官俸，有功名领月廪，否则领营生月钱 */
   Game.personSalary = function (p) {
     if (!p) return 0;
+    if (p.palace) return Game.palaceSalary(p);
     if (p.office) return Game.SALARY(p.office.grade);
     const j = Game.jobInfo(p.job);
     const wage = j ? j.salary : 0;
@@ -1635,6 +2140,10 @@ dt-stat,.dt-stats{display:block}
   Game.personShopCap = function (p) {
     if (!p) return 0;
     if (p.office) return Game.officeShopCap(p.office.grade);
+    if (p.palace && p.palace.track === "consort") {
+      const r = Game.PALACE_CONSORT_RANKS[p.palace.grade] || {};
+      return r.shopCap || 0;
+    }
     return p.title ? (Game.TITLE_SHOP_CAP[p.title] || 0) : 0;
   };
 
@@ -1642,6 +2151,8 @@ dt-stat,.dt-stats{display:block}
   Game.shopCap = function () {
     let cap = Game.SHOP_CAP_BASE;
     Game.householdMembers().forEach(m => { cap += Game.personShopCap(m.person); });
+    /* 入宫女儿虽不在家，高位妃嫔仍荫家（不与 household 重复计） */
+    (Game.G.children || []).filter(x => x.alive && x.out === "palace").forEach(x => { cap += Game.personShopCap(x); });
     return cap;
   };
 
@@ -1653,6 +2164,13 @@ dt-stat,.dt-stats{display:block}
       return { person: g.spouse, role: "spouse", rel: g.char.gender === "男" ? "妻" : "赘夫" };
     const ch = g.children.find(x => x.id === id);
     if (ch) return { person: ch, role: "child", rel: ch.relation || "族人" };
+    if (id && id.indexOf("il-") === 0) {
+      const pid = id.slice(3);
+      for (const c of g.children) {
+        if (c.spouse && c.spouse.id === pid)
+          return { person: c.spouse, role: "inlaw", rel: c.gender === "男" ? "媳" : "赘婿" };
+      }
+    }
     return null;
   };
 
@@ -1661,8 +2179,11 @@ dt-stat,.dt-stats{display:block}
     const g = Game.G;
     const list = [{ person: g.char, role: "head", rel: "家主" }];
     if (g.spouse) list.push({ person: g.spouse, role: "spouse", rel: g.char.gender === "男" ? "妻" : "赘夫" });
-    g.children.filter(x => x.alive).forEach(x =>
+    g.children.filter(x => x.alive && !x.out).forEach(x =>
       list.push({ person: x, role: "child", rel: x.relation || "族人" }));
+    /* 入门者同居：在家媳与招赘婿 */
+    g.children.filter(x => x.alive && !x.out && x.spouse && x.spouse.joined).forEach(x =>
+      list.push({ person: x.spouse, role: "inlaw", rel: x.gender === "男" ? "媳" : "赘婿" }));
     return list;
   };
 
@@ -1794,7 +2315,7 @@ dt-stat,.dt-stats{display:block}
   };
 
   /* 播种 n 亩：须在播期内、有空闲地、备得起种子工本 */
-  Game.sowLand = function (key, n) {
+  Game.sowLand = function (key, n, silent) {
     const g = Game.G;
     n = Math.max(0, Math.floor(Number(n)));
     const crop = Game.cropInfo(key);
@@ -1817,8 +2338,9 @@ dt-stat,.dt-stats{display:block}
     if (same && !crop.perennial) same.mu += n;
     else g.fields[key].lots.push({ mu: n, hm, hy, bear: false });
     g._lastSow = { key, n, cost };
-    log(`雇工下${crop.name}种${n}亩，耗种子工本${cost}两，约${hm}月可收。`, "good");
-    Game.save(); Game.refresh();
+    g._monthSeed = Math.round(((g._monthSeed || 0) + cost) * 100) / 100;
+    log(`${silent && g.steward ? "庄头" + g.steward.name + "作主" : "雇工"}下${crop.name}种${n}亩，耗种子工本${cost}两，约${hm}月可收。`, "good");
+    if (!silent) { Game.save(); Game.refresh(); }
   };
 
   /* 失田后，把超出留存亩数的在田批次削齐（从末批起） */
@@ -1899,7 +2421,11 @@ dt-stat,.dt-stats{display:block}
 
   /* 2. 族人俸禄月钱（抱病者仅半饷；家主无官亦兼业糊口） */
   Game.settleSalaries = function (g) {
-    let total = 0, headPay = 0;
+    let total = 0, headPay = 0, palaceRemit = 0;
+    /* 宫中女儿月俸径寄回家 */
+    (g.children || []).filter(x => x.alive && x.out === "palace").forEach(x => {
+      palaceRemit += Game.palaceRemit ? Game.palaceRemit(x) : Game.palaceSalary(x);
+    });
     Game.householdMembers().forEach(m => {
       const p = m.person;
       if (p.age < 16) return;
@@ -1928,9 +2454,11 @@ dt-stat,.dt-stats{display:block}
       if (p.isSick) pay = Math.round(pay / 2 * 10) / 10;
       total += pay;
     });
+    total = Math.round((total + palaceRemit) * 10) / 10;
     g.money += total;
     g._lastSalaries = total;
     g._lastHeadPay = headPay;
+    g._lastPalaceRemit = palaceRemit;
     return total;
   };
 
@@ -2010,6 +2538,127 @@ dt-stat,.dt-stats{display:block}
     return { mul: 1, name: "", normal: true };
   };
 
+  /* ---------------- 儿孙添丁：在家成婚的儿子 / 招赘女儿照样生养 ----------------
+   * 儿子+儿媳、招赘女儿+女婿：女方16~42、男方16~50，每月约一成身孕，怀胎十月
+   * 所生为孙辈（parentId 记生父/生母），入户同居，长房之孙可承祧 */
+  Game.couplePair = function (ch) {
+    if (!ch || !ch.alive || !ch.married || !ch.spouse || !ch.spouse.joined || ch.out || ch.palace) return null;
+    if (ch.gender === "男") return { mom: ch.spouse, dad: ch };
+    return { mom: ch, dad: ch.spouse };
+  };
+  /* 生育率：夫妻双方折中看；难产伤身：减生育率，重则此后再难有孕 */
+  Game.laborInjury = function (mom, log, whoName) {
+    if (!mom) return;
+    const loss = rand(15, 35);
+    mom.fertility = Math.max(0, (mom.fertility == null ? 50 : mom.fertility) - loss);
+    if (mom.fertility <= 8 || chance(0.35)) {
+      mom.infertile = true;
+      log(`${whoName}这次伤了根本，大夫摇头：此后再难有孕了。`, "bad");
+    } else {
+      log(`${whoName}这次伤了身子，大夫说须好生调养（生育${mom.fertility}·${Game.fertilityWord ? Game.fertilityWord(mom) : ""}）。`, "bad");
+    }
+  };
+  Game.fertilityFactor = function (mom, dad) {
+    const mf = Game.fertilityOf ? Game.fertilityOf(mom) : 50;
+    const df = Game.fertilityOf ? Game.fertilityOf(dad) : 50;
+    if (mom && mom.infertile) return 0;
+    return clamp((mf + df) / 100, 0.15, 1.9);
+  };
+  /* 嗣位人选：同居的直系后代（子辈与在册孙辈），出阁/分家/入宫者不算 */
+  Game.directHeirs = function (g) {
+    return (g.children || []).filter(x => x.alive && !x.out);
+  };
+  Game.heirPerson = function (g) {
+    if (!g.heirId) return null;
+    const h = (g.children || []).find(x => x.id === g.heirId);
+    return (h && h.alive && !h.out) ? h : null;
+  };
+  Game.setHeir = function (id) {
+    const g = Game.G;
+    const h = (g.children || []).find(x => x.id === id);
+    if (!h || !h.alive || h.out) return log("须在家同居的直系后代方可立嗣。", "bad");
+    g.heirId = id;
+    log(`立嗣：${h.name}（${h.gender}·${h.age}岁）为${g.surname}氏继承人，来日承祧有人。`, "good");
+    Game.save(); Game.refresh();
+  };
+  Game.clearHeir = function (silent) {
+    const g = Game.G;
+    g.heirId = null;
+    if (!silent) { log("撤了嗣位，容后再议。", ""); Game.save(); Game.refresh(); }
+  };
+  Game.birthChanceCouple = function (g, ch) {
+    const pair = Game.couplePair(ch);
+    if (!pair) return 0;
+    if (ch.pregnancy) return 0;
+    if ((ch.cooldown || 0) > 0) return 0;
+    const mom = pair.mom, dad = pair.dad;
+    if (!mom || !dad) return 0;
+    if (mom.age > 42 || mom.age < 16 || dad.age > 50 || dad.age < 16) return 0;
+    if ((mom && mom.infertile)) return 0;
+    if (g.children.filter(x => x.alive).length >= 8) return 0;
+    let p = 0.10;
+    if (Game.householdMembers().length >= Game.houseCapacity()) p -= 0.03;
+    if (g.children.some(x => x.alive && x.age <= 1)) p -= 0.04;
+    if (mom.age >= 36) p -= (mom.age - 35) * 0.01;
+    if (g.riteBuff && g.riteBuff.birth > 0) p += (g.riteBuff.birthBonus || 0.03);
+    if (Game.fertilityFactor) p *= Game.fertilityFactor(mom, dad);
+    return clamp(p, 0.005, 0.18);
+  };
+  Game.conceiveCouple = function (g, ch, log) {
+    ch.pregnancy = { month: 1, total: Game.PREG_MONTHS };
+    const who = ch.gender === "男" ? ("儿媳" + ch.spouse.name) : ch.name;
+    log(who + "身子不爽，延医诊脉，竟是有了身孕，合家欢喜，来年添丁。", "good");
+  };
+  Game.advanceCouplePregnancy = function (g, ch, log) {
+    const preg = ch.pregnancy;
+    if (!preg) return;
+    if (!ch.spouse || !ch.spouse.joined) { ch.pregnancy = null; return; }
+    preg.month += 1;
+    const left = preg.total - preg.month + 1;
+    if (preg.month === 5) log((ch.gender === "男" ? "儿媳" + ch.spouse.name : ch.name) + "已有五月身孕。", "");
+    if (left > 0) return;
+    Game.deliverCouple(g, ch, log);
+  };
+  Game.deliverCouple = function (g, ch, log) {
+    const pair = Game.couplePair(ch);
+    ch.pregnancy = null;
+    ch.cooldown = Game.POSTPARTUM_MONTHS;
+    if (!pair) return;
+    const mom = pair.mom, dad = pair.dad;
+    const risk = 0.015 + Math.max(0, mom.age - 32) * 0.006 + (mom.stats && mom.stats.体力 < 35 ? 0.02 : 0);
+    if (chance(risk)) {
+      if (chance(0.75)) {
+        log((ch.gender === "男" ? "儿媳" + mom.name : mom.name) + "临盆艰难，产下一死胎，举家哀恸。", "bad");
+        if (chance(0.4) && Game.laborInjury) Game.laborInjury(mom, log, (ch.gender === "男" ? "儿媳" + mom.name : mom.name));
+      } else {
+        const gender = chance(0.52) ? "男" : "女";
+        const baby = Game.makeChild(gender, dad, mom, g.surname, gender === "男" ? "孙" : "孙女", ch.id);
+        g.children.push(baby);
+        log((ch.gender === "男" ? "儿媳" + mom.name : mom.name) + "拼死诞下一" + (gender === "男" ? "孙" : "孙女") + "取名" + baby.name + "，自己却血崩而亡。", "bad");
+        if (ch.gender === "男") { ch.spouse = null; ch.married = false; }
+        else { ch.alive = false; }
+      }
+      return;
+    }
+    const n = chance(0.015) ? 2 : 1;
+    for (let i = 0; i < n; i++) {
+      const gender = chance(0.52) ? "男" : "女";
+      const baby = Game.makeChild(gender, dad, mom, g.surname, gender === "男" ? "孙" : "孙女", ch.id);
+      g.children.push(baby);
+      log((ch.gender === "男" ? "儿媳" + mom.name : mom.name) + "十月怀胎，诞下一" + (gender === "男" ? "孙" : "孙女") + "，取名" + baby.name + "。", "good");
+      const notable = Game.notableBirthTraits ? Game.notableBirthTraits(baby) : [];
+      if (notable.length)
+        log("稳婆们奔走相告：" + baby.name + "生而" + notable.map(function (d) { return Game.traitName(d.key, gender); }).join("、") + "，" + notable[0].desc, "good");
+    }
+    if (n === 2) log("一胎双孙，并蒂莲开，乡人皆道是积善之报。", "good");
+    /* 顺产亦有小概率伤身：高龄、体弱更险 */
+    if (!mom.infertile && Game.laborInjury) {
+      const ip = 0.02 + (mom.age >= 35 ? 0.06 : 0) + ((mom.stats && mom.stats.体力 < 35) ? 0.04 : 0);
+      if (chance(ip)) Game.laborInjury(mom, log, (ch.gender === "男" ? "儿媳" + mom.name : mom.name));
+    }
+  };
+
+
   /* ---------------- 生育（怀胎十月制） ----------------
    * 受孕：已婚、男方<47、女方16~42岁，基准每月12%（坐月子/有孕期间不孕）
    * 妊娠：受孕后怀胎 10 个月才分娩，杜绝“一月一胎”
@@ -2026,7 +2675,8 @@ dt-stat,.dt-stats{display:block}
     const father = c.gender === "女" ? s : c;
     if (!mother || !father) return 0;
     if (mother.age > 42 || mother.age < 16 || father.age > 50 || father.age < 16) return 0;
-    if (g.children.filter(x => x.alive).length >= 6) return 0;
+    if (mother.infertile) return 0;
+    if (g.children.filter(x => x.alive).length >= 8) return 0;
     let p = 0.12;
     if (Game.householdMembers().length >= Game.houseCapacity()) p -= 0.03;   // 房舍逼仄
     if (g.children.some(x => x.alive && x.age <= 1)) p -= 0.04;              // 尚有襁褓幼子
@@ -2040,7 +2690,8 @@ dt-stat,.dt-stats{display:block}
     if (mother.age >= 36) p -= (mother.age - 35) * 0.01;
     /* 祖佑：祭祖后数月易受孕 */
     if (g.riteBuff && g.riteBuff.birth > 0) p += (g.riteBuff.birthBonus || 0.03);
-    return clamp(p, 0.02, 0.20);
+    if (Game.fertilityFactor) p *= Game.fertilityFactor(mother, father);
+    return clamp(p, 0.005, 0.20);
   };
 
   /* 受孕成功：立下胎记，下月起算怀胎 */
@@ -2076,10 +2727,11 @@ dt-stat,.dt-stats{display:block}
     /* 难产率：基础2%，母年高、体弱则升 */
     let risk = 0.02 + Math.max(0, mother.age - 32) * 0.008 + (mother.stats && mother.stats.体力 < 35 ? 0.03 : 0);
     if (chance(risk)) {
-      /* 难产：母子只能保一，大概率丧子，小概率丧母 */
+      /* 难产：母子只能保一，大概率丧子，小概率丧母；丧子亦可伤身 */
       if (chance(0.75)) {
         log(`${c.gender === "男" ? "夫人" + s.name : c.name}临盆艰难，挣扎一日夜，终产下一死胎，举家哀恸。`, "bad");
         g.family.reputation = Math.max(0, g.family.reputation - 1);
+        if (chance(0.4) && Game.laborInjury) Game.laborInjury(c.gender === "男" ? s : c, log, c.gender === "男" ? "夫人" + s.name : c.name);
         return;
       } else {
         const gender = chance(0.52) ? "男" : "女";
@@ -2104,6 +2756,11 @@ dt-stat,.dt-stats{display:block}
         log(`稳婆们奔走相告：${child.name}生而${notable.map(d => Game.traitName(d.key, gender)).join("、")}，${notable[0].desc}`, "good");
     }
     if (twins) log(`一胎双子，并蒂莲开，乡人皆道是积善之报。`, "good");
+    const _mom = c.gender === "男" ? s : c;
+    if (!_mom.infertile && Game.laborInjury) {
+      const _ip = 0.02 + (_mom.age >= 35 ? 0.06 : 0) + ((_mom.stats && _mom.stats.体力 < 35) ? 0.04 : 0);
+      if (chance(_ip)) Game.laborInjury(_mom, log, c.gender === "男" ? "夫人" + s.name : c.name);
+    }
   };
 
   /* 成年无官身族人补派营生 */
@@ -2146,9 +2803,10 @@ dt-stat,.dt-stats{display:block}
     const social = Game.officeSocialCost(g);
     const manor = Game.manorInfo ? Game.manorInfo(g.manor || "hut") : { upkeep: 0 };
     const manorKeep = manor.upkeep || 0;
-    const total = Math.round((keep + social + manorKeep) * 10) / 10;
+    const stewardWage = (g.steward && g.steward.wage) || 0;
+    const total = Math.round((keep + social + manorKeep + stewardWage) * 10) / 10;
     if (total > 0) g.money -= total;
-    g._lastUpkeep = { keep, social, manorKeep, total };
+    g._lastUpkeep = { keep, social, manorKeep, stewardWage, total };
     return g._lastUpkeep;
   };
 })();
@@ -2284,7 +2942,7 @@ dt-stat,.dt-stats{display:block}
   /* 口碑倍率：口碑0→0.5，50→1.0，100→1.5 */
   Game.fameMul = (fame) => 0.5 + fame / 100;
   /* 盘价：开办本金 × 口碑倍率 */
-  Game.shopPrice = (s) => Math.round(Game.SHOP_TYPES[s.type].cost * Game.fameMul(s.fame));
+  Game.shopPrice = (s) => Math.round(((s.invested != null ? s.invested : Game.SHOP_TYPES[s.type].cost)) * Game.fameMul(s.fame));
 
   Game.openShop = function (type) {
     const g = Game.G;
@@ -2296,7 +2954,7 @@ dt-stat,.dt-stats{display:block}
     if (g.money < t.cost) return log(`开张${t.name}需本钱${t.cost}两。`, "bad");
     g.money -= t.cost;
     const ordinal = ["", "一", "二", "三", "四", "五", "六"][g.shops.filter(s => s.type === type).length + 1] || "";
-    g.shops.push({ id: "s" + Date.now() + rand(100, 999), type, fame: 30, months: 0, lastProfit: 0, discount: false });
+    g.shops.push({ id: "s" + Date.now() + rand(100, 999), type, fame: 30, months: 0, lastProfit: 0, discount: false, level: 1, invested: t.cost, clerks: 0 });
     log(`择吉开张，${t.name}挂牌营业（家中第${g.shops.length}间铺面）。`, "good");
     Game.save(); Game.refresh();
   };
@@ -2318,8 +2976,140 @@ dt-stat,.dt-stats{display:block}
     const s = g.shops[i];
     const price = Game.shopPrice(s);
     g.money += price;
-    log(`将${shopName(s)}连铺面带招牌盘出，口碑${s.fame}，得银${price}两${price >= Game.SHOP_TYPES[s.type].cost ? "，反比开张本钱更丰" : ""}。`, price >= Game.SHOP_TYPES[s.type].cost ? "good" : "");
+    const sunk = (s.invested != null ? s.invested : Game.SHOP_TYPES[s.type].cost);
+    log(`将${shopName(s)}连铺面带招牌盘出，口碑${s.fame}，得银${price}两${price >= sunk ? "，反比投进去的本钱更丰" : ""}。`, price >= sunk ? "good" : "");
     g.shops.splice(i, 1);
+    Game.save(); Game.refresh();
+  };
+  /* 雇伙计：每铺至多2人，月钱2两/人，流水+10%/人 */
+  Game.hireClerk = function (id) {
+    const g = Game.G;
+    const s = g.shops.find(x => x.id === id);
+    if (!s) return;
+    if ((s.clerks || 0) >= 2) return log("这间铺子伙计已满（2人）。", "bad");
+    s.clerks = (s.clerks || 0) + 1;
+    log(`给${shopName(s)}雇一伙计，月钱2两，流水+10%。`, "good");
+    Game.save(); Game.refresh();
+  };
+  Game.dismissClerk = function (id) {
+    const g = Game.G;
+    const s = g.shops.find(x => x.id === id);
+    if (!s || !(s.clerks > 0)) return;
+    s.clerks -= 1;
+    log(`辞去${shopName(s)}一伙计。`, "");
+    Game.save(); Game.refresh();
+  };
+  /* 分号升级：铺子分三级，升级加流水，盘价按累计投入算 */
+  Game.shopLevelName = function (lv) { return ["", "小铺", "分号", "老字号"][lv] || "小铺"; };
+  /* 一键升级：按现有银两，从便宜到贵逐间升，能升几间升几间（门槛不够的跳过） */
+  Game.upgradeAllShops = function () {
+    const g = Game.G;
+    if (!g.shops.length) return log("尚无铺面可升。", "bad");
+    const cands = g.shops
+      .filter(s => (s.level || 1) < 3)
+      .map(s => ({ s, cost: Game.upgradeCost(s) }))
+      .sort((a, b) => a.cost - b.cost);
+    if (!cands.length) return log("间间都是老字号，无需再升。", "");
+    let n = 0, spent = 0;
+    const skipped = [];
+    cands.forEach(({ s, cost }) => {
+      const lv = s.level || 1;
+      const needMonths = lv === 1 ? 6 : 12;
+      const needFame = lv === 1 ? 50 : 70;
+      if ((s.months || 0) < needMonths) { skipped.push(`${shopName(s)}(经营${s.months || 0}/${needMonths}月)`); return; }
+      if ((s.fame || 0) < needFame) { skipped.push(`${shopName(s)}(口碑${s.fame}/${needFame})`); return; }
+      const c2 = Game.upgradeCost(s);
+      if (g.money < c2) { skipped.push(`${shopName(s)}(差${c2}两)`); return; }
+      g.money -= c2; spent += c2;
+      s.invested = (s.invested != null ? s.invested : Game.SHOP_TYPES[s.type].cost) + c2;
+      s.level = lv + 1;
+      s.fame = s.level === 3 ? 50 : 40;
+      n++;
+    });
+    if (!n) return log("没有够格升级的铺子：" + skipped.join("、") + "。", "bad");
+    log(`一键升级${n}间铺子，共耗银${spent}两，口碑按新规格重攒。` + (skipped.length ? "其余未升：" + skipped.join("、") + "。" : ""), "good");
+    Game.save(); Game.refresh();
+  };
+  Game.upgradeCost = function (s) {
+    const t = Game.SHOP_TYPES[s.type];
+    return Math.round(t.cost * 0.8 * (s.level || 1));
+  };
+  Game.upgradeShop = function (id) {
+    const g = Game.G;
+    const s = g.shops.find(x => x.id === id);
+    if (!s) return;
+    const lv = s.level || 1;
+    if (lv >= 3) return log("已是三级老字号，到顶了。", "bad");
+    /* 升级门槛：开得久 + 口碑够 + 出得起钱，缺一不可 */
+    const needMonths = lv === 1 ? 6 : 12;
+    const needFame = lv === 1 ? 50 : 70;
+    if ((s.months || 0) < needMonths) return log(`${shopName(s)}才开张${s.months || 0}个月，根基未稳（需满${needMonths}个月）。`, "bad");
+    if ((s.fame || 0) < needFame) return log(`${shopName(s)}口碑${s.fame}，街坊还认不得这块招牌（需口碑${needFame}）。`, "bad");
+    const cost = Game.upgradeCost(s);
+    if (g.money < cost) return log(`升${Game.shopLevelName(lv + 1)}需银${cost}两。`, "bad");
+    g.money -= cost;
+    s.invested = (s.invested != null ? s.invested : Game.SHOP_TYPES[s.type].cost) + cost;
+    s.level = lv + 1;
+    /* 按新规格算口碑：换了大招牌，老客要重新认门，从起步线重攒（老字号底子厚，起点稍高） */
+    s.fame = s.level === 3 ? 50 : 40;
+    log(`${shopName(s)}扩为${Game.shopLevelName(s.level)}：流水+25%，只是新招牌新气象，口碑按大店规格重算，从${s.fame}起攒，养回来才值钱。`, "good");
+    Game.save(); Game.refresh();
+  };
+  /* 钱庄：存款吃月息1%，借贷月息5%（上限300两，随借随还） */
+  Game.bankSettle = function (g) {
+    if (!g.bank) g.bank = { deposit: 0, loan: 0 };
+    g._lastBank = { depInt: 0, loanInt: 0 };
+    if (g.bank.deposit > 0) {
+      const i = Math.round(g.bank.deposit * 0.01 * 10) / 10;
+      g.bank.deposit = Math.round((g.bank.deposit + i) * 10) / 10;
+      g.money = Math.round((g.money + i) * 10) / 10;
+      g._lastBank.depInt = i;
+      if (i > 0) log(`钱庄结息，存款添利${i}两。`, "good");
+    }
+    if (g.bank.loan > 0) {
+      const i = Math.round(g.bank.loan * 0.05 * 10) / 10;
+      g.money = Math.round((g.money - i) * 10) / 10;
+      g._lastBank.loanInt = i;
+      log(`钱庄收贷息${i}两（欠银${g.bank.loan}两，记得还本）。`, i > 0 ? "" : "");
+    }
+  };
+  Game.bankDeposit = function (n) {
+    const g = Game.G;
+    n = Math.max(0, Math.floor(Number(n)));
+    if (!n) return;
+    if (g.money < n) return log(`存入${n}两，囊中不足。`, "bad");
+    if (!g.bank) g.bank = { deposit: 0, loan: 0 };
+    g.money -= n; g.bank.deposit = Math.round((g.bank.deposit + n) * 10) / 10;
+    log(`存银${n}两入钱庄，月息一分。`, "good");
+    Game.save(); Game.refresh();
+  };
+  Game.bankWithdraw = function (n) {
+    const g = Game.G;
+    n = Math.max(0, Math.floor(Number(n)));
+    if (!n) return;
+    if (!g.bank || g.bank.deposit < n) return log("庄上没存这么多。", "bad");
+    g.bank.deposit = Math.round((g.bank.deposit - n) * 10) / 10; g.money += n;
+    log(`从钱庄取出${n}两。`, "");
+    Game.save(); Game.refresh();
+  };
+  Game.bankBorrow = function (n) {
+    const g = Game.G;
+    n = Math.max(0, Math.floor(Number(n)));
+    if (!n) return;
+    if (!g.bank) g.bank = { deposit: 0, loan: 0 };
+    if (g.bank.loan + n > 300) return log("钱庄：欠账至多300两，先还旧的再借。", "bad");
+    g.bank.loan += n; g.money += n;
+    log(`从钱庄借银${n}两应急，月息五分，莫忘了还。`, n > 0 ? "" : "");
+    Game.save(); Game.refresh();
+  };
+  Game.bankRepay = function (n) {
+    const g = Game.G;
+    n = Math.max(0, Math.floor(Number(n)));
+    if (!n || !g.bank || !g.bank.loan) return;
+    n = Math.min(n, g.bank.loan, Math.floor(g.money));
+    if (n <= 0) return log("囊中空空，还不起。", "bad");
+    g.bank.loan -= n; g.money -= n;
+    log(`还钱庄欠银${n}两（尚欠${g.bank.loan}两）。`, "good");
     Game.save(); Game.refresh();
   };
 
@@ -2331,11 +3121,11 @@ dt-stat,.dt-stats{display:block}
       s.months += 1;
       const [lo, hi] = t.base;
       const mid = (lo + hi) / 2;
-      let rev = mid * (1 + (Math.random() * 2 - 1) * t.vol) * (0.6 + s.fame / 100 * 0.8);
+      let rev = mid * (1 + (Math.random() * 2 - 1) * t.vol) * (0.6 + s.fame / 100 * 0.8) * ((g.trends && g.trends[s.type]) || 1) * (1 + 0.25 * ((s.level || 1) - 1)) * (1 + 0.1 * (s.clerks || 0));
       if (s.discount) { rev *= 0.82; s.fame = clamp(s.fame + rand(2, 4)); }
       if (g.workFocus) { rev *= 1.2; s.fame = clamp(s.fame + 1); }
       const gross = Math.round(rev);
-      const staff = (Game.SHOP_STAFF_BASE || 2) + (s.fame >= 70 ? (Game.SHOP_STAFF_FAME_EXTRA || 1) : 0);
+      const staff = (Game.SHOP_STAFF_BASE || 2) + (s.fame >= 70 ? (Game.SHOP_STAFF_FAME_EXTRA || 1) : 0) + (s.clerks || 0) * 2;
       let profit = gross - t.upkeep - staff;
       s.lastProfit = profit;
       s.lastStaff = staff;
@@ -2377,6 +3167,7 @@ dt-stat,.dt-stats{display:block}
   /* ============================================================
    * 媒妁 / 婚姻
    * ============================================================ */
+  /* 媒婆说亲也一次看三个：门户体貌全亮出来，中意便下聘，不中意全婉拒，下个月再请 */
   Game.matchmake = function (idx) {
     const g = Game.G;
     if (g.char.gender === "女" && g.spouse) return log("已招赘入门。", "bad");
@@ -2387,34 +3178,41 @@ dt-stat,.dt-stats{display:block}
     g.money -= mm.fee;
     const base = 38 + mm.quality * 16;
     const other = g.char.gender === "男" ? "女" : "男";
-    g.candidate = {
-      name: Game.makeName(other, pick(Game.SURNAMES)),
-      gender: other,
-      age: rand(15, 20),
-      family: rand(15 + mm.quality * 15, 55 + mm.quality * 18),
-      stats: {
-        体力: rand(base - 12, base + 12),
-        智力: rand(base - 12, base + 14),
-        武力: rand(base - 18, base + 10),
-        魅力: rand(base - 8, base + 18)
-      },
-      gift: mm.gift + rand(-5, 10)
-    };
-    Game.decoratePerson(g.candidate, null, null, true);    /* 容貌 / 膂力词条直接落到属性上 */
-    log(`${mm.name}收了礼金，三日后回话，${mm.desc}。`, "");
+    g.candidates = [];
+    for (let i = 0; i < 3; i++) {
+      const c = {
+        name: Game.makeName(other, pick(Game.SURNAMES)),
+        gender: other,
+        age: rand(15, 20),
+        family: rand(15 + mm.quality * 15, 55 + mm.quality * 18),
+        stats: {
+          体力: rand(base - 12, base + 12),
+          智力: rand(base - 12, base + 14),
+          武力: rand(base - 18, base + 10),
+          魅力: rand(base - 8, base + 18)
+        },
+        gift: mm.gift + rand(-5, 10)
+      };
+      Game.decoratePerson(c, null, null, true);
+      g.candidates.push(c);
+    }
+    g.candidate = null;
+    log(`${mm.name}收了礼金，三日后回话，一口气领来三位，${mm.desc}。`, "");
     Game.save(); Game.refresh();
     Game.showCandidate && Game.showCandidate();
   };
-  Game.proposal = function () {
+  Game.proposal = function (i) {
     const g = Game.G;
-    const c = g.candidate;
+    const c = (g.candidates || [])[i == null ? 0 : Number(i)] || g.candidate;
     if (!c) return;
+
     if (g.money < c.gift) { log(`备不起${c.gift}两聘礼，婚事告吹。`, "bad"); return; }
     g.money -= c.gift;
     g.spouse = Object.assign({ id: "sp" + Date.now() + rand(100, 999), alive: true, title: null, office: null, favor: rand(70, 85) }, c);
     if (g.spouse.favor == null) g.spouse.favor = rand(70, 85);
     g.spouse.job = Game.pickJob(g.spouse);
     g.candidate = null;
+    g.candidates = null;
     rep(Math.round(c.family / 12));
     log(g.char.gender === "男"
       ? `三书六礼已毕，迎娶${c.name}过门，其妻家门户${c.family}。`
@@ -2423,32 +3221,407 @@ dt-stat,.dt-stats{display:block}
   };
   Game.rejectCandidate = function () {
     const g = Game.G;
-    log(`婉拒了${g.candidate.name}这门亲事。`, "");
+    const n = (g.candidates || []).length;
+    log(n ? `这三门亲事都婉拒了，${n}位说亲对象各自归家，下个月再请媒不迟。` : "这门亲事婉拒了。", "");
     g.candidate = null;
+    g.candidates = null;
     Game.save(); Game.refresh();
   };
 
   /* 子女联姻 */
-  Game.marryChild = function (id) {
+  /* 子女婚嫁三选一：先看人（属性/天赋/词条/门户全亮出来），中意再下聘，不中意就等下个月
+   * mode: marry=子娶妻入门 / 女出嫁离家；uxori=女招赘婿入门 */
+  /* 随机生成一位亲家（媒人介绍用）：门第体貌随机，天赋词条俱全 */
+  function makeInLaw(gender, quality) {
+    const q = quality || 0;
+    const base = 40 + q * 10;
+    const p = {
+      id: "il" + Date.now() + rand(100, 999),
+      name: Game.makeName(gender, pick(Game.SURNAMES)),
+      gender, age: rand(15, 20),
+      family: rand(20 + q * 10, 60 + q * 12),
+      stats: {
+        体力: rand(base - 10, base + 12),
+        智力: rand(base - 10, base + 14),
+        武力: rand(base - 16, base + 8),
+        魅力: rand(base - 8, base + 16)
+      },
+      alive: true, title: null, office: null, job: null
+    };
+    Game.decoratePerson(p, null, null, true);
+    p.job = Game.pickJob ? Game.pickJob(p) : "farmhand";
+    p.fatherName = "不详"; p.motherName = "不详";
+    return p;
+  }
+  function childCandidateList(g, gender) {
+    const otherFamily = rand(20, 70) + Math.round(g.family.reputation / 8);
+    const list = [];
+    for (let i = 0; i < 3; i++) {
+      const p = makeInLaw(gender);
+      p.family = Math.max(10, Math.round(otherFamily + rand(-18, 18)));
+      if (gender === "女") p._cost = Math.round(15 + p.family * 0.4);   /* 娶/赘：聘礼 */
+      else p._gift = Math.round(10 + p.family * 0.35);                  /* 嫁：彩礼 */
+      list.push(p);
+    }
+    return list;
+  }
+  Game.proposeChild = function (id, mode) {
     const g = Game.G;
     const c = g.children.find(x => x.id === id);
-    if (!c || c.married || !c.alive) return;
-    if (c.age < 15) return log(`${c.name}尚未及婚龄。`, "bad");
-    const otherFamily = rand(20, 70) + Math.round(g.family.reputation / 8);
-    if (c.gender === "男") {
-      const cost = rand(15, 40);
-      if (g.money < cost) return log(`娶妇聘礼需${cost}两，家计为难。`, "bad");
-      g.money -= cost;
-      log(`为${c.name}娶妇，亲家门户${otherFamily}，往来有助。`, "good");
+    if (!c || c.married || !c.alive || c.palace || c.out) return;
+    if (c.age < 15) return log(`${c.name}尚未及婚龄（十五议亲），可先去人际定亲。`, "bad");
+    if (mode === "uxori" && c.gender !== "女") return log("招赘只为女儿设，儿子当娶妇。", "bad");
+    if (mode === "marry" && c.gender === "女" && c.uxori) c.uxori = false;
+    const gender = c.gender === "男" ? "女" : "男";
+    g.childCandidates = { childId: id, mode, list: childCandidateList(g, gender) };
+    Game.save(); Game.refresh();
+    if (Game.showChildCandidates) Game.showChildCandidates();
+  };
+  Game.marryChild = function (id) { Game.proposeChild(id, "marry"); };
+  Game.marryChildUxori = function (id) { Game.proposeChild(id, "uxori"); };
+  Game.dismissChildCandidates = function () {
+    Game.G.childCandidates = null;
+    log("这几门亲事都先搁下，往后再议。", "");
+    Game.save(); Game.refresh();
+  };
+  /* 三选一定：迎娶/许嫁/招赘落定 */
+  Game.confirmChildCandidate = function (idx) {
+    const g = Game.G;
+    const cc = g.childCandidates;
+    if (!cc) return;
+    const c = g.children.find(x => x.id === cc.childId);
+    const cand = cc.list[idx];
+    if (!c || !cand || c.married) { g.childCandidates = null; Game.save(); Game.refresh(); return; }
+    if (cc.mode === "uxori") {
+      if (g.money < cand._cost) return log(`招赘酒席聘礼需${cand._cost}两，家计为难。`, "bad");
+      g.money -= cand._cost;
+      cand.joined = true;
+      c.spouse = cand;
+      c.spouseApt = cand.apt; c.spouseStats = cand.stats; c.spouseFamily = cand.family;
+      c.spouseName = cand.name; c.spouseTraits = cand.traits || [];
+      c.uxori = true; c.married = true;
+      rep(4);
+      log(`为${c.name}招赘${cand.name}入门（门户${cand.family}），子嗣从${g.surname}姓，香火得续。`, "good");
+    } else if (c.gender === "男") {
+      if (g.money < cand._cost) return log(`娶妇聘礼需${cand._cost}两，家计为难。`, "bad");
+      g.money -= cand._cost;
+      cand.joined = true;
+      c.spouse = cand;
+      c.spouseApt = cand.apt; c.spouseStats = cand.stats; c.spouseFamily = cand.family;
+      c.spouseName = cand.name; c.spouseTraits = cand.traits || [];
+      c.married = true;
+      log(`为${c.name}娶妇${cand.name}入门（门户${cand.family}），小两口同居理家。`, "good");
     } else {
-      const gift = rand(10, 30) + Math.round(otherFamily / 4);
-      g.money += gift;
-      log(`${c.name}许嫁良家，得彩礼${gift}两，亲家门户${otherFamily}。`, "good");
+      g.money += cand._gift;
+      c.out = "married";
+      c.spouseApt = cand.apt; c.spouseStats = cand.stats; c.spouseFamily = cand.family;
+      c.spouseName = cand.name; c.spouseTraits = cand.traits || [];
+      c.married = true;
+      log(`${c.name}许嫁${cand.name}（门户${cand.family}），得彩礼${cand._gift}两。女儿出阁，来日承祧还看兄弟（无兄弟可招赘留家）。`, "good");
     }
-    c.married = true;
+    rep(3);
+    g.childCandidates = null;
+    Game.save(); Game.refresh();
+    if (Game.showChildCandidates) Game.showChildCandidates();
+  };
+  /* 子女和离：媳/婿离家，嫁出女归家，均可再议亲 */
+  Game.divorceChild = function (id) {
+    const g = Game.G;
+    const c = g.children.find(x => x.id === id);
+    if (!c || !c.married || !c.alive) return log("此人并无婚配可离。", "bad");
+    if (c.out === "branch") return log("分家各过各的，娘家管不着了。", "bad");
+    const fam = (c.spouse && c.spouse.family) || c.spouseFamily || 40;
+    const fee = Math.round(10 + fam * 0.2);
+    if (g.money < fee) return log(`和离需安家银${fee}两，家计为难。`, "bad");
+    g.money -= fee;
+    g.family.reputation = Math.max(0, g.family.reputation - 3);
+    const hadJoined = !!(c.spouse && c.spouse.joined);
+    const wasOut = c.out === "married";
+    c.spouse = null;
+    c.spouseApt = null; c.spouseStats = null; c.spouseFamily = null;
+    c.spouseName = null; c.spouseTraits = null;
+    c.married = false; c.uxori = false;
+    if (wasOut) c.out = null;
+    log(hadJoined
+      ? `${c.name}与配偶和离，对方收拾行李离家，付安家银${fee}两（声望-3），来日可再议亲。`
+      : `${c.name}和离归家，付安家银${fee}两（声望-3），来日可再议亲（含招赘）。`, "bad");
+    Game.save(); Game.refresh();
+  };
+  /* 未成年定亲（人际）：付定金十两，十五岁自动完婚 */
+  Game.proposeBetrothal = function (contactId, childId) {
+    const g = Game.G;
+    const ct = (g.contacts || []).find(x => x.id === contactId);
+    const ch = g.children.find(x => x.id === childId && x.alive && !x.married);
+    if (!ct || !ch) return;
+    if (ct.favor < 80) return log(`${ct.name}与你家尚是泛泛之交（好感${ct.favor}），此时定亲未免唐突。`, "bad");
+    if (ch.gender === ct.gender) return log("同性何以结亲。", "bad");
+    if (ch.age >= 15 || ch.palace || ch.out || ch.betrothed) return log("此子已可直接议亲，无需定亲。", "bad");
+    if (g.money < 10) return log("定亲需十两定金。", "bad");
+    g.money -= 10;
+    ch.betrothed = {
+      name: ct.name, gender: ct.gender, age: ct.age, family: ct.family,
+      stats: ct.stats, apt: ct.apt, traits: ct.traits || []
+    };
+    g.contacts = g.contacts.filter(x => x.id !== contactId);
+    rep(3);
+    log(`与${ct.name}家指腹为婚……不，是指童为婚，付定金十两，待${ch.name}十五岁即完婚（亲家门户${ct.family}）。`, "good");
+    Game.save(); Game.refresh();
+  };
+  /* 定亲完婚：年满十五自动操办，儿子娶入门、女儿嫁出门 */
+  Game.completeBetrothal = function (ch) {
+    const g = Game.G;
+    const b = ch.betrothed;
+    if (!b || ch.married) return;
+    if (ch.gender === "男") {
+      const cost = Math.round(15 + b.family * 0.4);
+      if (g.money < cost) { log(`${ch.name}与${b.name}的婚事因聘礼不足（需${cost}两）暂缓，明年再议。`, "bad"); return; }
+      g.money -= cost;
+      const w = Object.assign({}, b, { id: b.id || ("il" + Date.now() + rand(100, 999)), alive: true, title: null, office: null, job: null, joined: true });
+      if (Game.pickJob) w.job = Game.pickJob(w);
+      ch.spouse = w;
+      ch.spouseApt = b.apt; ch.spouseStats = b.stats; ch.spouseFamily = b.family;
+      ch.spouseName = b.name; ch.spouseTraits = b.traits || [];
+      ch.married = true; ch.betrothed = null;
+      log(`当年定亲今日完婚：${ch.name}迎娶${b.name}入门，亲家门户${b.family}。`, "good");
+    } else {
+      const gift = Math.round(10 + b.family * 0.35);
+      g.money += gift;
+      ch.out = "married";
+      ch.spouseApt = b.apt; ch.spouseStats = b.stats; ch.spouseFamily = b.family;
+      ch.spouseName = b.name; ch.spouseTraits = b.traits || [];
+      ch.married = true; ch.betrothed = null;
+      log(`当年定亲今日完婚：${ch.name}许嫁${b.name}，得彩礼${gift}两。`, "good");
+    }
     rep(3);
     Game.save(); Game.refresh();
   };
+
+  /* ============================================================
+   * 田庄掌柜：开工钱雇人，当季自动把分派田种满（手动播种仍可）
+   * ============================================================ */
+  Game.hireSteward = function (kind) {
+    const g = Game.G;
+    const t = (Game.STEWARDS || []).find(x => x.kind === kind);
+    if (!t) return;
+    if (g.steward) return log("庄上已有掌柜，先辞了旧人再聘。", "bad");
+    if (g.family.reputation < (t.needRep || 0))
+      return log(t.name + "非声望" + t.needRep + "之家不就。", "bad");
+    if (g.money < t.wage) return log("连首月工钱都开不出。", "bad");
+    g.steward = {
+      kind: t.kind, name: t.name + "·" + Game.makeName("男", pick(Game.SURNAMES)).slice(-1) + "老",
+      wage: t.wage, bonus: t.bonus
+    };
+    log("聘得" + g.steward.name + "（" + t.name + ")为庄头，月钱" + t.wage + "两。此后当季自动把分派田种满，你只管收成。", "good");
+    Game.save(); Game.refresh();
+  };
+  Game.dismissSteward = function () {
+    const g = Game.G;
+    if (!g.steward) return;
+    log("辞去庄头" + g.steward.name + "，此后播种须亲力亲为了。", "");
+    g.steward = null;
+    Game.save(); Game.refresh();
+  };
+  /* 庄头按月自动下种：当季即把分派田种满，钱不够则量力少种，种子工本照支 */
+  Game.autoSow = function (g) {
+    if (!g.steward) return;
+    Game.FOOD_KEYS.forEach(k => {
+      const crop = Game.cropInfo(k);
+      if (!Game.sowSeasonNow(crop, g.month)) return;
+      const need = Math.floor((g.landUse[k] || 0) - Game.standingMu(g, k));
+      if (need <= 0) return;
+      const perMu = crop.seed + (Game.FARM_LABOR_PER_MU || 0.35);
+      const afford = Math.floor(g.money / perMu);
+      if (afford <= 0) { log("囊中羞涩，" + crop.name + "本季无力下种。", "bad"); return; }
+      Game.sowLand(k, Math.min(need, afford), true);
+    });
+  };
+
+  /* ============================================================
+   * 女官体系：女儿入宫两条路（宫女线 / 选秀妃嫔线）
+   * 宫女：12-17岁送入宫为小宫女，逐年考课晋升，28岁放出归家，月俸仅自给
+   * 选秀：14-19岁应选，凭姿容点为秀女/答应/常在；在宫一律不寄家，高位者危难说情、荫家开铺
+   * 宫中女不承祧（出宫归家后可）；宫中有人，危难时按位分递话说情
+   * ============================================================ */
+  Game.palaceEligible = function (ch) {
+    return ch && ch.alive && ch.gender === "女" && !ch.married && !ch.palace && !ch.out
+      && ch.age >= 12 && ch.age <= 17;
+  };
+  Game.draftEligible = function (ch) {
+    return ch && ch.alive && ch.gender === "女" && !ch.married && !ch.palace && !ch.out
+      && ch.age >= 14 && ch.age <= 19;
+  };
+  Game.sendToPalace = function (id) {
+    const g = Game.G;
+    const ch = g.children.find(x => x.id === id);
+    if (!ch || !Game.palaceEligible(ch)) return log("此女不合入宫之选（须12-17岁未婚在家女）。", "bad");
+    if ((ch.stats.智力 || 0) + (ch.stats.魅力 || 0) < 90)
+      return log(ch.name + "资质稍欠（智+魅须满90），宫中不收。", "bad");
+    if (g.money < 10) return log("打点需银十两。", "bad");
+    g.money -= 10;
+    ch.palace = { track: "maid", grade: 0, since: g.year };
+    ch.out = "palace";
+    ch.job = null;
+    rep(4);
+    log(ch.name + "（" + ch.age + "岁）送入宫为小宫女。宫女月俸仅自给、不寄家；熬出位分或妃嫔得赏，方能荫家——危难时宫中有人递话，位分越高分量越重。宫中女不承祧，28岁放出归家。", "good");
+    Game.save(); Game.refresh();
+  };
+  Game.palaceDraft = function (id) {
+    const g = Game.G;
+    const ch = g.children.find(x => x.id === id);
+    if (!ch || !Game.draftEligible(ch)) return log("此女不合选秀之选（须14-19岁未婚在家女）。", "bad");
+    const charm = ch.stats.魅力 || 0, smart = ch.stats.智力 || 0;
+    const score = charm + smart * 0.4 + g.family.reputation / 40;
+    if (score < 85) {
+      rep(-1);
+      log(ch.name + "参选而容色平平，被撂牌子送回家来（智魅还须磨砺，或家声再高些）。", "bad");
+      Game.save(); Game.refresh();
+      return;
+    }
+    const grade = charm >= 78 ? 2 : charm >= 65 ? 1 : 0;
+    ch.palace = { track: "consort", grade, since: g.year, preg: null, favor: 30 };
+    ch.out = "palace";
+    ch.job = null;
+    rep(10);
+    const rn = Game.PALACE_CONSORT_RANKS[grade].name;
+      log("喜报！" + ch.name + "选秀中选，点为" + rn + "！一朝入宫，阖家声望大涨。宫中不寄家用，高位者危难时可递话说情、荫家开铺。", "good");
+    Game.save(); Game.refresh();
+  };
+  Game.palaceLeave = function (id) {
+    const g = Game.G;
+    const ch = g.children.find(x => x.id === id);
+    if (!ch || !ch.palace) return;
+    if (ch.palace.track === "consort" && ch.palace.grade > 2)
+      return log(ch.name + "已是" + Game.palaceName(ch) + "，圣眷在身，不得出宫。", "bad");
+    const cost = ch.palace.track === "consort" ? 30 : 5;
+    if (g.money < cost) return log("赎归打点需银" + cost + "两。", "bad");
+    g.money -= cost;
+    log(ch.name + "（" + Game.palaceName(ch) + "）出宫归家，重列婚嫁。", "");
+    ch.palace = null; ch.out = null; ch.pregnancy = null;
+    Game.save(); Game.refresh();
+  };
+  /* ============================================================
+   * 夺嫡：宫中皇子成年（16岁）即开夺嫡结算
+   * 位分越高、皇子越多、声望越高、押对边站越胜；败则母夺位分、家受牵连
+   * ============================================================ */
+  Game.claimStakes = function (g) {
+    const sons = (g.royalKids || []).filter(x => x.alive && x.gender === "男");
+    if (!sons.length) return null;
+    const moms = (g.children || []).filter(x => x.alive && x.out === "palace" && x.palace && x.palace.track === "consort");
+    const top = moms.sort((a, b) => b.palace.grade - a.palace.grade)[0];
+    const grade = top ? top.palace.grade : 0;
+    return { sons: sons.length, grade, moms: moms.length };
+  };
+  Game.settleSuccession = function (g, log) {
+    const st = Game.claimStakes ? Game.claimStakes(g) : null;
+    if (!st) return;
+    const adult = (g.royalKids || []).some(x => x.alive && x.gender === "男" && x.age >= 16);
+    if (!adult) return;
+    if (g.successionDone) return;
+    g.successionDone = true;
+    const edge = (st.grade - 3) * 0.10 + (st.sons - 1) * 0.08 + Math.min(0.15, (g.family.peakReputation || 0) / 4000) - 0.05;
+    const p = Math.min(0.85, Math.max(0.10, 0.45 + edge));
+    const rival = pick(Game.RIVAL_HOUSES || ["权门"]);
+    if (chance(p)) {
+      g.successionWon = true;
+      rep(60);
+      g.family.peakReputation = Math.max(g.family.peakReputation, g.family.reputation);
+      log(`储位已定：${rival}所拥皇子失势，你家皇子入主东宫！举朝来贺，声望+60——外戚之势，自此而始。`, "good");
+    } else {
+      g.successionWon = false;
+      rep(-25);
+      g.family.reputation = Math.max(0, g.family.reputation - 25);
+      const moms = (g.children || []).filter(x => x.alive && x.out === "palace" && x.palace && x.palace.track === "consort");
+      moms.forEach(m => { m.palace.grade = Math.max(0, m.palace.grade - 2); });
+      g.money = Math.round(g.money * 0.7);
+      log(`夺嫡落败：${rival}拥立得逞。圣上清算，你家女儿各降两级、抄没家财三成、声望-25——站错队了。`, "bad");
+    }
+    Game.save();
+  };
+  Game.successionStatus = function (g) {
+    const st = Game.claimStakes ? Game.claimStakes(g) : null;
+    if (!st) return null;
+    const ages = (g.royalKids || []).filter(x => x.alive && x.gender === "男").map(x => x.age);
+    return { sons: st.sons, grade: st.grade, maxAge: ages.length ? Math.max.apply(null, ages) : 0 };
+  };
+
+
+  /* 妃嫔每月：推进身孕/临盆（身孕十月即产） */
+  Game.palaceMonthly = function (g, log) {
+    (g.children || []).filter(x => x.alive && x.out === "palace" && x.palace && x.palace.track === "consort").forEach(x => {
+      const pl = x.palace;
+      if (pl.preg) {
+        pl.preg += 1;
+        if (pl.preg >= 10) {
+          pl.preg = null;
+          if (chance(0.85)) {
+            const gender = chance(0.55) ? "男" : "女";
+            const title = gender === "男" ? "皇子" : "公主";
+            const baby = { id: "rp" + Date.now() + rand(100, 999), name: "皇" + (gender === "男" ? "子" : "女") + "·" + x.name.slice(-1), gender, age: 0, alive: true, royal: true, motherId: x.id };
+            g.royalKids = g.royalKids || [];
+            g.royalKids.push(baby);
+            rep(15);
+            log(`${x.name}（${Game.palaceName(x)}）诞下${title}，一时恩宠无两，阖家声望+15——皇嗣既立，夺嫡的风迟早吹到你家。`, "good");
+          } else {
+            log(`${x.name}（${Game.palaceName(x)}）临盆艰难，竟产下一死胎，圣上为之辍朝一日。`, "bad");
+          }
+        }
+      } else {
+        const fav = (pl.favor == null ? 30 : pl.favor);
+        let pPreg = x.age >= 20 && x.age <= 38
+          ? clamp(0.02 + (fav - 30) * 0.002 + (pl.grade >= 4 ? 0.04 : pl.grade >= 2 ? 0.02 : 0), 0, 0.10)
+          : 0;
+        if (x.infertile) pPreg = 0;
+        else if (pPreg > 0) {
+          const ff = Game.fertilityOf ? Game.fertilityOf(x) : 50;
+          pPreg = clamp(pPreg * (ff / 50), 0, 0.16);
+        }
+        if (pPreg > 0 && chance(pPreg)) {
+          pl.preg = 1;
+          log(`${x.name}（${Game.palaceName(x)}）有孕在身，阖宫贺喜。`, "good");
+        }
+      }
+    });
+  };
+
+  Game.palaceReview = function (g) {
+    (g.children || []).filter(x => x.alive && x.out === "palace" && x.palace).forEach(x => {
+      const pl = x.palace;
+      if (pl.track === "maid") {
+        Game.gainStat(x, "智力", 1);
+        if (x.age >= Game.PALACE_RELEASE_AGE) {
+          const fee = rand(10, 20);
+          g.money += fee;
+          x.palace = null; x.out = null;
+          log(x.name + "年至二十八，蒙恩放出归家，携赏银" + fee + "两，重列婚嫁。", "good");
+          return;
+        }
+        const score = (x.stats.智力 || 0) * 0.5 + (x.stats.魅力 || 0) * 0.5 + g.family.reputation / 60;
+        if (pl.grade < Game.PALACE_MAID_RANKS.length - 1 && chance((score - 55) / 60)) {
+          pl.grade += 1;
+          rep(2);
+          log("宫中考课：" + x.name + "勤谨伶俐，晋为" + Game.PALACE_MAID_RANKS[pl.grade].name + "。", "good");
+        }
+      } else {
+        Game.gainStat(x, "魅力", 1);
+        /* 身孕推进见 palaceMonthly（每月）；此处只做圣眷浮沉 */
+        const fav = (pl.favor == null ? 30 : pl.favor);
+        pl.favor = clamp(fav + rand(-3, 4) + (pl.grade >= 4 ? 1 : 0), 5, 95);
+        if (pl.grade < Game.PALACE_CONSORT_RANKS.length - 1) {
+          if (chance(((x.stats.魅力 || 0) - 60) / 50 + g.family.reputation / 800)) {
+            pl.grade += 1;
+            rep(6);
+            log("宫中传喜：" + x.name + "晋位" + Game.PALACE_CONSORT_RANKS[pl.grade].name + "！赏供应加，阖家声望+6。", "good");
+            return;
+          }
+        }
+        if (pl.grade <= 2 && chance(0.05)) {
+          x.palace = null; x.out = null;
+          log(x.name + "久不得见天颜，请旨出宫归家，容色依旧，可再议亲。", "bad");
+        }
+      }
+    });
+  };
+
 
   /* ============================================================
    * 族学
@@ -2629,30 +3802,88 @@ dt-stat,.dt-stats{display:block}
     const blessExam = (g.riteBuff && g.riteBuff.exam > 0) ? (g.riteBuff.examBonus || 6) : 0;
     const privExam = (Game.repPriv ? Game.repPriv().examBonus : 0) || 0;
     const sickPenalty = c.isSick ? 8 : 0;   /* 抱病应考大打折扣，快去看医生 */
-    const score = ability + rand(-14, 14) + Math.round(g.family.reputation / 25) + blessExam + privExam - sickPenalty;
+    const score = ability + rand(-14, 14) + Math.min(15, Math.round(g.family.reputation / 25)) + blessExam + privExam - sickPenalty;
 
+    /* 放榜贺仪：中了有人送贺礼添声势 */
+    const celebrate = (silver, extra) => {
+      if (silver > 0) { g.money += silver; log(`乡绅亲友送来贺仪银${silver}两，门前车马盈门。`, "good"); }
+      if (extra) log(extra, "good");
+    };
     if (ex.key === "jinshi") {
-      /* 殿试只定等第 */
+      /* 殿试定等第：一甲三人状元榜眼探花赐进士及第，二甲进士出身（首名称传胪），三甲同进士出身 */
       c.title = "jinshi";
       g.family.titles.jinshi = g.gen;
-      const grade = score >= 92 ? 10 : score >= 80 ? 9 : 8;
+      let rank, grade, bonus, gift;
+      if (score >= 118)      { rank = "状元"; grade = 8; bonus = 50; gift = rand(150, 250); }
+      else if (score >= 111) { rank = "榜眼"; grade = 8; bonus = 40; gift = rand(120, 200); }
+      else if (score >= 105) { rank = "探花"; grade = 7; bonus = 35; gift = rand(100, 180); }
+      else if (score >= 97)  { rank = "传胪"; grade = 7; bonus = 25; gift = rand(80, 140); }
+      else if (score >= 85)  { rank = "二甲"; grade = 7; bonus = 15; gift = rand(60, 120); }
+      else                   { rank = "三甲"; grade = 6; bonus = 0;  gift = rand(40, 90); }
+      c.honor = rank === "二甲" || rank === "三甲" ? "进士" : rank;
       Game.appoint("civil", grade);
-      rep(ex.rep);
-      log(`金殿传胪，高中进士！${score >= 92 ? "位列二甲，钦点" : "三甲出身，授"}${Game.CIVIL_POSTS[grade]}。`, "good");
+      rep(ex.rep + bonus);
+      g.family.topHonor = rank;
+      const rankTxt = rank === "状元" || rank === "榜眼" || rank === "探花"
+        ? `${c.name}一甲${rank}，进士及第！跨马游街，翰苑题名，捷报传回故里，阖县轰动，爆竹声彻夜不息`
+        : rank === "传胪"
+        ? `金殿传胪——${c.name}二甲第一，钦点${Game.CIVIL_POSTS[grade]}！御街夸官，好不威风`
+        : rank === "二甲"
+        ? `金殿传胪——${c.name}位列二甲，钦点${Game.CIVIL_POSTS[grade]}！捷报传回故里，阖县轰动`
+        : `金殿传胪——${c.name}三甲出身，授${Game.CIVIL_POSTS[grade]}！十年寒窗，一朝登科`;
+      log(rankTxt + "。", "good");
+      celebrate(gift, rank === "状元" ? "县令亲登门送匾“独占鳌头”，邀你明年为乡试作保。" : "县令亲登门道贺，邀你明年为乡试作保。");
+      if (Game.queueXibao) Game.queueXibao({ who: c.name, rel: "家主", exam: "殿试", rank, detail: rankTxt, gift, showNow: true });
     } else if (score >= ex.threshold) {
       c.title = ex.key;
       g.family.titles[ex.key] = g.gen;
       rep(ex.rep);
-      log(`${ex.month !== null ? ex.month + "月" : ""}${ex.name}放榜——${c.name}高中${ex.title}！`, "good");
+      const mth = ex.month !== null ? ex.month + "月" : "";
+      const flavor = {
+        xiucai: `县衙张榜——${c.name}名列生员！戴上儒巾的那一刻，塾师捋须而笑：总算没白教你。`,
+        juren: `秋闱放榜——${c.name}高中举人！报子骑马连报三声，整条街都出来看热闹。`,
+        gongshi: `春闱放榜——${c.name}取中贡士！会馆同乡摆酒相庆，只待殿试一搏。`,
+        wuxiucai: `校场放榜——${c.name}挽强弓、舞大刀，取中武秀才！一众军汉齐声喝彩。`,
+        wujuren: `武科秋闱放榜——${c.name}高中武举人！马上步下，样样夺魁。`,
+        wujinshi: `兵部放榜——${c.name}取中武进士！甲胄鲜明，御街夸官，好不威风。`
+      };
+      /* 乡试第一为解元，会试第一为会元，皆是大魁天下的名头 */
+      let passRank = null;
+      if ((ex.key === "juren" || ex.key === "wujuren") && score >= 102) passRank = "解元";
+      if (ex.key === "gongshi" && score >= 102) passRank = "会元";
+      if (passRank) {
+        c.honor = passRank;
+        rep(20);
+        g.family.topHonor = passRank;
+      }
+      log(`${mth}${ex.name}放榜——${passRank ? `${c.name}高中${passRank}！大魁天下，捷报雪片般飞来` : (flavor[ex.key] || (c.name + "高中" + ex.title + "！"))}`, "good");
       /* 举人 / 武举人 可直接大挑授官 */
-      if (ex.key === "juren" && chance(0.6)) Game.appoint("civil", rand(2, 4));
-      if (ex.key === "wujuren" && chance(0.6)) Game.appoint("military", rand(2, 4));
+      if (ex.key === "juren" && chance(0.6)) Game.appoint("civil", rand(1, 3));
+      if (ex.key === "wujuren" && chance(0.6)) Game.appoint("military", rand(1, 3));
       /* 贡士留京待殿试：无需操作，三月考试按钮会出现 */
       if (ex.key === "gongshi") log("礼部赐宴，三月即可参加殿试。", "good");
-      if (ex.key === "wujinshi") Game.appoint("military", rand(8, 10));
+      if (ex.key === "wujinshi") Game.appoint("military", rand(6, 8));
+      const _gift = passRank ? rand(60, 110) : (ex.key === "juren" || ex.key === "wujuren" ? rand(30, 60) : rand(8, 20));
+      celebrate(_gift);
+      /* 举人及以上放喜报：解元会元大书特书 */
+      if ((ex.key === "juren" || ex.key === "wujuren" || ex.key === "gongshi") && Game.queueXibao)
+        Game.queueXibao({ who: c.name, rel: "家主", exam: ex.name, rank: passRank || ex.title, gift: _gift, showNow: true });
     } else {
-      log(`${ex.name}落第而归，卷帙零落，且待来科。`, "bad");
+      const margin = ex.threshold - score;
+      const comfort = margin <= 8
+        ? `${ex.name}放榜——只差${margin}分！阅卷官惜才，亲批“稍欠火候”，阖家都替你惋惜。`
+        : `${ex.name}落第而归，卷帙零落。回家路上无言，唯有明月相伴。`;
+      log(comfort, "bad");
       c.stats.智力 = ex.track === "civil" ? clamp(c.stats.智力 + 1) : c.stats.智力;
+      /* 落第有人陪：配偶灯下相伴，先生来信劝勉 */
+      if (g.spouse) {
+        g.spouse.favor = clamp((g.spouse.favor == null ? 65 : g.spouse.favor) + 3, 0, 100);
+        log(`${g.spouse.name}灯下相伴，温言宽慰：“来科再战便是。”夫妻好感+3。`, "");
+      } else if ((g.contacts || []).length) {
+        const c0 = g.contacts[0];
+        c0.favor = clamp(c0.favor + 3, 0, 100);
+        log(`好友${c0.name}设酒相邀，开解于你，好感+3。`, "");
+      }
     }
     Game.save(); Game.refresh();
   };
@@ -2691,6 +3922,52 @@ dt-stat,.dt-stats{display:block}
   /* ============================================================
    * 祭祖大典（花钱换声望+祖佑） / 远贸商队（花钱赌回报）
    * ============================================================ */
+  /* 万寿（五月，皇帝诞辰）/ 千秋（十月，太后诞辰）：按品级备礼
+     常规循例不加不减，不送则圣眷受损；丰厚加恩；奢侈大加圣眷却损清望民心 */
+  Game.festivalGiftTiers = function (g) {
+    const grade = g.char.office ? g.char.office.grade : 0;
+    const base = 8 + grade * 4;
+    return { normal: base, rich: Math.round(base * 2), lavish: Math.round(base * 4.5) };
+  };
+  Game.festivalEvent = function (g) {
+    const isWan = g.month === 5;
+    const T = Game.festivalGiftTiers(g);
+    const fest = isWan ? "万寿节" : "千秋节";
+    const who = isWan ? "万岁爷千秋" : "太后娘娘懿寿";
+    return { type: "choice", build: () => ({
+      title: fest + "进寿",
+      text: "又逢" + fest + "，" + who + "，朝野皆进寿礼。以你今时品秩，循例" + T.normal + "两，丰厚" + T.rich + "两，奢侈" + T.lavish + "两——礼单递与不递、递多递少，你自斟酌。",
+      choices: [
+        { label: "循例进寿（" + T.normal + "两，不加不减）", act: (l) => {
+            if (g.money < T.normal) { l("连循例的寿礼都凑不齐，只得空手叩贺。", "bad"); Game.adjustRel && Game.adjustRel(g, { emperor: -4 }); return; }
+            g.money -= T.normal;
+            l("寿礼循例而进，不多不少，宫中收讫，圣上淡淡说了声好。", "");
+          } },
+        { label: "备厚礼（" + T.rich + "两）", act: (l) => {
+            if (g.money < T.rich) { l("囊中羞涩，厚礼备不起，只得循例。", "bad"); return; }
+            g.money -= T.rich;
+            if (isWan) { Game.adjustRel && Game.adjustRel(g, { emperor: 7 }); l("厚礼呈进，圣上龙颜大悦，近臣皆知你忠荩（君恩+7）。", "good"); }
+            else { Game.adjustRel && Game.adjustRel(g, { emperor: 4 }); rep(2); l("太后娘娘见礼欢喜，阖宫称颂你家孝敬（君恩+4、声望+2）。", "good"); }
+          } },
+        { label: "奢侈大礼（" + T.lavish + "两）", act: (l) => {
+            if (g.money < T.lavish) { l("这般排场，卖了你也备不起。", "bad"); return; }
+            g.money -= T.lavish;
+            if (isWan) {
+              Game.adjustRel && Game.adjustRel(g, { emperor: 12, gentry: -6, people: -5 });
+              l("珠宝堆山，圣上笑得合不拢嘴（君恩+12）；只是清议哗然：媚上之徒，糜费无度（缙绅-6、百姓-5）。", "");
+            } else {
+              Game.adjustRel && Game.adjustRel(g, { emperor: 7, people: -4 });
+              l("太后收了重礼，笑称你是有心人（君恩+7）；民间却传你家为讨宫中欢心一掷千金（百姓-4）。", "");
+            }
+          } },
+        { label: "今年不送", act: (l) => {
+            if (isWan) { Game.adjustRel && Game.adjustRel(g, { emperor: -7 }); rep(-2); l("万寿不进寿，御前记了你一笔（君恩-7、声望-2）。", "bad"); }
+            else { Game.adjustRel && Game.adjustRel(g, { emperor: -4 }); rep(-1); l("千秋无所表示，太后倒也不问，只是圣上那里淡了几分（君恩-4、声望-1）。", "bad"); }
+          } }
+      ] }) };
+  };
+
+
   Game.holdRite = function (key) {
     const g = Game.G;
     const r = (Game.RITES || []).find(x => x.key === key);
@@ -2700,6 +3977,8 @@ dt-stat,.dt-stats{display:block}
       return log(`${r.name}非望族不敢举，尚需声望${r.needRep}。`, "bad");
     g.money -= r.cost;
     rep(r.rep);
+    g.family.clan = Math.min(100, (g.family.clan == null ? 50 : g.family.clan) + (key === "splendid" ? 8 : key === "grand" ? 6 : 4));
+    if (g.char.office && Game.adjustRel) Game.adjustRel(g, { kin: key === "splendid" ? 8 : key === "grand" ? 6 : 4 });
     const isGrand = key === "grand", isSplendid = key === "splendid";
     g.riteBuff = {
       exam: r.buffMonths,
@@ -2786,6 +4065,50 @@ dt-stat,.dt-stats{display:block}
       log(`${d.name}药不对症，${p.name}服后未见起色，反添虚弱，不如另请高明。`, "bad");
     }
     Game.save(); Game.refresh();
+  };
+
+  /* 自动延医：定一档医生，每月入夜自动给全家看病（有钱才请） */
+  Game.setAutoDoctor = function (key) {
+    const g = Game.G;
+    if (!key || key === "off") { g.autoDoctor = null; log("撤了自动延医，此后生病须亲点医生。", ""); }
+    else {
+      const d = (Game.DOCTORS || []).find(x => x.key === key);
+      if (!d) return;
+      if ((d.needRep || 0) > g.family.reputation)
+        return log(`${d.name}非望族不请，尚需声望${d.needRep}。`, "bad");
+      g.autoDoctor = key;
+      log(`定下自动延医：此后每月以${d.name}（${d.fee}两/人）给抱病家人看诊。`, "good");
+    }
+    Game.save(); Game.refresh();
+  };
+  Game.autoDoctorLoop = function (g) {
+    if (!g.autoDoctor) return;
+    const d = (Game.DOCTORS || []).find(x => x.key === g.autoDoctor);
+    if (!d) { g.autoDoctor = null; return; }
+    if ((d.needRep || 0) > g.family.reputation) {
+      log(`声望跌破${d.needRep}，${d.name}不肯再来，自动延医已撤。`, "bad");
+      g.autoDoctor = null;
+      return;
+    }
+    const sick = Game.householdMembers().filter(m => m.person.alive && m.person.isSick);
+    if (!sick.length) return;
+    sick.forEach(m => {
+      const p = m.person;
+      if (g.money < d.fee) { log(`想请${d.name}给${p.name}看病，囊中只剩${Math.round(g.money)}两，请不起。`, "bad"); return; }
+      g.money = Math.round((g.money - d.fee) * 100) / 100;
+      g._monthDoctor = Math.round(((g._monthDoctor || 0) + d.fee) * 100) / 100;
+      const max = (m.role === "head") ? Game.maxSta() : 100;
+      p.stats = p.stats || {};
+      if (chance(d.cure)) {
+        p.isSick = false;
+        const back = d.key === "master" ? rand(10, 16) : d.key === "local" ? rand(7, 12) : rand(4, 9);
+        p.stats.体力 = clamp((p.stats.体力 || 30) + back, 0, max);
+        log(`【自动延医】${d.name}看过${p.name}，服药数剂，病去大半（耗${d.fee}两）。`, "good");
+      } else {
+        p.stats.体力 = clamp((p.stats.体力 || 30) - rand(2, 5), 0, max);
+        log(`【自动延医】${d.name}药不对症，${p.name}未见起色（耗${d.fee}两），下月换个大夫或亲点高明。`, "bad");
+      }
+    });
   };
 
   /* 全家轮病：体弱、年老、拥挤易感；在病者每月耗体气 */
@@ -3063,6 +4386,7 @@ dt-stat,.dt-stats{display:block}
       if (!ch) return;
       if (ch.gender === ct.gender) return log("同性何以结亲。", "bad");
       if (ch.age < 15) return log(`${ch.name}尚未及婚龄。`, "bad");
+      if (ch.palace) return log(`${ch.name}身在宫中，不得议亲（先办出宫）。`, "bad");
       const gift = Math.round(ct.family * 1.2);
       if (ch.gender === "男") {
         if (g.money < gift) return log(`娶${ct.name}入门需聘礼${gift}两。`, "bad");
@@ -3070,12 +4394,21 @@ dt-stat,.dt-stats{display:block}
         log(`${ch.name}迎娶${ct.name}入门，亲家门户${ct.family}，天赋智${ct.apt.智力}，后代可期。`, "good");
       } else {
         g.money += Math.round(gift / 2);
-        log(`${ch.name}许嫁${ct.name}，得彩礼${Math.round(gift / 2)}两，亲家门户${ct.family}。`, "good");
+        ch.out = "married";
+        log(`${ch.name}许嫁${ct.name}，得彩礼${Math.round(gift / 2)}两。女儿出阁，来日承祧还看兄弟（无兄弟可招赘留家）。`, "good");
       }
-      /* 子媳/女婿入籍：其天赋并入子女，影响下一代 */
+      /* 子媳入籍同居：其天赋并入子女，影响下一代 */
       ch.married = true;
       ch.spouseApt = ct.apt; ch.spouseStats = ct.stats; ch.spouseFamily = ct.family;
       ch.spouseName = ct.name; ch.spouseTraits = ct.traits || [];
+      if (ch.gender === "男") {
+        ch.spouse = {
+          id: ct.id, name: ct.name, gender: ct.gender, age: ct.age, family: ct.family,
+          stats: ct.stats, apt: ct.apt, traits: ct.traits || [],
+          alive: true, title: null, office: null, joined: true,
+          job: Game.pickJob ? Game.pickJob(ct) : "farmhand"
+        };
+      }
       g.contacts = g.contacts.filter(x => x.id !== contactId);
       rep(6);
       Game.save(); Game.refresh();
@@ -3134,6 +4467,151 @@ dt-stat,.dt-stats{display:block}
     const given = Game.randomGiven ? Game.randomGiven(m.person.gender) : "平安";
     Game.renamePerson(id, (surname || "") + given);
   };
+  /* ============================================================
+   * 高门世家（固定五姓）：阖族一个好感，每月-2，比寻常往来难维持
+   * 拜访/厚礼刷好感；85可提亲（聘礼极重、嫁要倒贴、皇帝猜忌）；90且有官身可举荐
+   * ============================================================ */
+  Game.clanFavorOf = function (g, key) {
+    if (!g.family.clanFavor) g.family.clanFavor = {};
+    if (g.family.clanFavor[key] == null) g.family.clanFavor[key] = 15;
+    return g.family.clanFavor[key];
+  };
+  Game.clanPerson = function (t) {
+    const gender = chance(0.5) ? "男" : "女";
+    const base = 58;
+    const stats = { 体力: rand(45, 70), 智力: 0, 武力: 0, 魅力: 0 };
+    if (t.tilt === "智") { stats.智力 = rand(62, 85); stats.魅力 = rand(58, 80); stats.武力 = rand(30, 55); }
+    else if (t.tilt === "魅") { stats.魅力 = rand(66, 88); stats.智力 = rand(58, 80); stats.武力 = rand(30, 55); }
+    else if (t.tilt === "武") { stats.武力 = rand(60, 85); stats.智力 = rand(55, 78); stats.魅力 = rand(55, 80); }
+    else if (t.tilt === "体") { stats.智力 = rand(58, 80); stats.魅力 = rand(55, 80); stats.武力 = rand(40, 65); }
+    else { stats.智力 = rand(60, 82); stats.魅力 = rand(60, 82); stats.武力 = rand(35, 60); }
+    stats.体力 = t.tilt === "体" ? rand(58, 80) : rand(45, 70);
+    const p = {
+      id: "gc" + Date.now() + rand(100, 999),
+      name: Game.makeName(gender, t.surname),
+      gender, age: rand(15, 20),
+      family: rand(t.family[0], t.family[1]),
+      stats, alive: true, title: null, office: null, job: null, clan: t.name
+    };
+    Game.decoratePerson(p, null, null, true);
+    p.apt.智力 = clamp(Math.max(p.apt.智力, rand(60, 82)), 5, 99);
+    p.apt.魅力 = clamp(Math.max(p.apt.魅力, rand(62, 84)), 5, 99);
+    p.job = Game.pickJob ? Game.pickJob(p) : "farmhand";
+    return p;
+  };
+  Game.visitClan = function (key) {
+    const g = Game.G;
+    const t = (Game.GREAT_CLANS || []).find(x => x.key === key);
+    if (!t) return;
+    if (g.ap <= 0 || g.locked) return log("本月精力已尽，且待下月。", "bad");
+    if (g.money < 8) return log("登高门须备门敬八两，囊中不足。", "bad");
+    g.money -= 8; g.ap -= 1;
+    const gain = rand(4, 7) + Math.round(((g.char.stats.魅力 || 50) - 50) / 18);
+    g.family.clanFavor[key] = clamp(Game.clanFavorOf(g, key) + gain, 0, 100);
+    log(`备门敬登门拜访${t.name}，清谈竟日，${t.name}好感+${gain}（今${g.family.clanFavor[key]}）。`, "good");
+    Game.save(); Game.refresh();
+  };
+  Game.giftClan = function (key) {
+    const g = Game.G;
+    const t = (Game.GREAT_CLANS || []).find(x => x.key === key);
+    if (!t) return;
+    if (g.money < 30) return log("厚礼需银三十两。", "bad");
+    g.money -= 30;
+    const gain = rand(8, 14);
+    g.family.clanFavor[key] = clamp(Game.clanFavorOf(g, key) + gain, 0, 100);
+    log(`遣人送厚礼与${t.name}，${t.name}好感+${gain}（今${g.family.clanFavor[key]}）。高门眼界高，薄礼不收。`, "good");
+    Game.save(); Game.refresh();
+  };
+  /* 高门提亲：迎娶聘礼约为门户两倍；许嫁须倒贴嫁妆、添声望、惹君忌；高门不肯赘婿 */
+  Game.proposeClan = function (key, childId) {
+    const g = Game.G;
+    const t = (Game.GREAT_CLANS || []).find(x => x.key === key);
+    if (!t) return;
+    if (Game.clanFavorOf(g, key) < 85) return log(`${t.name}与你家尚是泛泛之交（好感${Game.clanFavorOf(g, key)}），此时提亲未免唐突（需85）。`, "bad");
+    const p = Game.clanPerson(t);
+    const marryIn = (name, gift) => {
+      if (g.money < gift) { log(`迎娶${name}需聘礼${gift}两（高门聘礼约为门户两倍）。`, "bad"); return; }
+      g.money -= gift;
+      return true;
+    };
+    if (childId) {
+      const ch = g.children.find(x => x.id === childId && x.alive && !x.married);
+      if (!ch) return;
+      if (ch.gender === p.gender) { /* 性别撞了就换一位同门（仍是本姓） */
+        p.gender = ch.gender === "男" ? "女" : "男";
+        p.name = Game.makeName(p.gender, t.surname);
+      }
+      if (ch.age < 15) return log(`${ch.name}尚未及婚龄。`, "bad");
+      if (ch.palace || ch.out) return log("此子不便议亲。", "bad");
+      if (ch.gender === "男") {
+        const gift = Math.round(p.family * 2.0);
+        if (!marryIn(p.name, gift)) return;
+        p.gender = "女"; p.joined = true;
+        ch.spouse = p;
+        ch.spouseApt = p.apt; ch.spouseStats = p.stats; ch.spouseFamily = p.family;
+        ch.spouseName = p.name; ch.spouseTraits = p.traits || [];
+        ch.married = true;
+        rep(Math.round(p.family / 15));
+        if (Game.adjustRel && g.char.office) Game.adjustRel(g, { emperor: -5 });
+        log(`${ch.name}迎娶${t.name}${p.name}入门，天赋智${p.apt.智力}，后代可期；只是与世家结亲，上意微忌（君恩-5）。`, "good");
+      } else {
+        const dowry = Math.round(p.family * 1.2);
+        if (g.money < dowry) { log(`许嫁${t.name}须备嫁妆${dowry}两，家计为难。`, "bad"); return; }
+        g.money -= dowry;
+        p.gender = "男";
+        ch.out = "married";
+        ch.spouseApt = p.apt; ch.spouseStats = p.stats; ch.spouseFamily = p.family;
+        ch.spouseName = p.name; ch.spouseTraits = p.traits || [];
+        ch.married = true;
+        rep(10);
+        if (Game.adjustRel && g.char.office) Game.adjustRel(g, { emperor: -5 });
+        log(`${ch.name}许嫁${t.name}${p.name}，倒贴嫁妆${dowry}两，声望+10；高门联姻，上意微忌（君恩-5）。`, "good");
+      }
+      Game.save(); Game.refresh();
+      return;
+    }
+    /* 家主自娶 */
+    if (g.spouse) return log("已有婚配。", "bad");
+    if (g.char.gender === p.gender) { p.gender = g.char.gender === "男" ? "女" : "男"; p.name = Game.makeName(p.gender, t.surname); }
+    const gift = Math.round(p.family * 2.0);
+    if (g.money < gift) { log(`迎娶${p.name}需聘礼${gift}两。`, "bad"); return; }
+    g.money -= gift;
+    g.spouse = {
+      id: p.id, name: p.name, gender: p.gender, age: p.age, family: p.family,
+      stats: p.stats, apt: p.apt, traits: p.traits, clan: t.name,
+      alive: true, title: null, office: null, job: null, favor: 75
+    };
+    if (Game.pickJob) g.spouse.job = Game.pickJob(g.spouse);
+    rep(Math.round(p.family / 15));
+    if (Game.adjustRel && g.char.office) Game.adjustRel(g, { emperor: -5 });
+    log(g.char.gender === "男"
+      ? `三书六礼，迎娶${t.name}${p.name}入门（天赋智${p.apt.智力}），上意微忌（君恩-5）。`
+      : `备下重聘，招${t.name}${p.name}入赘（天赋智${p.apt.智力}），上意微忌（君恩-5）。`, "good");
+    Game.save(); Game.refresh();
+  };
+  /* 举荐升品：有官身、好感90，一年一次，直升一级、10%连升两级（君恩-3、该族好感-15） */
+  Game.recommendClan = function (key) {
+    const g = Game.G;
+    const t = (Game.GREAT_CLANS || []).find(x => x.key === key);
+    if (!t) return;
+    if (!g.char.office) return log("白身布衣，无官可举，先谋个一官半职。", "bad");
+    if (Game.clanFavorOf(g, key) < 90) return log(`${t.name}好感不足90，时尚早。`, "bad");
+    g.clanRec = g.clanRec || {};
+    if (g.clanRec[key] === g.year) return log(`${t.name}今年已为你美言过，好事须待来年。`, "bad");
+    g.clanRec[key] = g.year;
+    const o = g.char.office;
+    const top = Game.GRADES.length - 1;
+    const jump = (o.grade >= top - 1 && chance(0.1)) ? 2 : (chance(0.1) ? 2 : 1);
+    const ng = Math.min(top, o.grade + jump);
+    Game.appoint(o.track, ng);
+    g.family.clanFavor[key] = clamp(g.family.clanFavor[key] - 15, 0, 100);
+    rep(2);
+    if (Game.adjustRel) Game.adjustRel(g, { emperor: -3 });
+    log(`${t.name}长辈在吏部为你美言，直升${Game.GRADES[ng]}${(o.track === "civil" ? Game.CIVIL_POSTS : Game.MILITARY_POSTS)[ng]}${jump === 2 ? "（连升两级，祖坟冒烟！）" : ""}，只是这般奥援，圣上未必爱看（君恩-3、${t.name}好感-15）。`, "good");
+    Game.save(); Game.refresh();
+  };
+
+
   Game.dismissContact = function (id) {
     const g = Game.G;
     g.contacts = (g.contacts || []).filter(x => x.id !== id);
@@ -3196,6 +4674,30 @@ dt-stat,.dt-stats{display:block}
   /* ============================================================
    * 过月
    * ============================================================ */
+  /* 近月价格走势：保留最近6个月，供“近三月均价 + 走势” */
+  /* 六业行市：每月浮动（带惯性），0.6~1.4，直乘各铺流水 */
+  Game.rollTrends = function (g) {
+    if (!g.trends) { g.trends = {}; Object.keys(Game.SHOP_TYPES).forEach(k => { g.trends[k] = 1; }); }
+    Object.keys(Game.SHOP_TYPES).forEach(k => {
+      const prev = g.trends[k] || 1;
+      const shock = 0.7 + Math.random() * 0.7;
+      g.trends[k] = Math.round(clamp(prev * 0.55 + shock * 0.45, 0.6, 1.4) * 100) / 100;
+    });
+  };
+
+  Game.pushPrices = function (g) {
+    if (!g.priceHist) g.priceHist = { land: [], rice: [], wheat: [], veg: [], fruit: [] };
+    const h = g.priceHist;
+    h.land.push(g.landPrice);
+    ["rice", "wheat", "veg", "fruit"].forEach(k => h[k].push(g.market[k]));
+    Object.keys(h).forEach(k => { if (h[k].length > 6) h[k] = h[k].slice(-6); });
+  };
+  Game.avg3 = function (arr) {
+    if (!arr || !arr.length) return null;
+    const a = arr.slice(-3);
+    return Math.round(a.reduce((x, y) => x + y, 0) / a.length * 100) / 100;
+  };
+
   Game.nextMonth = function () {
     const g = Game.G;
     const c = g.char;
@@ -3209,17 +4711,24 @@ dt-stat,.dt-stats{display:block}
     const ctx = {};
 
     /* 1. 地价与集市粮价 */
+    const moneyBefore = Math.round(g.money * 100) / 100;
+    const granaryBefore = Object.assign({}, g.granary);
+    const logStart = (g.logs || []).length;
     g.landPrice = rand(7, 16);
     g.market = Game.rollMarket();
+    if (Game.rollTrends) Game.rollTrends(g);
+    Game.pushPrices(g);
 
     /* 2. 天时丰歉 */
     const weather = Game.rollWeather();
     if (!weather.normal) log(weather.name + (weather.good ? "，租粮俱丰。" : "，租粮大减。"), weather.good ? "good" : "bad");
     const workMul = g.workFocus ? 1.3 : 1;
 
-    /* 3. 田产：佃租两季收银；自耕诸色依农时，到收月方获 */
+    /* 3. 田产：庄头先把分派田自动种满；佃租两季收银；自耕诸色依农时，到收月方获 */
+    g._monthSeed = 0;
+    if (Game.autoSow) Game.autoSow(g);
     Game.settleRent(g, weather.mul, workMul);
-    Game.settleCrops(g, weather.mul, workMul);
+    Game.settleCrops(g, weather.mul, workMul * (g.steward ? (1 + (g.steward.bonus || 0)) : 1));
 
     /* 4. 每月自动置地（默认作佃租田，银紧则量力少买） */
     if (g.autoLand > 0) {
@@ -3243,8 +4752,10 @@ dt-stat,.dt-stats{display:block}
     Game.settleSalaries(g);
     g.workFocus = false;
 
-    /* 7. 束脩、口粮与门第日用 + 赋税 + 修缮应酬 */
+    /* 7. 束脩、口粮与门第日用 + 赋税 + 修缮应酬 + 钱庄结息 */
     settleAcademy(g);
+    if (Game.bankSettle) Game.bankSettle(g);
+    if (Game.palaceMonthly) Game.palaceMonthly(g, log);
     g._lastHousehold = Game.settleHousehold(g);
     if (Game.settleTaxes) {
       Game.settleTaxes(g);
@@ -3270,8 +4781,10 @@ dt-stat,.dt-stats{display:block}
       if (g.riteBuff.exam <= 0 && g.riteBuff.harvest <= 0 && g.riteBuff.birth <= 0) g.riteBuff = null;
     }
 
-    /* 8. 随机事件：在任则时有断案差事，否则寻常际遇 */
-    let ev = (c.office && Game.rollOfficeCase) ? Game.rollOfficeCase(g) : null;
+    /* 8. 随机事件：在任则时有断案差事，否则寻常际遇；五月万寿、十月千秋雷打不动 */
+    let ev = null;
+    if (c.office && (g.month === 5 || g.month === 10)) ev = Game.festivalEvent(g);
+    if (!ev) ev = (c.office && Game.rollOfficeCase) ? Game.rollOfficeCase(g) : null;
     if (!ev) ev = Game.rollEvent();
     if (ev) {
       if (ev.type === "auto") {
@@ -3291,8 +4804,10 @@ dt-stat,.dt-stats{display:block}
       c.isSick = false;
       log("调养得宜，病已痊愈。", "good");
     }
-    /* 全家轮病：老幼体弱者易感，拥挤更易传染 */
+    g._monthDoctor = 0;
+    /* 全家轮病：老幼体弱者易感，拥挤更易传染；随后自动延医 */
     if (Game.spreadIllness) Game.spreadIllness(g, log);
+    if (Game.autoDoctorLoop) Game.autoDoctorLoop(g);
     /* 声望自然消减：越高掉得越快，善名须年年维持 */
     if (g.family.reputation >= 600) g.family.reputation -= 4;
     else if (g.family.reputation >= 350) g.family.reputation -= 2;
@@ -3307,6 +4822,10 @@ dt-stat,.dt-stats{display:block}
       Game.makeContact(null, false);
     }
     g.contacts.forEach(ct => { ct.favor = clamp(ct.favor - 1, 0, 100); });
+    /* 高门世家好感每月-2，比寻常往来难维持 */
+    if (g.family.clanFavor) Object.keys(g.family.clanFavor).forEach(k => {
+      g.family.clanFavor[k] = clamp(g.family.clanFavor[k] - 2, 0, 100);
+    });
     if (yearTurned) g.contacts.forEach(ct => { ct.age += 1; });
     /* 夫妻好感每月-1，相敬如宾须常陪伴；过低则同床异梦 */
     if (g.spouse) {
@@ -3330,11 +4849,34 @@ dt-stat,.dt-stats{display:block}
       }
     }
     if (g.spouse) g.spouse.age += yearTurned ? 1 : 0;
+    /* 儿孙添丁：在家成婚的儿子 / 招赘女儿照怀胎十月生养 */
+    (g.children || []).forEach(function (ch) {
+      if (!ch.alive || !ch.married || !ch.spouse || !ch.spouse.joined || ch.out || ch.palace) return;
+      if (ch.cooldown > 0) ch.cooldown -= 1;
+      if (ch.pregnancy) { if (Game.advanceCouplePregnancy) Game.advanceCouplePregnancy(g, ch, log); }
+      else {
+        const cp = Game.birthChanceCouple ? Game.birthChanceCouple(g, ch) : 0;
+        if (cp > 0 && chance(cp)) { if (Game.conceiveCouple) Game.conceiveCouple(g, ch, log); }
+      }
+    });
 
     /* 11. 岁末：增岁、子女成长、考核 */
     if (yearTurned) {
       c.age += 1;
       growChildren(g);
+      /* 宫中女儿与皇嗣岁长一岁 */
+      (g.children || []).filter(x => x.alive && x.out === "palace").forEach(x => { x.age += 1; });
+      (g.royalKids || []).forEach(x => { if (x.alive) x.age += 1; });
+      if (Game.settleSuccession) Game.settleSuccession(g, log);
+      /* 宗族情分：岁终结算；高则添声望，低则易生事；久不走动则渐淡 */
+      if (g.family.clan == null) g.family.clan = 50;
+      if (g.family.clan >= 90) { rep(4); log("宗族和睦，岁时伏腊、婚丧嫁娶一呼百应，乡人敬你家门风（声望+4）。", "good"); }
+      else if (g.family.clan < 30 && chance(0.55)) {
+        if (g.money >= 15) { const s = rand(10, 25); g.money -= s; log(`亲族离心，有族人上门滋事，破财${s}两方才打发。`, "bad"); }
+        else { rep(-3); g.family.clan = Math.max(0, g.family.clan - 2); log("亲族在乡里散布怨言，说你为富不仁（声望-3）。", "bad"); }
+      }
+      if (g.family.clan > 60) g.family.clan -= 1; else if (g.family.clan < 40) g.family.clan += 1;
+      if (Game.palaceReview) Game.palaceReview(g);
       childrenTuition(g);
       ageTeacher(g);
       if (c.office) { if (Game.officeAnnualReview) Game.officeAnnualReview(g); else annualReview(g); }
@@ -3369,12 +4911,38 @@ dt-stat,.dt-stats{display:block}
       g.money = 0;
     }
 
+    /* 月度账单快照：收了多少、支了多少、粮仓几何、际遇何事 */
+    g._lastBill = {
+      year: g.year, month: g.month,
+      moneyBefore, moneyAfter: Math.round(g.money * 100) / 100,
+      rent: g._lastRent || 0,
+      salaries: g._lastSalaries || 0,
+      shops: (g.shops || []).map(x => ({ type: x.type, profit: x.lastProfit || 0 })),
+      yields: { rice: g._yield_rice || 0, wheat: g._yield_wheat || 0, veg: g._yield_veg || 0, fruit: g._yield_fruit || 0 },
+      harvestNames: g._harvestNames || [],
+      foodCost: (g._lastHousehold && g._lastHousehold.foodCost) || 0,
+      living: (g._lastHousehold && g._lastHousehold.living) || 0,
+      seedCost: g._monthSeed || 0,
+      doctorCost: g._monthDoctor || 0,
+      tax: (g._lastTax && g._lastTax.total) || 0,
+      upkeep: (g._lastUpkeep && g._lastUpkeep.total) || 0,
+      bankDepInt: (g._lastBank && g._lastBank.depInt) || 0,
+      bankLoanInt: (g._lastBank && g._lastBank.loanInt) || 0,
+      stewardWage: (g._lastUpkeep && g._lastUpkeep.stewardWage) || 0,
+      granary: Object.assign({}, g.granary),
+      granaryBefore,
+      weather: (!weather.normal) ? weather.name : "",
+      monthLogs: (g.logs || []).slice(logStart).filter(e => e.c !== "month").slice(-10)
+    };
     g.ap = 2;
     log(`—— ${g.surname}氏·第${g.gen}代 · 第${g.year}年${g.month}月 ——`, "month");
     g.locked = !!g.pendingEvent;
     Game.save();
     Game.refresh();
-    if (g.pendingEvent && Game.askChoice) {
+    /* 先出月度账单，账单合上后再出抉择事件（若有）；度年快进中则静默 */
+    if (Game._autoYear) { /* 由 nextYear 收尾 */ }
+    else if (Game.showBill) Game.showBill();
+    else if (g.pendingEvent && Game.askChoice) {
       const payload = g.pendingEvent.build(g);
       Game.askChoice(payload, () => {
         g.pendingEvent = null;
@@ -3384,8 +4952,66 @@ dt-stat,.dt-stats{display:block}
       });
     }
   };
+  /* 度年：连度十二个月，经济照常结算；逢抉择、丧事即停，由你定夺 */
+  Game.nextYear = function () {
+    const g = Game.G;
+    if (!g || !g.char.alive || g.locked || g.over) return;
+    const startChar = g.char;
+    const start = {
+      year: g.year, month: g.month,
+      money: Math.round(g.money * 100) / 100,
+      rep: g.family.reputation,
+      kids: g.children.filter(x => x.alive).length,
+      logLen: (g.logs || []).length
+    };
+    Game._autoYear = true;
+    let steps = 0, stopReason = "";
+    for (let i = 0; i < 12; i++) {
+      const gg = Game.G;
+      if (!gg.char.alive || gg.locked || gg.pendingEvent || gg.over) break;
+      if (gg.char !== startChar) break;   /* 年中已继嗣，停下 */
+      if (gg.char.isSick) { stopReason = "sick"; break; }   /* 抱病停下，先延医 */
+      Game.nextMonth();
+      steps++;
+      const ng = Game.G;
+      if (ng.char !== startChar) break;
+      if (!ng.char.alive || ng.over) break;
+      if (ng.pendingEvent) break;
+      if (ng.char.isSick) { stopReason = "sick"; break; }
+    }
+    Game._autoYear = false;
+    Game.save(); Game.refresh();
+    const ng = Game.G;
+    if (ng.pendingEvent) { if (Game.afterBill) Game.afterBill(); return; }  /* 有抉择待断 */
+    if (!ng.char.alive || ng.over) return;   /* 丧事弹窗已出 */
+    if (steps > 0 && Game.showYearSummary) Game.showYearSummary(start, steps, stopReason);
+  };
+  /* 账单合上后，补出本月抉择事件 */
+  Game.afterBill = function () {
+    const g = Game.G;
+    if (g && g.pendingEvent && Game.askChoice) {
+      const payload = g.pendingEvent.build(g);
+      Game.askChoice(payload, () => {
+        g.pendingEvent = null;
+        g.locked = false;
+        Game.syncLand();
+        Game.save(); Game.refresh();
+      });
+    }
+  };
 
   function growChildren(g) {
+    /* 入门亲属同寿：媳/赘婿年长一岁，年过六旬有寿终之时 */
+    (g.children || []).forEach(function (ch) {
+      const sp = ch.spouse;
+      if (!sp || !sp.joined) return;
+      sp.age = (sp.age || 20) + 1;
+      if (sp.age >= 60 && chance((sp.age - 58) * 0.02)) {
+        sp.alive = false;
+        ch.spouse = null; ch.married = false;
+        log((ch.gender === "男" ? "儿媳" : "赘婿") + sp.name + "寿终，享年" + sp.age + "岁。" + ch.name + "鳏居，可再议亲。", "");
+      }
+    });
     g.children.forEach(ch => {
       if (!ch.alive) return;
       ch.age += 1;
@@ -3410,6 +5036,10 @@ dt-stat,.dt-stats{display:block}
       }
       if (ch.alive && ch.age === 15) {
         log(`${ch.name}年已十五，${ch.gender === "男" ? "束发就傅" : "及笄"}，可以议亲了。`, "");
+      }
+      /* 定亲完婚：年满十五自动操办（聘礼不足则暂缓明年） */
+      if (ch.alive && ch.betrothed && !ch.married && ch.age >= 15 && !ch.palace && !ch.out) {
+        if (Game.completeBetrothal) Game.completeBetrothal(ch);
       }
       /* 成年谋生：无功名官身则充百业（人人有饭吃，务农兜底） */
       if (ch.alive && ch.age === 16 && !ch.office) {
@@ -3439,6 +5069,9 @@ dt-stat,.dt-stats{display:block}
    * 童试线55（文/武），举人线68；每年一次，智65约两成、75约三成 */
   function npcTryExam(ch) {
     const g = Game.G;
+    if (ch.out) return;
+    if (ch.gender !== "男") return;   /* 女儿不走男子科举，另有入宫女官线 */
+    if (ch.palace) return;
     const smart = (ch.stats.智力 || 0), strong = (ch.stats.武力 || 0);
     if (!ch.title) {
       const canCivil = smart >= 55, canMartial = strong >= 55;
@@ -3463,14 +5096,62 @@ dt-stat,.dt-stats{display:block}
       const ab = civil ? smart : strong;
       if (ab < 68) return;
       if (chance((ab - 60) / 60)) {
-        ch.title = civil ? "juren" : "wujuren"; rep(12);
+        const sc = Math.round(ab + rand(-14, 14) + Math.min(15, Math.round(g.family.reputation / 25)));
+        const first = sc >= 102;
+        ch.title = civil ? "juren" : "wujuren"; rep(first ? 32 : 12);
+        if (first) { ch.honor = "解元"; g.family.topHonor = "解元"; }
         g.family.titles[ch.title] = g.gen;
+        const gift = first ? rand(60, 110) : rand(20, 50);
+        g.money += gift;
         if (chance(0.5)) {
-          ch.office = { grade: rand(2, 4), track: civil ? "civil" : "military" };
-          log(`${ch.name}秋闱连捷中了${civil ? "举人" : "武举人"}，大挑授官，出仕去了。`, "good");
+          ch.office = { grade: rand(1, 3), track: civil ? "civil" : "military" };
+          log(`${ch.name}秋闱连捷中了${civil ? "举人" : "武举人"}${first ? "，且是大魁天下的解元" : ""}，大挑授官，出仕去了。亲友贺仪银${gift}两。`, "good");
         } else {
-          log(`${ch.name}高中${civil ? "举人" : "武举人"}，在乡候选。`, "good");
+          log(`${ch.name}高中${civil ? "举人" : "武举人"}${first ? "——还是解元，大魁天下" : ""}，在乡候选。亲友贺仪银${gift}两。`, "good");
         }
+        if (Game.queueXibao) Game.queueXibao({ who: ch.name, rel: ch.relation || "族人", exam: civil ? "乡试" : "武乡试", rank: first ? "解元" : (civil ? "举人" : "武举人"), gift });
+      }
+    } else if (ch.title === "juren") {
+      /* 儿子会试：中式为贡士，第一为会元（年满十九方许下场） */
+      if (ch.age < 19 || ch.age > 45) return;
+      if (smart < 72) return;
+      if (chance((smart - 68) / 80)) {
+        const sc = Math.round(smart + rand(-14, 14) + Math.min(15, Math.round(g.family.reputation / 25)));
+        const first = sc >= 102;
+        ch.title = "gongshi"; rep(first ? 40 : 20);
+        if (first) { ch.honor = "会元"; g.family.topHonor = "会元"; }
+        g.family.titles.gongshi = g.gen;
+        const gift = first ? rand(60, 110) : rand(30, 60);
+        g.money += gift;
+        log(`${ch.name}春闱取中贡士${first ? "——会元及第，大魁天下" : ""}！会馆摆酒，只待殿试一搏。贺仪银${gift}两。`, "good");
+        if (Game.queueXibao) Game.queueXibao({ who: ch.name, rel: ch.relation || "族人", exam: "会试", rank: first ? "会元" : "贡士", gift });
+      }
+    } else if (ch.title === "gongshi") {
+      /* 儿子殿试：同样定三甲，状元榜眼探花皆有可能（年满二十方许殿试） */
+      if (ch.age < 20 || ch.age > 45) return;
+      if (smart < 75) return;
+      if (chance((smart - 70) / 90)) {
+        const sc = Math.round(smart + rand(-14, 14) + Math.min(15, Math.round(g.family.reputation / 25)));
+        let rank, grade, bonus;
+        if (sc >= 118)      { rank = "状元"; grade = 8; bonus = 50; }
+        else if (sc >= 111) { rank = "榜眼"; grade = 8; bonus = 40; }
+        else if (sc >= 105) { rank = "探花"; grade = 7; bonus = 35; }
+        else if (sc >= 97)  { rank = "传胪"; grade = 7; bonus = 25; }
+        else if (sc >= 85)  { rank = "二甲"; grade = 7; bonus = 15; }
+        else                { rank = "三甲"; grade = 6; bonus = 0; }
+        ch.title = "jinshi";
+        ch.honor = rank === "二甲" || rank === "三甲" ? "进士" : rank;
+        g.family.titles.jinshi = g.gen;
+        g.family.topHonor = rank;
+        rep(80 + bonus);
+        ch.office = { grade, track: "civil" };
+        const gift = rank === "状元" ? rand(150, 250) : rank === "榜眼" || rank === "探花" ? rand(120, 200) : rank === "传胪" ? rand(80, 140) : rand(40, 90);
+        g.money += gift;
+        const txt = rank === "状元" || rank === "榜眼" || rank === "探花"
+          ? `${ch.relation || "族人"}${ch.name}金殿传胪，一甲${rank}，进士及第！跨马游街，阖县轰动`
+          : `${ch.relation || "族人"}${ch.name}殿试取中${rank === "传胪" ? "二甲第一（传胪）" : rank}，授${Game.CIVIL_POSTS ? Game.CIVIL_POSTS[grade] : ""}，十年寒窗一朝登科`;
+        log(txt + `。贺仪银${gift}两。`, "good");
+        if (Game.queueXibao) Game.queueXibao({ who: ch.name, rel: ch.relation || "族人", exam: "殿试", rank, gift });
       }
     }
   }
@@ -3514,6 +5195,86 @@ dt-stat,.dt-stats{display:block}
   }
 
   /* ============================================================
+   * 宫中说情：宫中女儿是家里的奥援，位分越高分量越重
+   * 妃嫔（秀女40→妃90）> 宫女（小宫女12→尚仪28）
+   * 差事办砸、贪腐案发、言官论劾、考绩下下时自动递话，有几率从轻发落
+   * ============================================================ */
+  Game.topPalace = function (g) {
+    const ds = (g.children || []).filter(x => x.alive && x.out === "palace" && x.palace);
+    ds.sort((a, b) => {
+      const ta = a.palace.track === "consort" ? 1 : 0, tb = b.palace.track === "consort" ? 1 : 0;
+      if (ta !== tb) return tb - ta;
+      return b.palace.grade - a.palace.grade;
+    });
+    return ds[0] || null;
+  };
+  Game.palacePower = function (x) {
+    if (!x || !x.palace) return 0;
+    return x.palace.track === "consort" ? 40 + x.palace.grade * 10 : 12 + x.palace.grade * 4;
+  };
+  Game.palacePleads = function (g) {
+    const d = Game.topPalace(g);
+    if (!d) return null;
+    if (!chance(Game.palacePower(d) / 150)) return null;
+    return d;
+  };
+  Game.palacePleadName = function (d) {
+    return "宫中" + Game.palaceName(d) + d.name;
+  };
+  /* 宫中女儿一律不寄钱回家（宫里开销大）；宫里的价值在说情与荫家 */
+  Game.palaceRemit = function (p) {
+    return 0;
+  };
+
+  /* ============================================================
+   * 分家另过：成年男丁可携妻儿分出去单过（各吃各锅）
+   * 未成年不得分；分出去一般喊不回——除非家中再无男丁，方可迎一支归宗
+   * ============================================================ */
+  Game.branchEligible = function (ch) {
+    return ch && ch.alive && ch.gender === "男" && ch.age >= 16 && !ch.out && !ch.palace && !ch.betrothed;
+  };
+  Game.branchOut = function (id) {
+    const g = Game.G;
+    const ch = g.children.find(x => x.id === id);
+    if (!ch || !Game.branchEligible(ch)) return log("唯成年在家男丁可分家另过。", "bad");
+    if (g.money < 40) return log("分家需安家银四十两，家计为难。", "bad");
+    g.money -= 40;
+    const bid = "br" + Date.now() + rand(100, 999);
+    const followers = [ch.id];
+    if (ch.spouse && ch.spouse.joined) followers.push(ch.spouse.id);
+    (g.children || []).filter(x => x.alive && x.parentId === ch.id).forEach(x => followers.push(x.id));
+    followers.forEach(fid => {
+      const m = g.children.find(x => x.id === fid);
+      if (m) { m.out = "branch"; m.branchId = bid; }
+      if (ch.spouse && ch.spouse.id === fid) { ch.spouse.out = "branch"; ch.spouse.branchId = bid; }
+    });
+    g.branches = g.branches || [];
+    g.branches.push({ id: bid, headId: ch.id, headName: ch.name, sinceYear: g.year, sinceMonth: g.month });
+    rep(-2);
+    log(ch.name + "分家另过，携家眷自立门户，付安家银四十两（声望-2）。自分各吃各锅；家中若再无男丁，方可迎其归宗。", "");
+    Game.save(); Game.refresh();
+  };
+  Game.malesAtHome = function (g) {
+    return Game.householdMembers().filter(m => m.person.alive && m.person.gender === "男").length;
+  };
+  Game.recallBranch = function (bid, silent) {
+    const g = Game.G;
+    const br = (g.branches || []).find(x => x.id === bid);
+    if (!br) return false;
+    (g.children || []).forEach(x => { if (x.branchId === bid) { x.out = null; x.branchId = null; } });
+    const hd = g.children.find(x => x.id === br.headId);
+    if (hd && hd.spouse && hd.spouse.branchId === bid) { hd.spouse.out = null; hd.spouse.branchId = null; }
+    g.branches = (g.branches || []).filter(x => x.id !== bid);
+    if (!silent) {
+      rep(2);
+      log(br.headName + "一支归宗，阖家团圆（声望+2）。", "good");
+      Game.save(); Game.refresh();
+    }
+    return true;
+  };
+
+
+  /* ============================================================
    * 死亡与继承
    * ============================================================ */
   Game.die = function (reason) {
@@ -3535,11 +5296,37 @@ dt-stat,.dt-stats{display:block}
     /* 同步一份到 family.history，老档与新档读取统一 */
     g.family.history = g.history;
 
-    const heirs = g.children.filter(x => x.alive);
-    if (heirs.length === 0) return Game.gameOver(true);
-
-    /* 男嗣优先，长幼有序；无男则女嗣 */
-    heirs.sort((a, b) => (a.gender === b.gender ? a.age - b.age : a.gender === "男" ? -1 : 1));
+    /* 出阁女、宫中女不承祧（招赘留家者可）；先 sons 后 daughters */
+    /* 若生前已立嗣且嗣子仍在堂，遵遗命直继，不再合族再议 */
+    if (Game.heirPerson) {
+      const named = Game.heirPerson(g);
+      if (named) { g.heirId = null; return Game.succeed(named); }
+      else if (g.heirId) g.heirId = null;
+    }
+    /* 子嗣优先于孙辈：先 sons 后 daughters；皆无则长房之孙可继 */
+    const kidHeirs = g.children.filter(x => x.alive && !x.out && !x.parentId);
+    const grandHeirs = g.children.filter(x => x.alive && !x.out && x.parentId);
+    const bySeniority = (a, b) => (a.gender === b.gender ? a.age - b.age : a.gender === "男" ? -1 : 1);
+    kidHeirs.sort(bySeniority);
+    grandHeirs.sort(bySeniority);
+    const heirs = kidHeirs.concat(grandHeirs);
+    if (heirs.length === 0) {
+      const backable = (g.children || []).filter(x => x.alive && x.out === "branch" && x.gender === "男" && !x.parentId);
+      if (backable.length && Game.askRecall) {
+        log("家中已无男丁承祧，族老议请分支出迎一支归宗。", "");
+        Game.askRecall(backable, (pick) => {
+          if (!pick) return Game.gameOver(true);
+          Game.recallBranch(pick.branchId, true);
+          const returned = g.children.filter(x => x.alive && !x.out);
+          returned.sort(bySeniority);
+          if (!returned.length) return Game.gameOver(true);
+          Game.log(pick.name + "一支归宗，仍由其承继宗祧。", "good");
+          Game.askSuccession(returned, (heir) => Game.succeed(heir));
+        });
+        return;
+      }
+      return Game.gameOver(true);
+    }
     Game.askSuccession(heirs, (heir) => Game.succeed(heir));
   };
 
@@ -3548,6 +5335,26 @@ dt-stat,.dt-stats{display:block}
     const g = Game.G;
     g.family.genChar = Game.nextGenChar ? Game.nextGenChar(g.family.genChar) : g.family.genChar;
     return g.family.genChar;
+  };
+  /* 整首字辈诗：设了就按诗循环取名；清空则回到单字顺进 */
+  Game.setGenPoem = function (text) {
+    const g = Game.G;
+    text = (text || "").replace(/\s+/g, "");
+    if (!text) {
+      g.family.genPoem = null;
+      log("撤了字辈诗，此后仍按单字顺进。", "");
+    } else {
+      if (text.length > 60) return log("字辈诗太长，六十字为限。", "bad");
+      g.family.genPoem = text;
+      g.family.genChar = text[0];
+      log("定下字辈诗“" + (text.length > 20 ? text.slice(0, 20) + "……" : text) + "”（" + text.length + "字循环），子孙取名从首字“" + text[0] + "”起。", "good");
+    }
+    Game.save(); Game.refresh();
+  };
+  Game.useGenPoem = function (i) {
+    const poem = (Game.GEN_POEMS || [])[Number(i)];
+    if (!poem) return;
+    Game.setGenPoem(poem.chars);
   };
   Game.setGenChar = function (ch) {
     const g = Game.G;
@@ -3560,6 +5367,7 @@ dt-stat,.dt-stats{display:block}
 
   Game.succeed = function (heir) {
     const g = Game.G;
+    g.heirId = null;
     g.gen += 1;
     if (Game.advanceGenChar) Game.advanceGenChar();
     g.pendingEvent = null;
@@ -3572,6 +5380,7 @@ dt-stat,.dt-stats{display:block}
     }
     g.spouse = null;
     g.candidate = null;
+    g.candidates = null;
     g.pregnancy = null;   /* 旧主丧，胎随旧房去 */
     g.cooldown = 0;
     g.contacts = [];   /* 人走茶凉，旧交须新主重新结识 */
@@ -3602,15 +5411,25 @@ dt-stat,.dt-stats{display:block}
       traits: heir.traits,
       title: heir.title || null,
       office: heir.office || null,
+      fatherName: heir.fatherName || "不详",
+      motherName: heir.motherName || "不详",
       job: null,
       retired: false
     };
     /* 未成年子弟承家，产业由老仆照管 */
-    /* 其余在世族人皆留在籍中，按与新家主的长幼定称谓 */
+    /* 其余在世族人皆留在籍中，按与新家主的世代长幼定称谓（孙继则有伯叔姑与堂亲） */
+    const heirIsGrand = !!heir.parentId;
     g.children = g.children.filter(x => x.alive && x.id !== heir.id)
       .map(x => {
         const older = x.age >= heir.age;
-        const relation = x.gender === "男" ? (older ? "兄" : "弟") : (older ? "姊" : "妹");
+        let relation;
+        if (x.id === heir.parentId) relation = x.gender === "男" ? "父" : "母";
+        else if (x.parentId && x.parentId === heir.id) relation = x.gender === "男" ? "子" : "女";
+        else if (!heirIsGrand && !x.parentId) relation = x.gender === "男" ? (older ? "兄" : "弟") : (older ? "姊" : "妹");
+        else if (!heirIsGrand) relation = x.gender === "男" ? "侄子" : "侄女";
+        else if (!x.parentId) relation = x.gender === "男" ? (older ? "伯" : "叔") : "姑";
+        else if (x.parentId === heir.parentId) relation = x.gender === "男" ? (older ? "兄" : "弟") : (older ? "姊" : "妹");
+        else relation = x.gender === "男" ? (older ? "堂兄" : "堂弟") : (older ? "堂姊" : "堂妹");
         return Object.assign({}, x, { relation });
       });
     g.ap = 2;
@@ -3620,6 +5439,73 @@ dt-stat,.dt-stats{display:block}
     }
     g.family.reputation = Math.round(g.family.reputation * 0.9);
     log(`灵前继嗣，${heir.name}承${g.surname}氏宗祧，是为第${g.gen}代家主。`, "month");
+    Game.save(); Game.refresh();
+  };
+
+  /* 传位：家主生前让位给直系后代（须15岁以上、在家同居）；老家主夫妇退为族中尊长 */
+  Game.abdicateTo = function (id) {
+    const g = Game.G;
+    const heir = (g.children || []).find(x => x.id === id);
+    if (!heir || !heir.alive || heir.out) return log("须在家同居的直系后代方可传位。", "bad");
+    if (heir.age < 15) return log(`${heir.name}年方${heir.age}岁，尚未成年，传位恐族人不服（须15岁以上）。`, "bad");
+    const old = g.char, oldSp = g.spouse;
+    const isGrand = !!heir.parentId;
+    const step = isGrand ? 2 : 1;
+    /* 老家主夫妇退位：留家养老，不再理家（也不再生育） */
+    const elderBase = { alive: true, married: false, out: null, palace: null, betrothed: null, pregnancy: null, cooldown: 0, infertile: true, title: null, office: null, job: null };
+    const oldHead = Object.assign({}, old, elderBase, {
+      id: "ret" + Date.now() + rand(100, 999),
+      name: old.name, gender: old.gender, age: old.age,
+      relation: isGrand ? (old.gender === "男" ? "祖父" : "祖母") : (old.gender === "男" ? "父" : "母"),
+      parentId: null, fatherName: old.fatherName || "不详", motherName: old.motherName || "不详"
+    });
+    if (old.title) oldHead.title = old.title;
+    g.children.push(oldHead);
+    let oldSpEntry = null;
+    if (oldSp) {
+      oldSpEntry = Object.assign({}, oldSp, elderBase, {
+        id: "ret" + Date.now() + rand(1000, 9999),
+        relation: isGrand ? (oldSp.gender === "男" ? "祖父" : "祖母") : (oldSp.gender === "男" ? "父" : "母"),
+        parentId: null
+      });
+      delete oldSpEntry.favor;
+      if (oldSp.title) oldSpEntry.title = oldSp.title;
+      g.children.push(oldSpEntry);
+    }
+    /* 新主夫妇登位：嗣子之妻/赘夫随之主持中馈 */
+    let newSpouse = null;
+    if (heir.spouse && heir.spouse.joined) newSpouse = heir.spouse;
+    g.children = g.children.filter(x => x.alive && x.id !== heir.id);
+    g.gen += step;
+    if (Game.advanceGenChar) for (let i = 0; i < step; i++) Game.advanceGenChar();
+    g.heirId = null;
+    g.pregnancy = null; g.cooldown = 0;
+    g.candidate = null; g.candidates = null;
+    g.spouse = newSpouse ? Object.assign({}, newSpouse, { joined: undefined }) : null;
+    if (g.spouse && g.spouse.favor == null) g.spouse.favor = 70;
+    const nh = { name: heir.name, gender: heir.gender, age: heir.age, stats: heir.stats, alive: true, isSick: false, apt: heir.apt, traits: heir.traits, title: heir.title || null, office: heir.office || null, fatherName: heir.fatherName || "不详", motherName: heir.motherName || "不详", job: null, retired: false, fertility: heir.fertility, infertile: heir.infertile };
+    if (nh.office && nh.office.grade == null) nh.office = null;
+    g.char = nh;
+    /* 其余族人按与新主的世代长幼重定称谓，退位尊长不动 */
+    const elderIds = {}; elderIds[oldHead.id] = 1; if (oldSpEntry) elderIds[oldSpEntry.id] = 1;
+    g.children = g.children.map(x => {
+      if (elderIds[x.id]) return x;
+      const older = x.age >= heir.age;
+      let relation;
+      if (x.id === heir.parentId) relation = x.gender === "男" ? "父" : "母";
+      else if (x.parentId && x.parentId === heir.id) relation = x.gender === "男" ? "子" : "女";
+      else if (!isGrand && !x.parentId) relation = x.gender === "男" ? (older ? "兄" : "弟") : (older ? "姊" : "妹");
+      else if (!isGrand) relation = x.gender === "男" ? "侄子" : "侄女";
+      else if (!x.parentId) relation = x.gender === "男" ? (older ? "伯" : "叔") : "姑";
+      else if (x.parentId === heir.parentId) relation = x.gender === "男" ? (older ? "兄" : "弟") : (older ? "姊" : "妹");
+      else relation = x.gender === "男" ? (older ? "堂兄" : "堂弟") : (older ? "堂姊" : "堂妹");
+      return Object.assign({}, x, { relation });
+    });
+    g.history.push({ gen: g.gen - step, name: old.name, gender: old.gender, age: old.age, title: old.title, post: old.office ? Game.GRADES[old.office.grade] : (old.retired ? "致仕" : "白丁"), years: g.year, reputation: g.family.peakReputation, spouse: oldSp ? oldSp.name : null, kids: g.children.filter(x => x.alive).length, cause: "传位" + heir.name });
+    g.family.history = g.history;
+    g.ap = 2;
+    rep(2);
+    log(`传位大典：${old.name}让位${heir.name}，是为第${g.gen}代家主。老家主夫妇退居后堂颐养天年（不再理家生育）。`, "month");
     Game.save(); Game.refresh();
   };
 
@@ -3733,7 +5619,7 @@ dt-stat,.dt-stats{display:block}
   function driftRel(g) {
     const r = relOf(g);
     RELS.forEach(x => {
-      let d = Math.round((START_REL - r[x.key]) * 0.06);
+      let d = Math.round((START_REL - r[x.key]) * 0.03);   /* 回弹放缓：恩怨记得住，好坏都更持久 */
       if (chance(0.25)) d += chance(0.5) ? 1 : -1;
       r[x.key] = clamp(r[x.key] + d, 0, 100);
     });
@@ -3947,7 +5833,20 @@ dt-stat,.dt-stats{display:block}
     const o = g.char.office;
     if (opt.favor) p += ((o.rel[opt.favor] == null ? START_REL : o.rel[opt.favor]) - START_REL) * 0.003;
     if (opt.stat)  p += ((g.char.stats[opt.stat] || 50) - 50) * 0.004;
-    const res = chance(clamp(p, 0.05, 0.97)) ? opt.win : opt.lose;
+const _raw = chance(clamp(p, 0.05, 0.97)) ? opt.win : opt.lose;
+    const res = Object.assign({}, _raw);
+    if (res.rel) res.rel = Object.assign({}, res.rel);
+    const _bad = res.cls === "bad" || (typeof res.merit === "number" && res.merit < 0);
+    if (_bad && Game.palacePleads) {
+      const sv = Game.palacePleads(g);
+      if (sv) {
+        if (typeof res.merit === "number") res.merit = Math.ceil(res.merit / 2);
+        if (typeof res.rep === "number") res.rep = Math.ceil(res.rep / 2);
+        if (typeof res.money === "number") res.money = Math.ceil(res.money / 2);
+        if (res.rel) Object.keys(res.rel).forEach(k => { res.rel[k] = Math.ceil(res.rel[k] / 2); });
+        l(Game.palacePleadName(sv) + "暗中递话说项，处分从轻。", "");
+      }
+    }
     if (typeof res.merit === "number") o.merit = Math.max(0, o.merit + res.merit);
     if (typeof res.rep === "number") rep(res.rep);
     if (typeof res.money === "number") g.money = Math.max(0, g.money + res.money);
@@ -3988,8 +5887,17 @@ dt-stat,.dt-stats{display:block}
     const dismissCase = () => { if (g.pendingEvent && g.pendingEvent.career) { g.pendingEvent = null; g.locked = false; } };
 
     /* 旧有的贪腐案发 */
-    if ((c.corruption || 0) > 0 && chance(0.25 + c.corruption * 0.15)) {
+if ((c.corruption || 0) > 0 && chance(0.25 + c.corruption * 0.15)) {
       c.corruption = 0;
+      const sv = Game.palacePleads ? Game.palacePleads(g) : null;
+      if (sv) {
+        const ng = Math.max(0, o.grade - 3);
+        const dgr = o.grade - ng;
+        Game.log(Game.palacePleadName(sv) + "闻讯连夜求情，圣上从轻发落：降" + dgr + "级，罚没家财三成。", "good");
+        g.money = Math.round(g.money * 0.7); rep(-8); o.merit = 0;
+        Game.appoint(o.track, ng); dismissCase();
+        return;
+      }
       Game.log("昔年受赇事发，锁拿问罪，革职抄家，体面扫地。", "bad");
       g.money = Math.round(g.money * 0.6); rep(-18); c.office = null; dismissCase();
       return;
@@ -4001,13 +5909,26 @@ dt-stat,.dt-stats{display:block}
 
     /* 君恩尽失：纵有政绩也难自全 */
     if (r.emperor <= LOW && chance(0.45)) {
-      if (o.grade > 0 && chance(0.6)) {
+if (o.grade > 0 && chance(0.6)) {
         const ng = o.grade - 1;
-        Game.appoint(o.track, ng); rep(-6);
-        Game.log(`圣眷既失，言官交章论劾，左迁为${Game.GRADES[ng]}${posts[ng]}。`, "bad");
+        const sv = Game.palacePleads ? Game.palacePleads(g) : null;
+        if (sv) {
+          o.merit = Math.max(0, o.merit - 10); rep(-2);
+          Game.log(Game.palacePleadName(sv) + "于御前哭诉家门忠良，弹章留中不发，官职得保（政绩-10）。", "good");
+        } else {
+          Game.appoint(o.track, ng); rep(-6);
+          Game.log(`圣眷既失，言官交章论劾，左迁为${Game.GRADES[ng]}${posts[ng]}。`, "bad");
+        }
+      } else {
+const svJX = Game.palacePleads ? Game.palacePleads(g) : null;
+      if (svJX) {
+        const ngjx = Math.max(0, o.grade - 2);
+        Game.appoint(o.track, ngjx); rep(-4); o.merit = 0;
+        Game.log(Game.palacePleadName(svJX) + "长跪宫门求情，圣上念旧，从轻降用，官职得保。", "good");
       } else {
         c.office = null; rep(-11); dismissCase();
         Game.log("君恩断绝，一纸诏书罢官冠带，放归田里。", "bad");
+      }
       }
       return;
     }
@@ -4027,10 +5948,18 @@ dt-stat,.dt-stats{display:block}
     }
 
     if (o.merit < thr * 0.4 && r.emperor < 45 && chance(0.5)) {
-      if (o.grade > 0) {
+const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
+      if (svKX && o.grade > 0) {
+        o.merit = 0; rep(-2);
+        Game.log(Game.palacePleadName(svKX) + "托人于吏部说项，考语从轻，官职得保（政绩清零）。", "good");
+      } else if (o.grade > 0) {
         const ng = o.grade - 1;
         Game.appoint(o.track, ng); rep(-5);
         Game.log(`考绩下下，左迁为${Game.GRADES[ng]}${posts[ng]}。`, "bad");
+      } else if (svKX) {
+        const ngjx2 = Math.max(0, o.grade);
+        Game.appoint(o.track, ngjx2); rep(-4); o.merit = 0;
+        Game.log(Game.palacePleadName(svKX) + "苦苦求情，圣上开恩，革职改为降用留任。", "good");
       } else {
         c.office = null; rep(-10); dismissCase();
         Game.log("考绩罢软，奉旨革职，冠带闲住。", "bad");
@@ -4102,8 +6031,10 @@ dt-stat,.dt-stats{display:block}
   }
   /* 族人身份：官身 > 功名 > 营生 > 在学 / 幼 */
   function personStatus(p) {
+    if (p.palace) return { text: "宫中·" + Game.palaceName(p), cls: "office" };
     if (p.office) return { text: officeText(p.office), cls: "office" };
     if (p.title) return { text: titleName(p.title), cls: "title" };
+    if (p.out === "married") return { text: "已出阁", cls: "mute" };
     if (p.age < 3) return { text: "襁褓", cls: "mute" };
     if (p.age < 16) return { text: "在学蒙童", cls: "mute" };
     const j = Game.jobInfo(p.job);
@@ -4177,14 +6108,19 @@ dt-stat,.dt-stats{display:block}
     renderExams();
     renderHouse();
     renderMembers();
+    if (typeof renderGenPoem === "function") renderGenPoem();
+    renderSteward();
     renderLandUse();
     renderGranaryMarket();
     renderHouseholdReport();
     renderShops();
+    if (typeof renderBank === "function") renderBank();
     renderAcademy();
     renderMarriage();
+    if (typeof renderKin === "function") renderKin();
     if (document.activeElement !== $("autoLandInput")) $("autoLandInput").value = g.autoLand || "";
     $("nextBtn").disabled = !c.alive || g.locked;
+    if ($("nextYearBtn")) $("nextYearBtn").disabled = !c.alive || g.locked;
   };
 
   /* ---------------- 己身属性 ---------------- */
@@ -4265,15 +6201,30 @@ dt-stat,.dt-stats{display:block}
   function memberId(m) {
     if (m.role === "head") return "head";
     if (m.role === "spouse") return "sp-" + m.person.id;
+    if (m.role === "inlaw") return "il-" + m.person.id;
     return m.person.id;
   }
   function relBadge(m) {
     if (m.role === "head") return '<span class="rel-badge head">家主</span>';
     if (m.role === "spouse") return `<span class="rel-badge spouse">${m.rel}</span>`;
+    if (m.role === "inlaw") return `<span class="rel-badge kin">${m.rel}</span>`;
     return `<span class="rel-badge kin">${m.rel}</span>`;
+  }
+  function renderAutoDoctor() {
+    const g = Game.G;
+    const host = $("autoDoctorRow");
+    if (!host) return;
+    const cur = g.autoDoctor;
+    const btn = (key, label) => `<button class="btn btn-xs" data-autodoctor="${key}" ${cur === key || (!cur && key === "off") ? "disabled" : ""}>${label}</button>`;
+    host.innerHTML = `<span class="muted">自动延医：</span>`
+      + btn("off", "不自动")
+      + (Game.DOCTORS || []).map(d => btn(d.key, `${d.name}${d.fee}两${d.needRep ? "(望族)" : ""}`)).join("")
+      + `<span class="muted" style="margin-left:6px;">定档后每月自动请该医生给抱病家人看诊，有钱才请。</span>`;
   }
   function renderMembers() {
     const g = Game.G;
+    if (Game.renderHeirRow) Game.renderHeirRow();
+    renderAutoDoctor();
     const members = Game.householdMembers();
     $("membersArea").innerHTML = members.map(m => {
       const p = m.person, st = personStatus(p);
@@ -4288,6 +6239,33 @@ dt-stat,.dt-stats{display:block}
         ${p.isSick ? '<span class="mc-trait tr-bad">需延医</span>' : ''}
       </button>`;
     }).join("");
+  }
+
+  /* 某人的子女：在籍活着的；家主夫妻看子辈，其余看parentId（入门亲眷找其婚配子女） */
+  /* 第几辈：家主夫妻为第g.gen代，伯叔姑减一，子侄辈加一，孙辈加二 */
+  function genOf(m) {
+    const g = Game.G;
+    if (!m || !m.person) return g.gen;
+    if (m.role === "head" || m.role === "spouse") return g.gen;
+    const r = m.person.relation;
+    if (r === "孙" || r === "孙女") return g.gen + 2;
+    if (r === "伯" || r === "叔" || r === "姑") return g.gen - 1;
+    if (r === "子" || r === "女" || r === "侄子" || r === "侄女" || r === "媳" || r === "赘婿") return g.gen + 1;
+    return g.gen;
+  }
+
+  function kidsOf(m) {
+    const g = Game.G;
+    if (!m || !m.person) return [];
+    if (m.role === "head" || m.role === "spouse") {
+      return (g.children || []).filter(x => x.alive && (x.parentId === g.char.id || (!x.parentId && (x.relation === "子" || x.relation === "女"))));
+    }
+    let pid = m.person.id;
+    if (m.role === "inlaw") {
+      const owner = (g.children || []).find(x => x.spouse && x.spouse.id === m.person.id);
+      if (owner) pid = owner.id;
+    }
+    return (g.children || []).filter(x => x.alive && x.parentId === pid);
   }
 
   function showMember(id) {
@@ -4310,9 +6288,55 @@ dt-stat,.dt-stats{display:block}
         <div class="trait-row">${traitChips(p)}</div>
         ${(p.traits || []).length ? `<div class="trait-desc">${p.traits.map(k => { const d = Game.traitDef(k); return d ? `<p><b>${Game.traitName(k, p.gender)}</b>·${d.desc}</p>` : ""; }).join("")}</div>` : ""}
       </div>`;
-    const canMarry = m.role === "child" && p.age >= 15 && !p.married;
-    const marryBtn = canMarry
-      ? `<button class="btn" data-marrymember="${p.id}" style="margin-top:6px;">托媒议亲</button>` : "";
+    /* 婚嫁与入宫：子娶妻入门 / 女出嫁离家或招赘留家 / 女儿另有宫中线 */
+    let marryBtn = "";
+    if (m.role === "child" && !p.married && !p.palace && !p.out && p.age >= 15) {
+      if (p.gender === "男") {
+        marryBtn = `<button class="btn" data-marry-child="${p.id}" style="margin-top:6px;">为其娶妻（媳入门同居）</button>`;
+      } else {
+        marryBtn = `<button class="btn" data-marry-child="${p.id}" style="margin-top:6px;">许嫁出阁（收彩礼离家）</button>`
+          + `<button class="btn" data-uxori-child="${p.id}" style="margin-top:6px;">招赘留家（婿入门从家姓）</button>`
+          + (((Game.G.family.reputation || 0) >= 100 || (p.spouseFamily || 0) >= 80)
+            ? `<p class="muted" style="font-size:12px;">无子之家招赘最宜：婿入门同居，子嗣从${Game.G.surname}姓，来日可承祧。</p>` : "");
+      }
+    }
+    let palaceBtn = "";
+    if (m.role === "child" && p.gender === "女" && !p.married && !p.out && !p.palace) {
+      if (Game.palaceEligible && Game.palaceEligible(p))
+        palaceBtn += `<button class="btn" data-palace-send="${p.id}" style="margin-top:6px;">送入宫为宫女（10两打点）</button>`;
+      if (Game.draftEligible && Game.draftEligible(p))
+        palaceBtn += `<button class="btn" data-palace-draft="${p.id}" style="margin-top:6px;">应选秀（博妃嫔之位）</button>`;
+    }
+    if (m.role === "child" && p.palace) {
+      palaceBtn += `<button class="btn" data-palace-leave="${p.id}" style="margin-top:6px;">赎归出宫</button>`;
+    }
+    if (m.role === "child" && p.married && (!p.out || p.out === "married")) {
+      marryBtn += `<button class="btn" data-divorce-child="${p.id}" style="margin-top:6px;">和离（可再议亲）</button>`;
+    }
+    if (m.role === "child" && p.betrothed && !p.married) {
+      marryBtn += `<p class="muted" style="font-size:12px;margin-top:6px;">已与${p.betrothed.name}（门户${p.betrothed.family}）定亲，十五岁自动完婚。</p>`;
+    }
+    if (m.role === "child" && Game.branchEligible && Game.branchEligible(p)) {
+      marryBtn += `<button class="btn" data-branch-out="${p.id}" style="margin-top:6px;">分家另过（携妻儿单过，需40两）</button>`;
+    }
+    if (m.role === "child" && p.alive && !p.out) {
+      if (Game.G.heirId === p.id)
+        marryBtn += `<button class="btn" data-clear-heir="1" style="margin-top:6px;">撤嗣位</button>`;
+      else
+        marryBtn += `<button class="btn" data-set-heir="${p.id}" style="margin-top:6px;">立为继承人</button>`;
+      if (p.age >= 15)
+        marryBtn += `<button class="btn" data-abdicate="${p.id}" style="margin-top:6px;">传位给他</button>`;
+    }
+    /* 入门亲眷卡上也能办和离：找得到其婚配的子女即可 */
+    if (m.role === "inlaw") {
+      const owner = (Game.G.children || []).find(x => x.spouse && x.spouse.id === p.id && x.married);
+      if (owner) marryBtn += `<button class="btn" data-divorce-child="${owner.id}" style="margin-top:6px;">和离（${owner.name}与${p.name}拆伙，可再议亲）</button>`;
+    }
+    /* 入门亲属注脚 */
+    const inlawNote = m.role === "inlaw"
+      ? `<p class="modal-text">入门亲眷，同居理家，月入 ${p.age >= 16 ? Game.personSalary(p) : 0} 两。</p>` : "";
+    const spouseNote = (m.role === "child" && p.spouse && p.spouse.joined)
+      ? `<p class="modal-text">${p.gender === "男" ? "妻" : "赘夫"}：${p.spouse.name}（门户${p.spouse.family}）同居家中。</p>` : "";
     const sickBlock = p.isSick ? `
       <div class="dt-sick" style="margin-top:10px;border-top:1px dashed #ccc;padding-top:8px;">
         <p class="modal-text" style="color:var(--vermilion-dk)">抱病在身，久病伤身还减半饷，抱病应考-8分，宜速延医。</p>
@@ -4331,12 +6355,15 @@ dt-stat,.dt-stats{display:block}
         }).join("")}</div>
       </div>` : "";
     openModal(`
-      <h3 class="modal-title">${p.name} <span class="muted" style="font-size:14px;">· ${m.rel}</span></h3>
+      <h3 class="modal-title">${p.name} <span class="muted" style="font-size:14px;">· ${m.rel} · 第${genOf(m)}代</span></h3>
       <p class="modal-text">${p.gender} · ${p.age}岁　身份：<b class="ms-${st.cls}">${st.text}</b>${isTeacher ? "　·　族学西席" : ""}${p.married ? "　·　已婚" : ""}</p>
       <div class="dt-stats">${statRows}</div>
       <p class="modal-text" style="margin-top:10px;">
-        功名：${p.title ? titleName(p.title) : "无"}　·　月入：${income} 两${p.age < 16 ? "　·　尚在蒙岁，月耗减半" : ""}
+        功名：${p.title ? titleName(p.title) : "无"}${p.honor ? `　·　<b style="color:var(--vermilion-dk)">${p.honor}${p.honor === "进士" ? "" : (p.title === "jinshi" ? "·进士及第" : "")}</b>` : ""}　·　月入：${income} 两${p.age < 16 ? "　·　尚在蒙岁，月耗减半" : ""}
       </p>
+      <p class="modal-text">父：${p.fatherName || "不详"}　母：${p.motherName || "不详"}</p>
+      <p class="modal-text">生育：${Game.fertilityOf ? Game.fertilityOf(p) : 50}（${Game.fertilityWord ? Game.fertilityWord(p) : ""}）${p.infertile ? " · 已难再孕" : ""}</p>
+      <p class="modal-text">子女：${(() => { const ks = kidsOf(m); return ks.length ? ks.map(k => `<button class="btn btn-xs" data-member="${k.id}">${k.name}（${k.gender}·${k.age}岁）</button>`).join(" ") : "暂无"; })()}</p>
       ${talent}
       ${sickBlock}
       ${birthdayBlock}
@@ -4349,7 +6376,9 @@ dt-stat,.dt-stats{display:block}
           <button class="btn btn-xs" data-rename-confirm="${id}">改名</button>
         </div>
       </div>` : ""}
-      <div class="dt-foot">${marryBtn}<button class="btn modal-close" data-close="1">掩卷</button></div>`);
+      ${inlawNote}
+      ${spouseNote}
+      <div class="dt-foot">${marryBtn}${palaceBtn}<button class="btn modal-close" data-close="1">掩卷</button></div>`);
     const layer = $("modalLayer");
     layer.querySelector("[data-close]").addEventListener("click", closeModal);
     const mb = layer.querySelector("[data-marrymember]");
@@ -4452,12 +6481,24 @@ dt-stat,.dt-stats{display:block}
     const cap = Game.shopCap();
     const atLimit = g.shops.length >= cap;
     $("bizInfo2").textContent = `已开张 ${g.shops.length} 间 · 阖族功名官身可撑 ${cap} 间${atLimit ? "（额度已满）" : ""}`;
+    if ($("upgradeAllBtn")) {
+      const afford = g.shops.some(x => (x.level || 1) < 3 && g.money >= Game.upgradeCost(x));
+      $("upgradeAllBtn").disabled = !afford;
+    }
 
+    const trendTxt = (key) => {
+      const tr = (g.trends && g.trends[key]) || 1;
+      const pct = Math.round((tr - 1) * 100);
+      const arrow = pct > 5 ? "涨↗" : pct < -5 ? "跌↘" : "平→";
+      return `行市${tr.toFixed(2)}（${arrow}${Math.abs(pct)}%）`;
+    };
     $("shopOpenRow").innerHTML = Object.entries(Game.SHOP_TYPES).map(([key, t]) => {
       const afford = g.money >= t.cost;
+      const trc = ((g.trends && g.trends[key]) || 1) >= 1 ? "var(--moss)" : "var(--vermilion-dk)";
       return `<button class="btn" data-open="${key}" ${atLimit || !afford ? "disabled" : ""}>
         <span class="so-name">${t.name}</span>
         <span class="so-cost">${afford ? `本金${t.cost}两` : `需${t.cost}两`} · ${t.tag}</span>
+        <span class="so-cost" style="color:${trc}">${trendTxt(key)}</span>
       </button>`;
     }).join("");
 
@@ -4479,9 +6520,15 @@ dt-stat,.dt-stats{display:block}
       const mul = Game.fameMul(s.fame);
       const price = Game.shopPrice(s);
       const pnl = s.lastProfit || 0;
+      const lv = s.level || 1;
+      const tr = (g.trends && g.trends[s.type]) || 1;
+      const upCost = lv < 3 ? Game.upgradeCost(s) : null;
+      const upNeedM = lv === 1 ? 6 : 12, upNeedF = lv === 1 ? 50 : 70;
+      const upOk = lv < 3 && (s.months || 0) >= upNeedM && (s.fame || 0) >= upNeedF && g.money >= upCost;
+      const upWhy = lv >= 3 ? "" : ((s.months || 0) < upNeedM ? `经营${s.months || 0}/${upNeedM}月` : (s.fame || 0) < upNeedF ? `口碑${s.fame}/${upNeedF}` : `需${upCost}两`);
       return `<div class="shop-card ${s.discount ? "discounting" : ""}">
         <div class="shop-head">
-          <b>${t.name}</b>
+          <b>${t.name}·${Game.shopLevelName(lv)}</b>
           <span class="shop-pnl ${pnl >= 0 ? "up" : "down"}">上月 ${pnl >= 0 ? "+" : ""}${pnl}两</span>
         </div>
         <div class="shop-fame">
@@ -4489,16 +6536,38 @@ dt-stat,.dt-stats{display:block}
           <span class="fame-num">口碑 ${s.fame}</span>
           <span class="fame-mul">×${mul.toFixed(2)}</span>
         </div>
+        <div class="muted" style="font-size:12px;margin:2px 0;">本行行市 ×${tr.toFixed(2)}${tr >= 1 ? "（顺风）" : "（逆风）"} · 伙计${s.clerks || 0}/2人（工钱${(s.clerks || 0) * 2}两/月，流水+${(s.clerks || 0) * 10}%）</div>
         <div class="shop-foot">
           <span class="muted">${t.tag} · 月用度${t.upkeep}两</span>
           ${s.discount ? '<span class="shop-tag-disc">本月打折</span>' : ""}
           <span class="btn-row">
             <button class="btn btn-xs" data-discount="${s.id}">${s.discount ? "停止打折" : "打折酬宾"}</button>
+            <button class="btn btn-xs" data-hire-clerk="${s.id}" ${(s.clerks || 0) >= 2 ? "disabled" : ""}>雇伙计</button>
+            ${(s.clerks || 0) > 0 ? `<button class="btn btn-xs" data-dismiss-clerk="${s.id}">辞伙计</button>` : ""}
+            ${upCost != null ? `<button class="btn btn-xs" data-upgrade-shop="${s.id}" ${upOk ? "" : "disabled"}>升${Game.shopLevelName(lv + 1)}${upWhy}</button>` : `<span class="muted">三级老字号</span>`}
             <button class="btn btn-xs" data-sellshop="${s.id}">盘出约${price}两</button>
           </span>
         </div>
       </div>`;
     }).join("") + capNote;
+  }
+
+  /* ---------------- 钱庄 ---------------- */
+  function renderBank() {
+    const g = Game.G;
+    const host = $("bankArea");
+    if (!host) return;
+    if (!g.bank) g.bank = { deposit: 0, loan: 0 };
+    host.innerHTML = `
+      <p>庄存 <b>${g.bank.deposit}</b> 两（月息一分）　欠账 <b style="color:${g.bank.loan > 0 ? "var(--vermilion-dk)" : "inherit"}">${g.bank.loan}</b> 两（月息五分）</p>
+      <div class="land-deal">
+        <input type="number" id="bankAmt" min="1" step="1" placeholder="银两">
+        <button class="btn btn-xs" data-bank="deposit">存入</button>
+        <button class="btn btn-xs" data-bank="withdraw">取出</button>
+        <button class="btn btn-xs" data-bank="borrow">借入</button>
+        <button class="btn btn-xs" data-bank="repay">还欠</button>
+      </div>
+      <p class="muted" style="font-size:12px;">存款每月自动结息；欠账每月自动扣息，记得还本。</p>`;
   }
 
   /* ---------------- 族学 ---------------- */
@@ -4606,6 +6675,7 @@ dt-stat,.dt-stats{display:block}
           <div class="spouse-head"><b>${s.name}</b><span class="muted">${g.char.gender === "男" ? "妻" : "赘夫"} · ${s.age}岁 · 门户${s.family || "?"}</span></div>
           <div class="rel-track"><i style="width:${s.favor}%"></i></div>
           <p class="muted">夫妻好感 ${s.favor}/100 · ${tip}（每月-1，多陪伴可增；好感高更易添丁，过低配偶可能出走）</p>
+          <p class="muted">子嗣缘：你${Game.fertilityOf ? Game.fertilityOf(g.char) : "?"} · ${s.name}${Game.fertilityOf ? Game.fertilityOf(s) : "?"}${s.infertile || g.char.infertile ? "（一方已难再孕，添丁无望）" : ""}</p>
           <div class="btn-row">
             <button class="btn btn-xs" data-spouse-care="1" ${(g.ap || 0) <= 0 ? "disabled" : ""}>陪伴(1精力)</button>
             <button class="btn btn-xs" data-spouse-gift="small" ${g.money < 5 ? "disabled" : ""}>赠点心5两</button>
@@ -4625,7 +6695,8 @@ dt-stat,.dt-stats{display:block}
   function renderContacts() {
     const g = Game.G;
     const list = g.contacts || [];
-    const kids = g.children.filter(x => x.alive && !x.married && x.age >= 15);
+    const kids = g.children.filter(x => x.alive && !x.married && !x.palace && !x.out && !x.betrothed && x.age >= 15);
+    const youngKids = g.children.filter(x => x.alive && !x.married && !x.palace && !x.out && !x.betrothed && x.age < 15);
     const sortList = (arr) => arr.slice().sort((a, b) => {
       if (contactsSort === "family") return (b.family || 0) - (a.family || 0);
       if (contactsSort === "apt") return ((b.apt && b.apt.智力) || 0) - ((a.apt && a.apt.智力) || 0);
@@ -4644,14 +6715,17 @@ dt-stat,.dt-stats{display:block}
           <div class="apt-row">${aptRows(ct)}</div>
           <div class="trait-row">${traitChips(ct)}</div>
           <div class="rel-track" style="margin:4px 0;"><i style="display:block;height:6px;background:linear-gradient(90deg,#c86,#a52);width:${ct.favor}%"></i></div>
-          <p class="muted">好感 ${ct.favor}/100 ${ct.favor >= 80 ? "· 可提亲" : "· 拜访赠礼可增，每月-1"}</p>
+          <p class="muted">${ct.favor >= 80
+            ? `好感 ${ct.favor}/100 · <b style="color:var(--vermilion-dk)">已可提亲！</b>`
+            : `好感 ${ct.favor}/100 · 距提亲还差 <b>${80 - ct.favor}</b>（约拜访${Math.ceil((80 - ct.favor) / 6)}次或厚礼${Math.ceil((80 - ct.favor) / 11)}次）· 若不走动约${ct.favor}月后淡忘（每月-1）`}</p>
           <div class="btn-row">
             <button class="btn btn-xs" data-visit-ct="${ct.id}" ${(g.ap || 0) <= 0 ? "disabled" : ""}>拜访(1精力+3两)</button>
             <button class="btn btn-xs" data-gift-ct="${ct.id}" data-level="small" ${g.money < 5 ? "disabled" : ""}>薄礼5两</button>
             <button class="btn btn-xs" data-gift-ct="${ct.id}" data-level="mid" ${g.money < 20 ? "disabled" : ""}>厚礼20两</button>
             <button class="btn btn-xs" data-gift-ct="${ct.id}" data-level="big" ${g.money < 60 ? "disabled" : ""}>珠宝60两</button>
             ${(!g.spouse && g.char.gender !== ct.gender) ? `<button class="btn btn-xs" data-propose-ct="${ct.id}" ${ct.favor < 80 ? "disabled" : ""}>提亲迎娶</button>` : ""}
-            ${kids.filter(k => k.gender !== ct.gender).map(k => `<button class="btn btn-xs" data-propose-ct="${ct.id}" data-child="${k.id}" ${ct.favor < 80 ? "disabled" : ""}>为${k.name}说亲</button>`).join("")}
+            ${kids.length && ct.favor >= 80 ? `<button class="btn btn-xs" data-match-contact="${ct.id}">为族人说亲（${kids.length}位可选）</button>` : ""}
+            ${youngKids.filter(k => k.gender !== ct.gender).map(k => `<button class="btn btn-xs" data-betroth-ct="${ct.id}" data-child="${k.id}" ${ct.favor < 80 ? "disabled" : ""}>为${k.name}(${k.age}岁)定亲</button>`).join("")}
             <button class="btn btn-xs" data-dismiss-ct="${ct.id}">断交</button>
           </div>
         </div>`;
@@ -4666,7 +6740,33 @@ dt-stat,.dt-stats{display:block}
         ${fBtn("royal", "皇亲", royals.length)}
         <span class="muted" style="margin-left:6px;">排序：</span>
         ${sBtn("favor", "好感")}${sBtn("family", "门户")}${sBtn("apt", "天赋")}
+      </div>
+      <div class="btn-row" style="margin-bottom:8px;">
+        <span class="muted">名帖（${list.length}/8）· 高门另有阖族好感，每月-2，更难维持</span>
       </div>`;
+    /* 高门世家：固定五姓，旧时王谢堂前燕 */
+    const clanCard = (t) => {
+      const f = Game.clanFavorOf(Game.G, t.key);
+      const needM = Math.max(0, 85 - f), needR = Math.max(0, 90 - f);
+      const canOffice = !!(Game.G.char.office);
+      const recCd = Game.G.clanRec && Game.G.clanRec[t.key] === Game.G.year;
+      return `
+        <div class="tc-card" style="margin-top:6px;border-left:3px solid var(--gold);">
+          <div class="tc-head"><b>${t.name}</b><span class="muted">${t.motto} · ${t.desc}</span></div>
+          <p class="muted">门户约${t.family[0]}–${t.family[1]} · 子弟天赋更佳（${t.tilt}突出），聘礼约为门户两倍，嫁女须倒贴嫁妆（+声望、惹君忌）</p>
+          <div class="rel-track" style="margin:4px 0;"><i style="display:block;height:6px;background:linear-gradient(90deg,#c9a227,#8a6d1f);width:${f}%"></i></div>
+          <p class="muted">阖族好感 ${f}/100（每月-2，更难维持）${f >= 85 ? ' · <b style="color:var(--vermilion-dk)">可提亲！</b>' : ` · 距提亲还差 <b>${needM}</b>`}${f >= 90 ? ' · <b style="color:var(--vermilion-dk)">可举荐！</b>' : ` · 距举荐还差 <b>${needR}</b>`}</p>
+          <div class="btn-row">
+            <button class="btn btn-xs" data-visit-clan="${t.key}" ${(Game.G.ap || 0) <= 0 ? "disabled" : ""}>拜访(1精力+8两)</button>
+            <button class="btn btn-xs" data-gift-clan="${t.key}" ${Game.G.money < 30 ? "disabled" : ""}>厚礼30两</button>
+            ${(!Game.G.spouse) ? `<button class="btn btn-xs" data-propose-clan="${t.key}" ${f < 85 ? "disabled" : ""}>提亲迎娶/入赘</button>` : ""}
+            ${kids.length && f >= 85 ? `<button class="btn btn-xs" data-match-clan="${t.key}">为族人说亲（${kids.length}位可选）</button>` : ""}
+            ${canOffice ? `<button class="btn btn-xs" data-recommend-clan="${t.key}" ${f < 90 || recCd ? "disabled" : ""}>${recCd ? "今年已举荐" : "求举荐(直升一级)"}</button>` : `<span class="muted">举荐需先有官身</span>`}
+          </div>
+        </div>`;
+    };
+    const clanHtml = `<p class="muted" style="margin:4px 0;">旧时王谢堂前燕——高门五姓，阖族一个好感，比寻常往来难维持，可娶可嫁可举荐，只是皇帝猜忌。</p>` + (Game.GREAT_CLANS || []).map(clanCard).join("");
+
       const section = (title, arr) => arr.length ? `<p class="ac-sub" style="margin-top:10px;">${title}（${arr.length}人）</p>${arr.map(card).join("")}` : "";
       let body = "";
       if (!list.length) {
@@ -4677,7 +6777,7 @@ dt-stat,.dt-stats{display:block}
       } else {
         body = view.length ? view.map(card).join("") : '<p class="muted">此组暂无。好感80可提亲，多拜访赠礼；皇亲需声望220多度月。</p>';
       }
-      main.innerHTML = controls + body;
+      main.innerHTML = controls + clanHtml + body;
     }
     /* 姻亲页只留个引子，避免两边重复按钮 */
     let host = document.querySelector('[data-candidate-host]');
@@ -4695,24 +6795,84 @@ dt-stat,.dt-stats{display:block}
     const g = Game.G;
     const host = document.querySelector('[data-candidate-host]');
     let slot = $("candidateSlot");
-    if (!g.candidate) { if (slot) slot.remove(); return; }
-    const c = g.candidate;
+    const list = g.candidates && g.candidates.length ? g.candidates : (g.candidate ? [g.candidate] : null);
+    if (!list) { if (slot) slot.remove(); return; }
+    const card = (c, i) => `
+      <div class="tc-card" style="margin-top:6px;">
+        <p><span class="cc-name">${c.name}</span>　<span class="muted">${c.gender} · ${c.age}岁 · 门户${c.family}</span></p>
+        <p class="muted">体力${c.stats.体力}　智力${c.stats.智力}　武力${c.stats.武力}　魅力${c.stats.魅力}</p>
+        <div class="apt-row cc-apt">${aptRows(c)}</div>
+        <div class="trait-row">${traitChips(c)}</div>
+        <p>聘礼 <b style="color:var(--vermilion-dk)">${c.gift}</b> 两</p>
+        <div class="btn-row"><button class="btn btn-xs" data-propose="${i}">相中TA，下聘</button></div>
+      </div>`;
     const html = `<div class="candidate-card" id="candidateSlot">
-      <p><span class="cc-name">${c.name}</span>　<span class="muted">${c.gender} · ${c.age}岁 · 门户${c.family}</span></p>
-      <p class="muted">体力${c.stats.体力}　智力${c.stats.智力}　武力${c.stats.武力}　魅力${c.stats.魅力}</p>
-      <div class="apt-row cc-apt">${aptRows(c)}</div>
-      <div class="trait-row">${traitChips(c)}</div>
-      <p>聘礼 <b style="color:var(--vermilion-dk)">${c.gift}</b> 两</p>
-      <div class="btn-row">
-        <button class="btn btn-xs" data-propose="1">应允下聘</button>
-        <button class="btn btn-xs" data-reject="1">婉拒</button>
-      </div>
+      <p><b>说亲对象（${list.length}位）</b> <span class="muted">中意便下聘，全不中意就婉拒，下个月再请媒</span></p>
+      ${list.map(card).join("")}
+      <div class="btn-row"><button class="btn btn-xs" data-reject="1">三位都婉拒</button></div>
     </div>`;
     if (slot) slot.outerHTML = html;
     else host.insertAdjacentHTML("beforeend", html);
   }
 
+  /* ---------------- 字辈诗 ---------------- */
+  function renderGenPoem() {
+    const g = Game.G;
+    const host = $("genPoemRow");
+    if (!host) return;
+    const poem = g.family.genPoem;
+    const presets = (Game.GEN_POEMS || []).map((t, i) =>
+      `<button class="btn btn-xs" data-genpoem-use="${i}" title="${t.chars}">${t.name}</button>`).join("");
+    host.innerHTML = poem
+      ? `<p class="muted" style="font-size:12px;margin:4px 0;">现行字辈诗（${poem.length}字循环）：<b>${poem.length > 24 ? poem.slice(0, 24) + "……" : poem}</b></p>
+         <div class="genchar-row"><input type="text" id="genPoemEdit" style="width:150px" placeholder="粘贴整首另立新诗"><button class="btn btn-xs" data-genpoem-set="1">另立</button><button class="btn btn-xs" data-genpoem-clear="1">撤诗</button></div>`
+      : `<p class="muted" style="font-size:12px;margin:4px 0;">未立字辈诗（单字顺进）。可用现成三首，或自填整首：</p>
+         <div class="btn-row">${presets}</div>
+         <div class="genchar-row"><input type="text" id="genPoemEdit" style="width:150px" placeholder="如：忠孝传家远诗书继世长"><button class="btn btn-xs" data-genpoem-set="1">立此诗</button></div>`;
+  }
+
+  /* ---------------- 田庄：庄头 ---------------- */
+  function renderSteward() {
+    const g = Game.G;
+    const host = $("stewardArea");
+    if (!host) return;
+    if (!g.steward) {
+      host.innerHTML = `<div class="btn-row">${(Game.STEWARDS || []).map(t => {
+        const ok = g.family.reputation >= (t.needRep || 0);
+        return `<button class="btn btn-xs" data-hire-steward="${t.kind}" ${!ok || g.money < t.wage ? "disabled" : ""}>聘${t.name} ${t.wage}两/月${t.bonus ? "·收成+" + Math.round(t.bonus * 100) + "%" : ""}${t.needRep ? "·需声望" + t.needRep : ""}</button>`;
+      }).join("")}</div>
+      <p class="muted" style="font-size:12px;margin-top:4px;">${(Game.STEWARDS || []).map(t => `${t.name}：${t.desc}`).join("；")}。</p>`;
+      return;
+    }
+    const st = g.steward;
+    host.innerHTML = `
+      <p><b>${st.name}</b> <span class="muted">月钱${st.wage}两${st.bonus ? " · 收成+" + Math.round(st.bonus * 100) + "%" : ""}</span>
+      <button class="btn btn-xs" data-dismiss-steward="1">辞退</button></p>
+      <p class="muted" style="font-size:12px;">当季自动把分派田种满，种子工本照支，钱不够则量力少种；分派多少就种多少，不用你再点。</p>
+      ${Game.FOOD_KEYS.map(k => {
+        const crop = Game.cropInfo(k);
+        const standing = Game.standingMu(g, k);
+        return `<div class="grain-row"><span class="gr-name">${crop.name}</span>
+          <span class="muted">分派${g.landUse[k] || 0}亩 · 在田${standing}亩</span></div>`;
+      }).join("")}`;
+  }
   /* ---------------- 田庄：田亩分派 ---------------- */
+  /* 近三月均价 + 走势小条 */
+  function sparkHtml(arr) {
+    if (!arr || arr.length < 2) return '<span class="muted">数据尚少</span>';
+    const mn = Math.min(...arr), mx = Math.max(...arr);
+    const bars = "▁▂▃▄▅▆▇";
+    return '<span class="spark">' + arr.slice(-6).map(v => {
+      const i = mx === mn ? 3 : Math.round((v - mn) / (mx - mn) * 6);
+      const up = v >= arr[0];
+      return `<em class="${up ? "up" : "dn"}">${bars[i]}</em>`;
+    }).join("") + "</span>";
+  }
+  function trendHtml(arr, unit) {
+    const avg = Game.avg3 ? Game.avg3(arr) : null;
+    if (avg == null) return "";
+    return `近三月均价 <b>${avg}</b> ${unit} ${sparkHtml(arr)}`;
+  }
   const useName = (k) => { const u = Game.LAND_USES.find(x => x.key === k); return u ? u.name : k; };
   const mrange = (arr) => arr.length === 1 ? `${arr[0]}月` : `${arr[0]}–${arr[arr.length - 1]}月`;
   function renderLandUse() {
@@ -4720,6 +6880,13 @@ dt-stat,.dt-stats{display:block}
     const allocated = Game.landAllocated();
     $("landAllocInfo").textContent = `共 ${g.land} 亩，已分派 ${allocated} 亩 · 今为${g.month}月`;
     $("landPriceInfo").textContent = g.landPrice;
+    const lpTrend = trendHtml(g.priceHist && g.priceHist.land, "两/亩");
+    if (lpTrend && !$("landTrend")) {
+      const el = document.createElement("span");
+      el.id = "landTrend"; el.className = "muted"; el.style.marginLeft = "8px";
+      $("landPriceInfo").after(el);
+    }
+    if ($("landTrend")) $("landTrend").innerHTML = lpTrend;
 
     $("landUseList").innerHTML = Game.LAND_USES.map(use => {
       const mu = u[use.key] || 0;
@@ -4784,12 +6951,14 @@ dt-stat,.dt-stats{display:block}
 
     $("marketList").innerHTML = Game.FOOD_KEYS.map(k => {
       const use = Game.LAND_USES.find(x => x.key === k);
+      const tr = trendHtml(g.priceHist && g.priceHist[k], "两/斗");
       return `<div class="market-row">
         <div class="mr-head">
           <b>${Game.FOOD_NAME[k]}粮</b>
           <span class="muted">${use ? use.desc : ""}</span>
           <span class="mr-price">${g.market[k]} 两/斗</span>
         </div>
+        ${tr ? `<div class="muted price-trend">${tr}</div>` : ""}
         <div class="mr-deal">
           <input type="number" min="1" step="1" placeholder="斗数" id="foodIn_${k}">
           <button class="btn btn-xs" data-buyfood="${k}">籴入</button>
@@ -4809,6 +6978,12 @@ dt-stat,.dt-stats{display:block}
       `${Game.FOOD_NAME[k]}${g["_yield_" + k]}斗`);
     rows.push(["诸色出产", yld.length ? yld.join("、") : "—"]);
     rows.push(["族人月钱", g._lastSalaries ? "+" + g._lastSalaries + " 两" : "—"]);
+    if (g._lastPalaceRemit > 0) rows.push(["宫中寄俸", "+" + g._lastPalaceRemit + " 两"]);
+    if (g.steward) rows.push(["庄头工钱", "−" + g.steward.wage + " 两（含宅修应酬）"]);
+    if (g._lastBill && g._lastBill.seedCost) rows.push(["种子工本", "−" + g._lastBill.seedCost + " 两"]);
+    if (g._lastBill && g._lastBill.doctorCost) rows.push(["延医药费", "−" + g._lastBill.doctorCost + " 两"]);
+    if (g._lastBill && g._lastBill.bankDepInt) rows.push(["钱庄利息", "+" + g._lastBill.bankDepInt + " 两"]);
+    if (g._lastBill && g._lastBill.bankLoanInt) rows.push(["借贷利息", "−" + g._lastBill.bankLoanInt + " 两"]);
     if (h) {
       rows.push(["口粮采买", h.foodCost ? "−" + h.foodCost + " 两" : "仓粮自给"]);
       rows.push(["门第日用", "−" + h.living + " 两（" + h.tier + "）"]);
@@ -4833,6 +7008,7 @@ dt-stat,.dt-stats{display:block}
       : "暂无在途商队";
     $("householdReport").innerHTML =
       '<p class="muted panel-hint">上月度月所结，今月行情看田庄各项。</p>' +
+      (g._lastBill ? '<div class="btn-row" style="margin-bottom:6px;"><button class="btn btn-xs" data-bill="1">查看上月账单</button></div>' : "") +
       '<ul class="report-list">' +
       rows.map(([k, v]) => `<li><span>${k}</span><b>${v}</b></li>`).join("") +
       "</ul>" +
@@ -4846,6 +7022,244 @@ dt-stat,.dt-stats{display:block}
       ).join("")}</div>` +
       `<p class="muted panel-hint">祭祖换声望+祖佑，商队以小博大，皆是花钱的去处；赋税修缮应酬每月照纳，钱再也不会堆着发霉。</p>`;
   }
+
+  /* ---------------- 年度小结（度年收尾） ---------------- */
+  Game.showYearSummary = function (start, steps, stopReason) {
+    const g = Game.G;
+    if (!g) return;
+    const dMoney = Math.round((g.money - start.money) * 100) / 100;
+    const dRep = g.family.reputation - start.rep;
+    const kids = g.children.filter(x => x.alive).length;
+    const lines = (g.logs || []).slice(start.logLen).filter(e => e.c !== "month");
+    const notable = lines.filter(e => /诞下|诞生|高中|传胪|及第|状元|榜眼|探花|解元|会元|授|晋位|晋为|娶|嫁|招赘|入宫|选秀|逝|夭折|出宫|放出/.test(e.t)).slice(-8);
+    openModal(`
+      <h3 class="modal-title">年度小结 <span class="muted">第${start.year}年${start.month}月 → 第${g.year}年${g.month}月（凡${steps}月）</span></h3>
+      <div class="bill-table">
+        <div class="bill-row"><span>银两</span><b>${start.money} 两 → ${Math.round(g.money * 100) / 100} 两（${dMoney >= 0 ? "+" : ""}${dMoney}）</b></div>
+        <div class="bill-row"><span>声望</span><b>${start.rep} → ${g.family.reputation}（${dRep >= 0 ? "+" : ""}${dRep}）</b></div>
+        <div class="bill-row"><span>在册子嗣</span><b>${start.kids} → ${kids} 人</b></div>
+        <div class="bill-row total"><span>仓廪今剩</span><b>${Game.FOOD_KEYS.map(k => `${Game.FOOD_NAME[k]}${Math.round(g.granary[k])}斗`).join("、")}</b></div>
+      </div>
+      ${notable.length ? `<p class="muted" style="margin:8px 0 4px;">年中大事记</p><ul class="bill-logs">${notable.map(e => `<li class="${e.c || ""}">${e.t}</li>`).join("")}</ul>`
+        : `<p class="muted">这一年风平浪静——大事都记在家事编年里，月账单可回看。</p>`}
+      ${stopReason === "sick" ? `<p style="color:var(--vermilion-dk)">家主抱病在身，度年在此停下——先去人物详情延医治病，再继续度年。</p>` : ""}
+      <p class="muted" style="font-size:12px;">度年逢抉择、抱病、丧事会自动停下，细账见每月账单。</p>
+      <div class="modal-choices"><button class="btn btn-primary" data-year-ok="1">知道了</button></div>`);
+    $("modalLayer").querySelector("[data-year-ok]").addEventListener("click", () => { closeModal(); Game.flushXibao(); });
+  };
+  /* ---------------- 月度账单 ---------------- */
+  Game.showBill = function () {
+    const g = Game.G;
+    const b = g && g._lastBill;
+    if (!b) { if (Game.afterBill) Game.afterBill(); return; }
+    const shopTxt = b.shops.length
+      ? b.shops.map(x => `${(Game.SHOP_TYPES[x.type] || {}).name || x.type}${x.profit >= 0 ? "+" : ""}${x.profit}`).join("、")
+      : "尚无铺号";
+    const yldTxt = ["rice", "wheat", "veg", "fruit"].filter(k => b.yields[k]).map(k => `${Game.FOOD_NAME[k]}${b.yields[k]}斗`).join("、") || "本月无收成";
+    const granTxt = ["rice", "wheat", "veg", "fruit"].map(k => `${Game.FOOD_NAME[k]}${Math.round(b.granary[k])}斗`).join("、");
+    const logs = (b.monthLogs || []).map(e => `<li class="${e.c || ""}">${e.t}</li>`).join("");
+    openModal(`
+      <h3 class="modal-title">月度账单 <span class="muted">第${b.year}年${b.month}月</span></h3>
+      <p class="muted">${b.weather ? "天时：" + b.weather + "。" : ""}月初银 ${b.moneyBefore} 两 → 月末银 ${b.moneyAfter} 两</p>
+      <div class="bill-table">
+        <div class="bill-row"><span>佃租</span><b>+${b.rent} 两</b></div>
+        <div class="bill-row"><span>族人月钱</span><b>+${b.salaries} 两</b></div>
+        <div class="bill-row"><span>铺号盈亏</span><b>${shopTxt}</b></div>
+        <div class="bill-row"><span>田间出产</span><b>${yldTxt}</b></div>
+      ${b.seedCost ? `<div class="bill-row"><span>种子工本</span><b>−${b.seedCost} 两</b></div>` : ""}
+      ${b.doctorCost ? `<div class="bill-row"><span>延医药费</span><b>−${b.doctorCost} 两</b></div>` : ""}
+      ${b.bankDepInt ? `<div class="bill-row"><span>钱庄利息</span><b>+${b.bankDepInt} 两</b></div>` : ""}
+      ${b.bankLoanInt ? `<div class="bill-row"><span>借贷利息</span><b>−${b.bankLoanInt} 两</b></div>` : ""}
+        <div class="bill-row"><span>口粮采买</span><b>−${b.foodCost} 两</b></div>
+        <div class="bill-row"><span>门第日用</span><b>−${b.living} 两</b></div>
+        <div class="bill-row"><span>赋税徭役</span><b>−${b.tax} 两</b></div>
+        <div class="bill-row"><span>宅修应酬</span><b>−${b.upkeep} 两</b></div>
+      ${b.stewardWage ? `<div class="bill-row"><span>庄头工钱</span><b>−${b.stewardWage} 两（含上）</b></div>` : ""}
+        <div class="bill-row total"><span>仓廪今剩</span><b>${granTxt}</b></div>
+      </div>
+      ${logs ? `<p class="muted" style="margin:8px 0 4px;">本月际遇回放</p><ul class="bill-logs">${logs}</ul>` : `<p class="muted">本月平安无事，无甚际遇。</p>`}
+      ${g.pendingEvent ? `<p class="muted">另有一桩抉择待你定夺……</p>` : ""}
+      <div class="modal-choices"><button class="btn btn-primary" data-bill-close="1">知道了${g.pendingEvent ? "，看那桩事" : ""}</button></div>`);
+    $("modalLayer").querySelector("[data-bill-close]").addEventListener("click", () => {
+      closeModal();
+      if (Game._heldEvent) { Game.G.pendingEvent = Game._heldEvent; Game._heldEvent = null; return; }
+      if (Game.afterBill) Game.afterBill();
+    });
+  };
+  Game.showBillSilent = function () {
+    const g = Game.G;
+    if (!g || !g._lastBill) return;
+    /* 静默重看：暂扣抉择事件，看完只还原、不触发 */
+    Game._heldEvent = g.pendingEvent || null;
+    g.pendingEvent = null;
+    Game.showBill();
+  };
+
+  /* ---------------- 子女说亲三选一 ---------------- */
+  Game.showChildCandidates = function () {
+    const g = Game.G;
+    const cc = g && g.childCandidates;
+    if (!cc) return;
+    const c = g.children.find(x => x.id === cc.childId);
+    if (!c) { g.childCandidates = null; return; }
+    const verb = cc.mode === "uxori" ? "招赘（婿入门从家姓）" : (c.gender === "男" ? "娶妻（媳入门同居）" : "出嫁（收彩礼离家）");
+    openModal(`
+      <h3 class="modal-title">为${c.name}${verb}</h3>
+      <p class="muted">三位候选，家世品貌全亮出来，中意便下聘，不中意就“以后再说”，下个月还有。</p>
+      ${cc.list.map((p, i) => `
+        <div class="tc-card">
+          <div class="tc-head"><b>${p.name}</b><span class="muted">${p.gender}·${p.age}岁·门户${p.family}</span></div>
+          <p class="muted" style="font-size:13px;">体力${p.stats.体力}　智力${p.stats.智力}　武力${p.stats.武力}　魅力${p.stats.魅力}</p>
+          <div class="apt-row">${aptRows(p)}</div>
+          <div class="trait-row">${traitChips(p)}</div>
+          <p>${cc.mode === "uxori" || c.gender === "男" ? `聘礼 <b style="color:var(--vermilion-dk)">${p._cost}</b> 两` : `彩礼 <b style="color:var(--vermilion-dk)">+${p._gift}</b> 两`}</p>
+          <div class="btn-row"><button class="btn btn-xs" data-child-pick="${i}">选TA</button></div>
+        </div>`).join("")}
+      <div class="modal-choices"><button class="btn" data-child-dismiss="1">以后再说</button></div>`);
+    $("modalLayer").querySelector("[data-child-dismiss]").addEventListener("click", () => {
+      closeModal();
+      Game.dismissChildCandidates();
+    });
+    $("modalLayer").querySelectorAll("[data-child-pick]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        closeModal();
+        Game.confirmChildCandidate(Number(btn.dataset.childPick));
+      });
+    });
+  };
+  /* ---------------- 族亲（离家的人） ---------------- */
+  function renderKin() {
+    const g = Game.G;
+    const host = $("kinArea");
+    if (!host) return;
+    const clan = (g.family.clan == null ? 50 : g.family.clan);
+    let html = `<p class="muted">宗族情分 <b style="font-size:16px;color:${clan >= 90 ? "var(--moss)" : clan < 30 ? "var(--vermilion-dk)" : "inherit"}">${clan}</b>/100　${clan >= 90 ? "· 宗族和睦，年终添声望" : clan < 30 ? "· 离心离德，当心生事" : "· 祭祖、周济族人可加深"}${g.char.office && g.char.office.rel ? "（另有官场五方关系，在仕学仕途履历中查看）" : ""}</p>`;
+    const branches = g.branches || [];
+    const outDaus = g.children.filter(x => x.alive && x.out === "married");
+    const palace = g.children.filter(x => x.alive && x.out === "palace");
+    const canRecall = Game.malesAtHome ? Game.malesAtHome(g) === 0 : false;
+    html += "<p class=\"ac-sub\">分家各支（" + branches.length + "支）</p>";
+    if (!branches.length) {
+      html += '<p class="muted">暂无分家。成年男丁可在其人物详情中“分家另过”（需40两安家银）。</p>';
+    } else {
+      html += branches.map(br => {
+        const mems = g.children.filter(x => x.alive && x.branchId === br.id);
+        const names = mems.map(x => `<button class="btn btn-xs" data-member="${x.id}">${x.name}</button><span class="muted" style="font-size:12px;">(${(x.relation || "族人")}·${x.age}岁)</span>`).join(" ") || br.headName;
+        const ok = canRecall;
+        return `<div class="tc-card"><div class="tc-head"><b>${br.headName}一支</b>`
+          + `<span class="muted">第${g.year - br.sinceYear + 1}年分出 · ${mems.length}口</span></div>`
+          + `<p class="muted" style="font-size:13px;">${names}</p>`
+          + (ok ? `<div class="btn-row"><button class="btn btn-xs" data-recall="${br.id}">迎归宗（家中已无男丁）</button></div>`
+            : `<p class="muted" style="font-size:12px;">分家各过各的；家中尚有男丁，不得喊回。</p>`) + "</div>";
+      }).join("");
+    }
+    html += "<p class=\"ac-sub\" style=\"margin-top:10px;\">出阁女（" + outDaus.length + "人）</p>";
+    html += outDaus.length
+      ? outDaus.map(x => `<div class="tc-card"><div class="tc-head"><b>${x.name}</b><span class="muted">${x.age}岁 · 配${x.spouseName || "夫家"}</span></div><div class="btn-row"><button class="btn btn-xs" data-member="${x.id}">查看</button></div></div>`).join("")
+      : '<p class="muted">暂无。</p>';
+    html += "<p class=\"ac-sub\" style=\"margin-top:10px;\">宫中女（" + palace.length + "人）</p>";
+    html += palace.length
+      ? palace.map(x => `<div class="tc-card"><div class="tc-head"><b>${x.name}</b><span class="muted">${Game.palaceName(x)} · ${x.age}岁</span></div>`
+        + `<p class="muted" style="font-size:12px;">${x.palace.track === "consort" ? "月俸自用；危难时可递话说情（位分越高分量越重），偶或需家中接济" : "月俸自给；熬出位分方能说情荫家"}${Game.topPalace && Game.topPalace(g) === x ? " · 现为家中最大奥援" : ""}</p><div class="btn-row"><button class="btn btn-xs" data-member="${x.id}">查看（可办出宫）</button></div></div>`).join("")
+      : '<p class="muted">暂无。女儿入宫不寄家用；高位者危难说情、荫家开铺，偶或需家中接济。</p>';
+    /* 宫中皇嗣与夺嫡 */
+    const rk = (g.royalKids || []).filter(x => x.alive);
+    const sst = Game.successionStatus ? Game.successionStatus(g) : null;
+    if (rk.length || sst) {
+      html += "<p class=\"ac-sub\" style=\"margin-top:10px;\">宫中皇嗣" + (g.successionWon ? "（已定·你家赢了）" : g.successionDone ? "（已定·落败）" : "（夺嫡未定）") + "</p>";
+      html += rk.length
+        ? rk.map(x => `<div class="tc-card"><div class="tc-head"><b>${x.name}</b><span class="muted">${x.gender === "男" ? "皇子" : "公主"} · ${x.age}岁 · 母${(() => { const m = (g.children || []).find(c => c.id === x.motherId); return m ? m.name : "宫中"; })()}</span></div></div>`).join("")
+        : '<p class="muted">妃嫔正当宠，年二十至三十八最易有孕，生下皇子即是夺嫡的本钱。</p>';
+      if (sst && !g.successionDone)
+        html += `<p class="muted" style="font-size:12px;">夺嫡胜算看：母位（${["秀女","答应","常在","贵人","嫔","妃"][sst.grade] || "秀女"}）· 皇子${sst.sons}位 · 家声。皇子年满十六即见分晓，败则降位抄家。</p>`;
+    }
+    host.innerHTML = html;
+  }
+  Game.askRecall = function (list, onPick) {
+    openModal(`
+      <h3 class="modal-title">迎请归宗</h3>
+      <p class="modal-text">家中已无男丁承祧，分出去的支中尚有男儿。请择一支迎归宗祧（举家同归）：</p>
+      <div class="heir-list">
+        ${list.map(h => `
+          <button class="heir-card" data-recall-pick="${h.id}">
+            <span class="heir-info"><b>${h.name}　${h.age}岁</b>
+            <p>体${h.stats.体力} · 智${h.stats.智力} · 武${h.stats.武力} · 魅${h.stats.魅力}</p></span>
+          </button>`).join("")}
+      </div>`);
+    $("modalLayer").querySelectorAll("[data-recall-pick]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const pick = list.find(x => x.id === btn.dataset.recallPick);
+        closeModal();
+        onPick(pick || null);
+      });
+    });
+  };
+  /* ---------------- 存档导入导出 ---------------- */
+  Game.showExport = function () {
+    const code = Game.exportSave ? Game.exportSave() : "";
+    if (!code) { Game.log("暂无存档可导。", "bad"); return; }
+    openModal(`
+      <h3 class="modal-title">导出存档</h3>
+      <p class="muted">复制下面这串码，换手机/换浏览器后在开始界面“导入存档”里粘贴即可。自己留个备份也行。</p>
+      <textarea id="saveCodeBox" rows="5" style="width:100%;font-size:12px;" readonly>${code}</textarea>
+      <div class="modal-choices">
+        <button class="btn btn-primary" data-copy-save="1">复制存档码</button>
+        <button class="btn" data-close="1">关上</button>
+      </div>`);
+    $("modalLayer").querySelector("[data-close]").addEventListener("click", closeModal);
+    $("modalLayer").querySelector("[data-copy-save]").addEventListener("click", () => {
+      const box = $("saveCodeBox");
+      const done = () => Game.log("存档码已复制，请妥善保存。", "good");
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(box.value).then(done, () => { box.select(); document.execCommand && document.execCommand("copy"); done(); });
+      else { box.select(); document.execCommand && document.execCommand("copy"); done(); }
+    });
+  };
+  Game.showImport = function () {
+    openModal(`
+      <h3 class="modal-title">导入存档</h3>
+      <p class="muted">把之前导出的存档码粘贴进来，点确认即可继续旧档（会覆盖当前这台机器上的存档）。</p>
+      <textarea id="saveCodeIn" rows="5" style="width:100%;font-size:12px;" placeholder="粘贴存档码"></textarea>
+      <p class="muted" id="importErr" style="color:var(--vermilion-dk)"></p>
+      <div class="modal-choices">
+        <button class="btn btn-primary" data-do-import="1">确认导入</button>
+        <button class="btn" data-close="1">算了</button>
+      </div>`);
+    $("modalLayer").querySelector("[data-close]").addEventListener("click", closeModal);
+    $("modalLayer").querySelector("[data-do-import]").addEventListener("click", () => {
+      const r = Game.importSave($("saveCodeIn").value);
+      if (!r.ok) { $("importErr").textContent = r.msg; return; }
+      closeModal();
+      start();
+    });
+  };
+
+  /* ---------------- 说亲选人（一键收拢：列出全家未婚配者） ---------------- */
+  Game.pickMatch = function (kind, key, id) {
+    const g = Game.G;
+    const eligible = (g.children || []).filter(x =>
+      x.alive && !x.married && !x.palace && !x.out && !x.betrothed && x.age >= 15);
+    if (!eligible.length) { Game.log("家中暂无年满十五的未婚子女。", "bad"); return; }
+    openModal(`
+      <h3 class="modal-title">为谁说亲</h3>
+      <p class="muted">家中未婚配者（15岁以上）都在这里，点一位即与对方说合：</p>
+      <div class="heir-list">
+        ${eligible.map(x => `
+          <button class="heir-card" data-match-pick="${x.id}">
+            <span class="heir-info"><b>${x.name}　${x.gender} · ${x.age}岁</b>
+            <p>体${x.stats.体力} · 智${x.stats.智力} · 武${x.stats.武力} · 魅${x.stats.魅力} · 生育${Game.fertilityOf ? Game.fertilityOf(x) : "?"}</p></span>
+          </button>`).join("")}
+      </div>
+      <div class="modal-choices"><button class="btn" data-close="1">算了</button></div>`);
+    $("modalLayer").querySelector("[data-close]").addEventListener("click", closeModal);
+    $("modalLayer").querySelectorAll("[data-match-pick]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const cid = btn.dataset.matchPick;
+        closeModal();
+        if (kind === "contact") Game.proposeContact(id, cid);
+        else if (kind === "clan") Game.proposeClan(key, cid);
+      });
+    });
+  };
 
   /* ---------------- 弹窗 ---------------- */
   function openModal(innerHtml) {
@@ -4877,6 +7291,93 @@ dt-stat,.dt-stats{display:block}
     });
   };
 
+  /* 立嗣/传位选人：一处入口，列出在堂直系后代（含生育率） */
+  Game.pickHeir = function (mode) {
+    const g = Game.G;
+    const list = Game.directHeirs ? Game.directHeirs(g) : [];
+    if (!list.length) { Game.log("膝下暂无在堂直系后代。", "bad"); return; }
+    openModal(`
+      <h3 class="modal-title">${mode === "abdicate" ? "传位" : "立嗣"}</h3>
+      <p class="modal-text">在堂直系后代${list.length}人${mode === "abdicate" ? "（传位须年满十五）" : ""}，点一位${mode === "abdicate" ? "即传位（老家主退居后堂，不可反悔）" : "即立为继承人"}：</p>
+      <div class="heir-list">
+        ${list.map(x => `
+          <button class="heir-card" data-heir-pick="${x.id}" data-heir-mode="${mode}" ${mode === "abdicate" && x.age < 15 ? "disabled" : ""}>
+            <span class="heir-info"><b>${x.name}　${x.gender} · ${x.age}岁${g.heirId === x.id ? "（现嗣）" : ""}</b>
+            <p>体${x.stats.体力} · 智${x.stats.智力} · 武${x.stats.武力} · 魅${x.stats.魅力} · 生育${Game.fertilityOf ? Game.fertilityOf(x) : "?"}${x.infertile ? "（难孕）" : ""}</p></span>
+          </button>`).join("")}
+      </div>
+      <div class="modal-choices"><button class="btn" data-close="1">算了</button></div>`);
+    $("modalLayer").querySelector("[data-close]").addEventListener("click", closeModal);
+    $("modalLayer").querySelectorAll("[data-heir-pick]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.heirPick, md = btn.dataset.heirMode;
+        closeModal();
+        if (md === "abdicate") {
+          const h = (Game.G.children || []).find(x => x.id === id);
+          if (!h) return;
+          openModal(`
+            <h3 class="modal-title">传位${h.name}？</h3>
+            <p class="modal-text">传位之后，你（与配偶）退居后堂颐养天年，不再理家生育，${h.name}即为第${Game.G.gen + (h.parentId ? 2 : 1)}代家主。此事不可反悔。</p>
+            <div class="modal-choices"><button class="btn" data-close="1">再想想</button><button class="btn primary" data-abdicate-confirm="${id}">传位</button></div>`);
+          $("modalLayer").querySelector("[data-close]").addEventListener("click", closeModal);
+          $("modalLayer").querySelector("[data-abdicate-confirm]").addEventListener("click", (e) => { closeModal(); Game.abdicateTo(e.target.dataset.abdicateConfirm); });
+        } else Game.setHeir(id);
+      });
+    });
+  };
+  Game.renderHeirRow = function () {
+    const g = Game.G;
+    const host = document.getElementById("heirRow");
+    if (!host) return;
+    const h = Game.heirPerson ? Game.heirPerson(g) : null;
+    const n = Game.directHeirs ? Game.directHeirs(g).length : 0;
+    host.innerHTML = h
+      ? `<span class="muted">嗣位：<b>${h.name}</b>（${h.gender}·${h.age}岁）· 在堂直系${n}人</span>
+         <button class="btn btn-xs" data-open-heir-pick="set">改立</button>
+         <button class="btn btn-xs" data-clear-heir="1">撤嗣</button>
+         ${h.age >= 15 ? `<button class="btn btn-xs" data-open-heir-pick="abdicate">传位给他</button>` : ""}`
+      : `<span class="muted">嗣位：未立 · 在堂直系${n}人（百年之后按嫡长男嗣孙序议继；立嗣则遵遗命直继）</span>
+         ${n ? `<button class="btn btn-xs" data-open-heir-pick="set">立嗣</button>
+         <button class="btn btn-xs" data-open-heir-pick="abdicate">提前传位</button>` : ""}`;
+  };
+  /* 喜报：科举大魁的红色弹窗；赶考季多人同中则排队逐张报 */
+  Game.queueXibao = function (item) {
+    const g = Game.G;
+    g.pendingXibao = g.pendingXibao || [];
+    g.pendingXibao.push(item);
+    if (item.showNow) {
+      try { Game.flushXibao(); } catch (e) {}
+      Game.save(); Game.refresh();
+    } else Game.save();
+  };
+  Game.flushXibao = function () {
+    const g = Game.G;
+    const q = g.pendingXibao || [];
+    if (!q.length) return false;
+    const it = q.shift();
+    Game.save();
+    Game.showXibao(it, q.length);
+    return true;
+  };
+  Game.showXibao = function (it, rest) {
+    const big = it.rank === "状元" || it.rank === "榜眼" || it.rank === "探花";
+    const first = it.rank === "解元" || it.rank === "会元" || it.rank === "传胪";
+    const seal = big ? "魁" : "喜";
+    const title = big ? `大魁天下·${it.rank}及第` : `${it.exam}捷报·高中${it.rank}`;
+    openModal(`
+      <div class="xibao">
+        <div class="xibao-seal">${seal}</div>
+        <h3 class="xibao-title">${title}</h3>
+        <p class="xibao-text">捷报！贵府${it.rel || ""}${it.who}于${it.exam}高中${it.rank}${it.detail ? "——" + it.detail : "，十年寒窗，一朝登科"}！</p>
+        <p class="xibao-text">报子连报三声，披红挂彩，爆竹声里整条街都出来看热闹。${it.gift ? `亲友贺仪银${it.gift}两，门前车马盈门。` : ""}</p>
+        ${(big || first) ? `<p class="xibao-text">县令亲登门送匾道贺，族谱可添光彩一页。</p>` : ""}
+        <div class="modal-choices"><button class="btn primary" data-xibao-ok="1">${rest ? `知道了（还有${rest}张喜报）` : "知道了"}</button></div>
+      </div>`);
+    $("modalLayer").querySelector("[data-xibao-ok]").addEventListener("click", () => {
+      closeModal();
+      if (!Game.flushXibao()) { Game.save(); Game.refresh(); }
+    });
+  };
   Game.askSuccession = function (heirs, onPick) {
     openModal(`
       <h3 class="modal-title">灵前继嗣</h3>
@@ -4936,7 +7437,7 @@ dt-stat,.dt-stats{display:block}
     const c = g.char;
     const kids = (g.children || []).filter(x => x.alive);
     const kidsTxt = kids.length
-      ? kids.map(k => `${k.name}(${k.gender}·${k.age}岁${k.married ? "·已婚" : ""}${k.title ? "·" + (titleName(k.title) || k.title) : ""})`).join("、")
+      ? kids.map(k => `${k.name}(${k.gender}·${k.age}岁${k.palace ? "·宫中" + Game.palaceName(k) : k.married ? (k.out === "married" ? "·已出阁" : k.spouse && k.spouse.joined ? "·已婚同居" : "·已婚") : ""}${k.title ? "·" + (titleName(k.title) || k.title) : ""}${k.office ? "·" + officeText(k.office) : ""})`).join("、")
       : "尚无子嗣，加油添丁";
     const spouseTxt = g.spouse ? `配 ${g.spouse.name}（${g.spouse.age}岁，好感${g.spouse.favor == null ? 65 : g.spouse.favor}）` : "尚未婚配";
     openModal(`
@@ -4985,6 +7486,8 @@ dt-stat,.dt-stats{display:block}
     $("continueBtn").classList.toggle("hidden", !Game.hasSave());
   }
   function renderBest() {
+    const has = Game.hasSave();
+    if ($("exportBtn")) $("exportBtn").disabled = !has;
     const b = Game.getBest();
     $("bestRecord").textContent = b
       ? `旧卷留痕：${b.surname}氏传 ${b.gen} 代，${b.rank}${b.bestPost ? "，官至" + b.bestPost : ""}`
@@ -5013,6 +7516,63 @@ dt-stat,.dt-stats{display:block}
       Game.setGenChar(c);
       return;
     }
+    const cp = t.closest("[data-child-pick]");
+    if (cp) return;   /* 候选弹窗内自带监听 */
+    const cd = t.closest("[data-child-dismiss]");
+    if (cd) return;
+    const dc = t.closest("[data-divorce-child]");
+    if (dc) { const id = dc.dataset.divorceChild; closeModal(); Game.divorceChild(id); return; }
+    const bt = t.closest("[data-betroth-ct]");
+    if (bt) return Game.proposeBetrothal(bt.dataset.betrothCt, bt.dataset.child);
+    const bo = t.closest("[data-branch-out]");
+    if (bo) { const id = bo.dataset.branchOut; closeModal(); if (confirm("分家另过：携妻儿单过，各吃各锅（安家银40两）。家中无男丁前不得喊回，确定吗？")) Game.branchOut(id); return; }
+    const rc = t.closest("[data-recall]");
+    if (rc) return Game.recallBranch(rc.dataset.recall);
+    const mc = t.closest("[data-marry-child]");
+    if (mc) { const id = mc.dataset.marryChild; closeModal(); Game.marryChild(id); return; }
+    const sh = t.closest("[data-set-heir]");
+    if (sh) { closeModal(); Game.setHeir(sh.dataset.setHeir); return; }
+    const chh = t.closest("[data-clear-heir]");
+    if (chh) { closeModal(); Game.clearHeir(); return; }
+    const ab = t.closest("[data-abdicate]");
+    if (ab) { const id = ab.dataset.abdicate; closeModal(); Game.pickHeir ? Game.pickHeir("abdicate") : Game.abdicateTo(id); return; }
+    const ohp = t.closest("[data-open-heir-pick]");
+    if (ohp) return Game.pickHeir(ohp.dataset.openHeirPick);
+    const ux = t.closest("[data-uxori-child]");
+    if (ux) { const id = ux.dataset.uxoriChild; closeModal(); Game.marryChildUxori(id); return; }
+    const ps = t.closest("[data-palace-send]");
+    if (ps) { const id = ps.dataset.palaceSend; closeModal(); Game.sendToPalace(id); return; }
+    const pd = t.closest("[data-palace-draft]");
+    if (pd) { const id = pd.dataset.palaceDraft; closeModal(); Game.palaceDraft(id); return; }
+    const pl = t.closest("[data-palace-leave]");
+    if (pl) { const id = pl.dataset.palaceLeave; closeModal(); Game.palaceLeave(id); return; }
+    const ad = t.closest("[data-autodoctor]");
+    if (ad) return Game.setAutoDoctor(ad.dataset.autodoctor);
+    const bk = t.closest("[data-bank]");
+    if (bk) {
+      const v = ($("bankAmt") && $("bankAmt").value) || 0;
+      const k = bk.dataset.bank;
+      if (k === "deposit") return Game.bankDeposit(v);
+      if (k === "withdraw") return Game.bankWithdraw(v);
+      if (k === "borrow") return Game.bankBorrow(v);
+      if (k === "repay") return Game.bankRepay(v);
+      return;
+    }
+    if (t.closest("[data-upgrade-all]")) return Game.upgradeAllShops();
+    const hc = t.closest("[data-hire-clerk]");
+    if (hc) return Game.hireClerk(hc.dataset.hireClerk);
+    const dc2 = t.closest("[data-dismiss-clerk]");
+    if (dc2) return Game.dismissClerk(dc2.dataset.dismissClerk);
+    const us = t.closest("[data-upgrade-shop]");
+    if (us) return Game.upgradeShop(us.dataset.upgradeShop);
+    const gpu = t.closest("[data-genpoem-use]");
+    if (gpu) return Game.useGenPoem(gpu.dataset.genpoemUse);
+    const gps = t.closest("[data-genpoem-set]");
+    if (gps) { const inp = document.getElementById("genPoemEdit"); const r = Game.setGenPoem(inp ? inp.value : ""); return r; }
+    if (t.closest("[data-genpoem-clear]")) return Game.setGenPoem("");
+    const hire = t.closest("[data-hire-steward]");
+    if (hire) return Game.hireSteward(hire.dataset.hireSteward);
+    if (t.closest("[data-dismiss-steward]")) return Game.dismissSteward();
     const reroll = t.closest("[data-reroll-name]");
     if (reroll) {
       Game.randomizePersonName(reroll.dataset.rerollName);
@@ -5055,7 +7615,8 @@ dt-stat,.dt-stats{display:block}
     if (sow) return Game.sowLand(sow.dataset.sow, $("sowIn_" + sow.dataset.sow).value);
     const mm = t.closest("[data-mm]");
     if (mm) return Game.matchmake(Number(mm.dataset.mm));
-    if (t.closest("[data-propose]")) return Game.proposal();
+    const pp = t.closest("[data-propose]");
+    if (pp) return Game.proposal(pp.dataset.propose);
     if (t.closest("[data-reject]")) return Game.rejectCandidate();
     const exam = t.closest("[data-exam]");
     if (exam) return Game.takeExam(exam.dataset.exam);
@@ -5089,14 +7650,27 @@ dt-stat,.dt-stats{display:block}
       if (layer) { layer.classList.add("hidden"); layer.innerHTML = ""; }
       return Game.seeDoctor(doc.dataset.doctorMember, doc.dataset.doctorKind);
     }
+    const vc = t.closest("[data-visit-clan]");
+    if (vc) return Game.visitClan(vc.dataset.visitClan);
+    const gc = t.closest("[data-gift-clan]");
+    if (gc) return Game.giftClan(gc.dataset.giftClan);
+    const mcl = t.closest("[data-match-clan]");
+    if (mcl) return Game.pickMatch("clan", mcl.dataset.matchClan, null);
+    const pc = t.closest("[data-propose-clan]");
+    if (pc) return Game.proposeClan(pc.dataset.proposeClan, pc.dataset.child);
+    const rcc = t.closest("[data-recommend-clan]");
+    if (rcc) return Game.recommendClan(rcc.dataset.recommendClan);
     const vct = t.closest("[data-visit-ct]");
     if (vct) return Game.visitContact(vct.dataset.visitCt);
     const gct = t.closest("[data-gift-ct]");
     if (gct) return Game.giftContact(gct.dataset.giftCt, gct.dataset.level);
+    const mct = t.closest("[data-match-contact]");
+    if (mct) return Game.pickMatch("contact", null, mct.dataset.matchContact);
     const pct = t.closest("[data-propose-ct]");
     if (pct) return Game.proposeContact(pct.dataset.proposeCt, pct.dataset.child);
     const dct = t.closest("[data-dismiss-ct]");
     if (dct) return Game.dismissContact(dct.dataset.dismissCt);
+    if (t.closest("[data-bill]")) return Game.showBillSilent();
     if (t.closest("[data-spouse-care]")) return Game.spouseCare();
     const sg = t.closest("[data-spouse-gift]");
     if (sg) return Game.spouseGift(sg.dataset.spouseGift);
@@ -5107,6 +7681,7 @@ dt-stat,.dt-stats{display:block}
   });
 
   $("nextBtn").addEventListener("click", () => Game.nextMonth());
+  if ($("nextYearBtn")) $("nextYearBtn").addEventListener("click", () => Game.nextYear());
   $("treeBtn").addEventListener("click", showTree);
 
   $("landBuyBtn").addEventListener("click", () => Game.buyLand($("landAmount").value));
@@ -5146,6 +7721,10 @@ dt-stat,.dt-stats{display:block}
     Game.newGame(surname, gender, given, genChar);
     start();
   });
+  $("exportBtn").addEventListener("click", () => Game.showExport());
+  $("importBtn").addEventListener("click", () => Game.showImport());
+  const ex2 = $("exportBtn2"); if (ex2) ex2.addEventListener("click", () => Game.showExport());
+  const im2 = $("importBtn2"); if (im2) im2.addEventListener("click", () => Game.showImport());
   $("continueBtn").addEventListener("click", () => {
     if (Game.load()) start();
   });
@@ -5156,5 +7735,12 @@ dt-stat,.dt-stats{display:block}
 })();
 
 </script>
-</body>
+<script>
+if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  });
+}
+</script>
+<script>window.__CF$cv$params={r:'a507389feaad3d96',t:'MTc5Mjk5NDIyMg==',u:'01a176c8a3ae7126b4f040331af9d005',ut:'ZjsFsyxcChQAKPmkytGKbrRkSEMGxMTXGffs1nC8V1c-1792994223-1.2.1.1-02nIfLfXSQa2CbGXhB6MHvr3CBl1TTUuTFtO9oxzcahmK5N5Mx6aRYVkpGUGXWTpaVxdIWgVMjuLFCaZ9mWNML2fwqzpAIhZ0yPAyS9PHXM',i:60};(function(){if(!document.body)return;var s=document.createElement('script');s.src='/cdn-cgi/challenge-platform/scripts/precursor/main.js';document.head.appendChild(s);})();</script></body>
 </html>
