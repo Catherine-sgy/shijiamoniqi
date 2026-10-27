@@ -425,7 +425,8 @@ dt-stat,.dt-stats{display:block}
       <div class="panel">
         <h2 class="panel-title">开张铺号</h2>
         <p class="muted panel-hint"><span id="bizInfo2">尚无铺面</span>
-          <button class="btn btn-xs" id="upgradeAllBtn" data-upgrade-all="1" style="margin-left:8px;">一键升级</button></p>
+          <button class="btn btn-xs" id="upgradeAllBtn" data-upgrade-all="1" style="margin-left:8px;">一键升级</button>
+          <button class="btn btn-xs" id="hireAllBtn" data-hire-all="1" style="margin-left:8px;">一键雇伙计</button></p>
         <div class="shop-open" id="shopOpenRow"></div>
         <div class="shop-list" id="shopList"></div>
       </div>
@@ -747,6 +748,18 @@ dt-stat,.dt-stats{display:block}
   Game.OFFICE_SOCIAL_PER_GRADE = 0.8; /* 每品级迎来送往递增 */
 
   /* ---------- 祭祖大典（花钱换声望+祖佑） ---------- */
+  /* ---------- 寺庙祈福（求贵子、结奇缘）：稀有词条倍率、天赋加成、易孕，千两法会另有奇人来投 ---------- */
+  Game.PRAYERS = [
+    { key: "incense", name: "敬香", cost: 50, months: 6, tier: 1,
+      desc: "香火一炷，子嗣易得贵相（稀有词条×10、天赋+5、易孕）" },
+    { key: "oil", name: "添油", cost: 200, months: 12, tier: 2,
+      desc: "长明灯添油，福泽一年（稀有词条×30、天赋+10、易孕）" },
+    { key: "grand", name: "千两法会", cost: 1000, months: 12, tier: 3,
+      desc: "千两办水陆法会（稀有词条×100、天赋+15、易孕、声望+10，并有奇人来投）" }
+  ];
+  Game.PRAY_TIER_MUL = [1, 10, 30, 100];
+  Game.PRAY_TIER_APT = [0, 5, 10, 15];
+  Game.PRAY_TIER_BIRTH = [0, 0.01, 0.02, 0.03];
   Game.RITES = [
     { key: "small", name: "家祭", cost: 20, rep: 6, buffMonths: 3,
       desc: "猪羊酒果，告慰列祖，祖佑三月（收成+10%）" },
@@ -903,7 +916,7 @@ dt-stat,.dt-stats{display:block}
       desc: "好逸恶劳，诸事提不起劲，长进总要慢人一截。" },
 
     /* ---- 天资 ---- */
-    { key: "prodigy", name: "天赋异禀", group: "wit", rarity: 3, power: 30, mutate: 1 / 10000,
+    { key: "prodigy", name: "天赋异禀", group: "wit", rarity: 3, power: 30, mutate: 1 / 3000,
       growth: { 体力: 1.2, 智力: 1.3, 武力: 1.2, 魅力: 1.2 },
       born: p => { STATS.forEach(k => add(p, k, 6)); },
       desc: "生而神明，四维皆有过人之资，万中无一。" },
@@ -915,10 +928,10 @@ dt-stat,.dt-stats{display:block}
       desc: "天资昏钝，经书读十遍仍如隔云雾。" },
 
     /* ---- 体魄 / 勇力 ---- */
-    { key: "hercules", name: "力拔山兮", group: "physique", rarity: 4, power: 40, mutate: 1 / 10000,
+    { key: "hercules", name: "力拔山兮", group: "physique", rarity: 4, power: 40, mutate: 1 / 3000,
       growth: { 体力: 1.28, 武力: 1.3 }, born: p => { add(p, "体力", 32); add(p, "武力", 26); },
       desc: "生而膂力惊人，扛鼎拔山，世之虎臣，万中无一。" },
-    { key: "mighty", name: "力能扛鼎", group: "physique", rarity: 3, power: 30, mutate: 1 / 10000,
+    { key: "mighty", name: "力能扛鼎", group: "physique", rarity: 3, power: 30, mutate: 1 / 3000,
       growth: { 体力: 1.18, 武力: 1.2 }, born: p => { add(p, "体力", 20); add(p, "武力", 16); },
       desc: "筋骨奇伟，力能扛鼎，舞刀弄棒一学便会。" },
     { key: "strong", name: "孔武有力", group: "physique", rarity: 1, power: 10, spawn: 0.05,
@@ -931,7 +944,7 @@ dt-stat,.dt-stats{display:block}
 
     /* ---- 容貌（同组互斥，极美者与丑陋不两立） ---- */
     { key: "stunning",
-      name: { 男: "潘安再世", 女: "倾国倾城" }, group: "looks", rarity: 4, power: 40, mutate: 1 / 10000,
+      name: { 男: "潘安再世", 女: "倾国倾城" }, group: "looks", rarity: 4, power: 40, mutate: 1 / 3000,
       growth: { 魅力: 1.18 }, born: p => add(p, "魅力", 34),
       desc: "容色照人，见者无不心折，真乃倾国之姿，万中无一。" },
     { key: "handsome",
@@ -979,21 +992,29 @@ dt-stat,.dt-stats{display:block}
       if (a && Game.hasTrait(a, d.key) && chance(inheritP(d))) inherited = true;
       if (!inherited && b && Game.hasTrait(b, d.key) && chance(inheritP(d))) inherited = true;
       if (inherited) admit(d.key, true);
-      /* 自然降生：稀有词条万中取一，寻常禀赋按 spawn */
-      const pNat = d.mutate != null ? d.mutate : (d.rarity >= 3 ? 0 : (d.spawn || 0));
-      if (pNat > 0 && chance(pNat)) admit(d.key, false);
+      /* 自然降生：稀有词条三千取一（原万中取一），寻常禀赋按 spawn；寺庙祈福加成稀有 */
+      let pNat = d.mutate != null ? d.mutate : (d.rarity >= 3 ? 0 : (d.spawn || 0));
+      if (d.mutate != null && Game.G && Game.G.blessing && Game.G.blessing.months > 0) {
+        const mul = (Game.PRAY_TIER_MUL || [])[Game.G.blessing.tier] || 1;
+        pNat *= mul;
+      }
+      if (pNat > 0 && chance(Math.min(0.5, pNat))) admit(d.key, false);
     });
     return Object.values(picked).concat(loose);
   }
 
   /* 掷一项天赋（1~100），常人居中，英才与驽钝皆少见 */
   function rollApt() {
+    /* 祈福所生天赋另有加成（+5/+10/+15），封顶100 */
+    const bonus = (Game.G && Game.G.blessing && Game.G.blessing.months > 0)
+      ? ((Game.PRAY_TIER_APT || [])[Game.G.blessing.tier] || 0) : 0;
+    const cap = v => Math.min(100, v + bonus);
     const r = Math.random();
-    if (r < 0.05) return rand(82, 98);
-    if (r < 0.18) return rand(68, 82);
-    if (r < 0.82) return rand(40, 70);
-    if (r < 0.95) return rand(22, 42);
-    return rand(8, 24);
+    if (r < 0.05) return cap(rand(82, 98));
+    if (r < 0.18) return cap(rand(68, 82));
+    if (r < 0.82) return cap(rand(40, 70));
+    if (r < 0.95) return cap(rand(22, 42));
+    return cap(rand(8, 24));
   }
 
   /* 为一个 stats 已 roll 好的人补全天赋、词条；applyBorn 时一并应用出生禀赋
@@ -1021,8 +1042,15 @@ dt-stat,.dt-stats{display:block}
     if (f >= 25) return "偏弱";
     return "艰难";
   };
+  /* 生月 1~12：年龄按年月算，逢生月满一岁；寿宴须生辰月办 */
+  Game.birthTxt = function (p) {
+    if (!p) return "";
+    const bm = p.bm || 1;
+    return p.bornY != null ? `生于第${p.bornY}年${bm}月` : `${bm}月生人`;
+  };
   Game.decoratePerson = function (p, a, b, applyBorn) {
     if (!p) return p;
+    if (p.bm == null) p.bm = rand(1, 12);
     if (p.fertility == null && !p.infertile) p.fertility = Game.rollFertility();
     if (applyBorn == null) applyBorn = true;
     if (!p.apt) {
@@ -1270,6 +1298,14 @@ dt-stat,.dt-stats{display:block}
       if (!g.spouse) g.pregnancy = null;   /* 旧档无配偶则无身孕 */
       /* 生育率与嗣位迁移：旧档人人补生育率，新档嗣位默认空 */
       if (g.heirId === undefined) g.heirId = null;
+      /* 生月迁移：旧档人人补一个生月（随机），年龄保持不变，此后按生月长岁 */
+      if (Game.decoratePerson) {
+        const ensureBm = (x) => { if (x && x.bm == null) { try { Game.decoratePerson(x, null, null, false); } catch (e) { x.bm = 1 + Math.floor(Math.random() * 12); } } };
+        ensureBm(g.char); ensureBm(g.spouse);
+        (g.children || []).forEach(ch => { ensureBm(ch); if (ch.spouse) ensureBm(ch.spouse); });
+        (g.contacts || []).forEach(ensureBm);
+        (g.royalKids || []).forEach(ensureBm);
+      }
       if (Game.decoratePerson) {
         [g.char, g.spouse].forEach(x => { if (x && x.fertility == null && !x.infertile) { try { Game.decoratePerson(x, null, null, false); } catch (e) {} } });
         (g.children || []).forEach(ch => {
@@ -2546,6 +2582,11 @@ dt-stat,.dt-stats{display:block}
     if (ch.gender === "男") return { mom: ch.spouse, dad: ch };
     return { mom: ch, dad: ch.spouse };
   };
+  /* 祈福送子：香火庇佑期间更易受孕 */
+  Game.prayBirthBonus = function (g) {
+    if (g && g.blessing && g.blessing.months > 0) return (Game.PRAY_TIER_BIRTH || [])[g.blessing.tier] || 0;
+    return 0;
+  };
   /* 生育率：夫妻双方折中看；难产伤身：减生育率，重则此后再难有孕 */
   Game.laborInjury = function (mom, log, whoName) {
     if (!mom) return;
@@ -2602,6 +2643,7 @@ dt-stat,.dt-stats{display:block}
     if (mom.age >= 36) p -= (mom.age - 35) * 0.01;
     if (g.riteBuff && g.riteBuff.birth > 0) p += (g.riteBuff.birthBonus || 0.03);
     if (Game.fertilityFactor) p *= Game.fertilityFactor(mom, dad);
+    if (Game.prayBirthBonus) p += Game.prayBirthBonus(g);
     return clamp(p, 0.005, 0.18);
   };
   Game.conceiveCouple = function (g, ch, log) {
@@ -2633,6 +2675,7 @@ dt-stat,.dt-stats{display:block}
       } else {
         const gender = chance(0.52) ? "男" : "女";
         const baby = Game.makeChild(gender, dad, mom, g.surname, gender === "男" ? "孙" : "孙女", ch.id);
+        baby.bm = g.month; baby.bornY = g.year;
         g.children.push(baby);
         log((ch.gender === "男" ? "儿媳" + mom.name : mom.name) + "拼死诞下一" + (gender === "男" ? "孙" : "孙女") + "取名" + baby.name + "，自己却血崩而亡。", "bad");
         if (ch.gender === "男") { ch.spouse = null; ch.married = false; }
@@ -2644,6 +2687,7 @@ dt-stat,.dt-stats{display:block}
     for (let i = 0; i < n; i++) {
       const gender = chance(0.52) ? "男" : "女";
       const baby = Game.makeChild(gender, dad, mom, g.surname, gender === "男" ? "孙" : "孙女", ch.id);
+      baby.bm = g.month; baby.bornY = g.year;
       g.children.push(baby);
       log((ch.gender === "男" ? "儿媳" + mom.name : mom.name) + "十月怀胎，诞下一" + (gender === "男" ? "孙" : "孙女") + "，取名" + baby.name + "。", "good");
       const notable = Game.notableBirthTraits ? Game.notableBirthTraits(baby) : [];
@@ -2691,6 +2735,7 @@ dt-stat,.dt-stats{display:block}
     /* 祖佑：祭祖后数月易受孕 */
     if (g.riteBuff && g.riteBuff.birth > 0) p += (g.riteBuff.birthBonus || 0.03);
     if (Game.fertilityFactor) p *= Game.fertilityFactor(mother, father);
+    if (Game.prayBirthBonus) p += Game.prayBirthBonus(g);
     return clamp(p, 0.005, 0.20);
   };
 
@@ -2736,6 +2781,7 @@ dt-stat,.dt-stats{display:block}
       } else {
         const gender = chance(0.52) ? "男" : "女";
         const child = Game.makeChild(gender, c, s, g.surname);
+        child.bm = g.month; child.bornY = g.year;
         g.children.push(child);
         log(`${c.gender === "男" ? "夫人" + s.name : s.name}拼死诞下一${gender === "男" ? "子" : "女"}取名${child.name}，自己却血崩而亡。`, "bad");
         if (c.gender === "男") { g.spouse = null; g.family.reputation = Math.max(0, g.family.reputation - 1); }
@@ -2749,6 +2795,7 @@ dt-stat,.dt-stats{display:block}
     for (let i = 0; i < n; i++) {
       const gender = chance(0.52) ? "男" : "女";
       const child = Game.makeChild(gender, c, s, g.surname);
+      child.bm = g.month; child.bornY = g.year;
       g.children.push(child);
       log(`${c.gender === "男" ? "夫人" + s.name : s.name}十月怀胎，诞下一${gender === "男" ? "子" : "女"}，取名${child.name}。`, "good");
       const notable = Game.notableBirthTraits ? Game.notableBirthTraits(child) : [];
@@ -3001,6 +3048,17 @@ dt-stat,.dt-stats{display:block}
   };
   /* 分号升级：铺子分三级，升级加流水，盘价按累计投入算 */
   Game.shopLevelName = function (lv) { return ["", "小铺", "分号", "老字号"][lv] || "小铺"; };
+  /* 一键雇佣：间间铺子配满2伙计（雇不花钱，月钱2两/人，流水各+20%） */
+  Game.hireAllClerks = function () {
+    const g = Game.G;
+    if (!g.shops.length) return log("尚无铺面可雇人。", "bad");
+    let n = 0;
+    g.shops.forEach(x => { while ((x.clerks || 0) < 2) { x.clerks = (x.clerks || 0) + 1; n++; } });
+    if (!n) return log("间间铺子伙计都满了，无需再雇。", "");
+    const wage = g.shops.reduce((a, x) => a + (x.clerks || 0) * 2, 0);
+    log(`一键雇佣${n}名伙计，间间铺子配满2人（共月钱${wage}两/月，流水各+20%）。`, "good");
+    Game.save(); Game.refresh();
+  };
   /* 一键升级：按现有银两，从便宜到贵逐间升，能升几间升几间（门槛不够的跳过） */
   Game.upgradeAllShops = function () {
     const g = Game.G;
@@ -3341,6 +3399,7 @@ dt-stat,.dt-stats{display:block}
     c.spouseApt = null; c.spouseStats = null; c.spouseFamily = null;
     c.spouseName = null; c.spouseTraits = null;
     c.married = false; c.uxori = false;
+    c.marriedClan = null;   /* 姻亲断了 */
     if (wasOut) c.out = null;
     log(hadJoined
       ? `${c.name}与配偶和离，对方收拾行李离家，付安家银${fee}两（声望-3），来日可再议亲。`
@@ -3556,7 +3615,7 @@ dt-stat,.dt-stats{display:block}
           if (chance(0.85)) {
             const gender = chance(0.55) ? "男" : "女";
             const title = gender === "男" ? "皇子" : "公主";
-            const baby = { id: "rp" + Date.now() + rand(100, 999), name: "皇" + (gender === "男" ? "子" : "女") + "·" + x.name.slice(-1), gender, age: 0, alive: true, royal: true, motherId: x.id };
+            const baby = { id: "rp" + Date.now() + rand(100, 999), name: "皇" + (gender === "男" ? "子" : "女") + "·" + x.name.slice(-1), gender, age: 0, alive: true, royal: true, motherId: x.id, bm: g.month, bornY: g.year };
             g.royalKids = g.royalKids || [];
             g.royalKids.push(baby);
             rep(15);
@@ -3968,6 +4027,56 @@ dt-stat,.dt-stats{display:block}
   };
 
 
+  /* 寺庙祈福：花钱请香火，庇佑子嗣贵相；千两法会另有奇人来投 */
+  Game.pray = function (key) {
+    const g = Game.G;
+    const t = (Game.PRAYERS || []).find(x => x.key === key);
+    if (!t) return;
+    if (g.money < t.cost) return log(`办${t.name}需银${t.cost}两，囊中羞涩。`, "bad");
+    g.money -= t.cost;
+    g.blessing = { tier: t.tier, months: t.months };
+    if (t.tier === 3) {
+      rep(10);
+      log(`千两办水陆法会三日，阖城轰动，声望+10。方丈合掌：善哉，此家必有贵子。`, "good");
+      Game.praySage();
+    } else {
+      log(`${t.tier === 2 ? "长明灯前添油" : "宝刹拈香"}，许愿早生贵子，香火庇佑${t.months}个月（稀有天赋×${(Game.PRAY_TIER_MUL || [])[t.tier] || 1}、天赋+${(Game.PRAY_TIER_APT || [])[t.tier] || 0}、易孕）。`, "good");
+    }
+    Game.save(); Game.refresh();
+  };
+  /* 奇人来投：身怀稀世之才，径投名帖 */
+  Game.praySage = function () {
+    const g = Game.G;
+    g.contacts = g.contacts || [];
+    const rares = (Game.TRAITS || []).filter(d => d.rarity >= 3);
+    const d = pick(rares);
+    const gender = chance(0.5) ? "男" : "女";
+    const ct = {
+      id: "ct" + Date.now() + rand(100, 999),
+      name: Game.makeName(gender, pick(Game.SURNAMES)),
+      gender, age: rand(16, 24), type: "scholar", typeName: "奇士",
+      family: rand(60, 100),
+      stats: { 体力: rand(45, 65), 智力: rand(60, 80), 武力: rand(40, 65), 魅力: rand(60, 80) },
+      favor: 70, metYear: g.year, metMonth: g.month
+    };
+    Game.decoratePerson(ct, null, null, true);
+    /* 天赋保底75，并必怀一件稀世禀赋（同组旧有让位） */
+    ["体力", "智力", "武力", "魅力"].forEach(k => { ct.apt[k] = clamp(Math.max(ct.apt[k] || 0, rand(75, 95)), 5, 99); });
+    if (d) {
+      ct.traits = (ct.traits || []).filter(k => { const od = Game.traitDef(k); return !od || od.group !== d.group; });
+      if (ct.traits.indexOf(d.key) < 0) ct.traits.push(d.key);
+      if (d.born) d.born(ct);
+    }
+    if (g.contacts.length >= 8) {
+      const sorted = g.contacts.slice().sort((a, b) => (a.favor || 0) - (b.favor || 0));
+      const drop = sorted[0];
+      g.contacts = g.contacts.filter(x => x.id !== drop.id);
+      log(`名帖匣子已满，最疏远的${drop.name}被新帖挤了出去。`, "");
+    }
+    g.contacts.push(ct);
+    log(`法会圆满，竟有一${gender === "男" ? "奇士" : "奇女子"}${ct.name}慕名来投（${Game.traitName(d.key, gender)}，天赋智${ct.apt.智力}），径投名帖，好感70。`, "good");
+    Game.save(); Game.refresh();
+  };
   Game.holdRite = function (key) {
     const g = Game.G;
     const r = (Game.RITES || []).find(x => x.key === key);
@@ -4173,6 +4282,7 @@ dt-stat,.dt-stats{display:block}
     if (!m) return log("并无此人。", "bad");
     const p = m.person;
     if (p.age < 40) return log(`${p.name}年纪尚轻，设甚么寿宴。`, "bad");
+    if ((p.bm || 1) !== g.month) return log(`${p.name}生辰在${p.bm || 1}月，寿宴须生辰月再办（本月${g.month}月）。`, "bad");
     const b = (Game.BANQUETS || []).find(x => x.key === key);
     if (!b) return;
     if ((b.needRep || 0) > g.family.reputation)
@@ -4471,6 +4581,10 @@ dt-stat,.dt-stats{display:block}
    * 高门世家（固定五姓）：阖族一个好感，每月-2，比寻常往来难维持
    * 拜访/厚礼刷好感；85可提亲（聘礼极重、嫁要倒贴、皇帝猜忌）；90且有官身可举荐
    * ============================================================ */
+  /* 嫁入某高门的在世女儿：有她在堂，该族好感每月不减 */
+  Game.clanKinOf = function (g, key) {
+    return (g.children || []).find(x => x.alive && x.out === "married" && x.marriedClan === key) || null;
+  };
   Game.clanFavorOf = function (g, key) {
     if (!g.family.clanFavor) g.family.clanFavor = {};
     if (g.family.clanFavor[key] == null) g.family.clanFavor[key] = 15;
@@ -4560,6 +4674,7 @@ dt-stat,.dt-stats{display:block}
         g.money -= dowry;
         p.gender = "男";
         ch.out = "married";
+        ch.marriedClan = key;   /* 嫁入高门：女儿在世一日，该族好感每月不减 */
         ch.spouseApt = p.apt; ch.spouseStats = p.stats; ch.spouseFamily = p.family;
         ch.spouseName = p.name; ch.spouseTraits = p.traits || [];
         ch.married = true;
@@ -4707,6 +4822,15 @@ dt-stat,.dt-stats{display:block}
     g.month += 1;
     let yearTurned = false;
     if (g.month > 12) { g.month = 1; g.year += 1; yearTurned = true; }
+    /* 生辰长岁：年龄按年月算，逢生月满一岁（岁末不再齐长） */
+    (function () {
+      const party = [c];
+      if (g.spouse) party.push(g.spouse);
+      (g.children || []).forEach(x => { party.push(x); if (x.spouse && x.spouse.joined) party.push(x.spouse); });
+      (g.royalKids || []).forEach(x => party.push(x));
+      party.forEach(x => { if (x && x.alive !== false && (x.bm || 1) === g.month) x.age = (x.age || 0) + 1; });
+    })();
+
 
     const ctx = {};
 
@@ -4780,6 +4904,11 @@ dt-stat,.dt-stats{display:block}
       ["exam", "harvest", "birth"].forEach(k => { if (g.riteBuff[k] > 0) g.riteBuff[k] -= 1; });
       if (g.riteBuff.exam <= 0 && g.riteBuff.harvest <= 0 && g.riteBuff.birth <= 0) g.riteBuff = null;
     }
+    /* 香火：祈福庇佑逐月散去 */
+    if (g.blessing && g.blessing.months > 0) {
+      g.blessing.months -= 1;
+      if (g.blessing.months <= 0) { g.blessing = null; log("寺中香火散去，庇佑已尽，心诚则再去许愿。", ""); }
+    }
 
     /* 8. 随机事件：在任则时有断案差事，否则寻常际遇；五月万寿、十月千秋雷打不动 */
     let ev = null;
@@ -4822,8 +4951,10 @@ dt-stat,.dt-stats{display:block}
       Game.makeContact(null, false);
     }
     g.contacts.forEach(ct => { ct.favor = clamp(ct.favor - 1, 0, 100); });
-    /* 高门世家好感每月-2，比寻常往来难维持 */
+    /* 高门世家好感每月-2，比寻常往来难维持；嫁入该族的女儿在世则姻亲不断，不减 */
     if (g.family.clanFavor) Object.keys(g.family.clanFavor).forEach(k => {
+      const kin = Game.clanKinOf ? Game.clanKinOf(g, k) : null;
+      if (kin) return;
       g.family.clanFavor[k] = clamp(g.family.clanFavor[k] - 2, 0, 100);
     });
     if (yearTurned) g.contacts.forEach(ct => { ct.age += 1; });
@@ -4848,7 +4979,7 @@ dt-stat,.dt-stats{display:block}
         if (Game.conceive) Game.conceive(g, log);
       }
     }
-    if (g.spouse) g.spouse.age += yearTurned ? 1 : 0;
+    /* 配偶与众人皆按生月长岁（见上），此处不再另加 */
     /* 儿孙添丁：在家成婚的儿子 / 招赘女儿照怀胎十月生养 */
     (g.children || []).forEach(function (ch) {
       if (!ch.alive || !ch.married || !ch.spouse || !ch.spouse.joined || ch.out || ch.palace) return;
@@ -4862,11 +4993,9 @@ dt-stat,.dt-stats{display:block}
 
     /* 11. 岁末：增岁、子女成长、考核 */
     if (yearTurned) {
-      c.age += 1;
+      /* 岁末：子女成长、考核（增岁已按生月逐月办）；在朝子弟同样考课迁转 */
       growChildren(g);
-      /* 宫中女儿与皇嗣岁长一岁 */
-      (g.children || []).filter(x => x.alive && x.out === "palace").forEach(x => { x.age += 1; });
-      (g.royalKids || []).forEach(x => { if (x.alive) x.age += 1; });
+      (g.children || []).forEach(x => { if (Game.npcOfficeReview) Game.npcOfficeReview(g, x); });
       if (Game.settleSuccession) Game.settleSuccession(g, log);
       /* 宗族情分：岁终结算；高则添声望，低则易生事；久不走动则渐淡 */
       if (g.family.clan == null) g.family.clan = 50;
@@ -5001,11 +5130,11 @@ dt-stat,.dt-stats{display:block}
   };
 
   function growChildren(g) {
-    /* 入门亲属同寿：媳/赘婿年长一岁，年过六旬有寿终之时 */
+    /* 入门亲属同寿：年过六旬有寿终之时（长岁按生月） */
     (g.children || []).forEach(function (ch) {
       const sp = ch.spouse;
       if (!sp || !sp.joined) return;
-      sp.age = (sp.age || 20) + 1;
+      sp.age = (sp.age || 20);   /* 入门亲属按生月长岁，此处只判寿终 */
       if (sp.age >= 60 && chance((sp.age - 58) * 0.02)) {
         sp.alive = false;
         ch.spouse = null; ch.married = false;
@@ -5014,7 +5143,7 @@ dt-stat,.dt-stats{display:block}
     });
     g.children.forEach(ch => {
       if (!ch.alive) return;
-      ch.age += 1;
+      /* 长岁按生月逐月办，此处只管成长、寿终、应考 */
       if (ch.age <= 15) {
         /* 逐年长进：基础 3~7，再乘各人天赋与禀赋倍率 */
         ["体力", "智力", "武力", "魅力"].forEach(k => {
@@ -5879,6 +6008,43 @@ const _raw = chance(clamp(p, 0.05, 0.97)) ? opt.win : opt.lose;
   };
 
   /* ---------------- 岁末考绩：政绩 + 奥援定升迁 ---------------- */
+  /* 子弟考课：与家主同阈值 PROMO_MERIT；政绩岁积、达标迁转，阈值一模一样 */
+  Game.npcOfficeReview = function (g, ch) {
+    if (!ch || !ch.alive || ch.out || !ch.office || ch.palace) return;
+    const o = ch.office;
+    if (typeof o.merit !== "number") o.merit = 0;
+    if (ch.age >= 65) {
+      ch.office = null;
+      Game.log(`${ch.relation || "族人"}${ch.name}年老致仕，告老还乡，阖家设宴饯行。`, "");
+      return;
+    }
+    const ab = (o.track === "civil" ? ch.stats.智力 : ch.stats.武力) || 50;
+    o.merit += Math.max(1, Math.round((ab - 50) / 8) + rand(2, 6));
+    o.yg = (o.yg || 0) + 1;   /* 现任品级年数：刚迁转者不贬 */
+    const thr = Game.PROMO_MERIT(o.grade);
+    const top = Game.GRADES.length - 1;
+    if (o.merit >= thr && o.grade < top) {
+      /* 奥援：家声显赫、或乃父在朝高位，方得迁转——与家主同理 */
+      const support = (g.family.reputation >= 150) || (g.char.office && g.char.office.grade >= 4) || chance(0.35);
+      if (support) {
+        o.grade += 1; o.merit = Math.max(0, o.merit - thr); o.yg = 0;
+        rep(3);
+        const posts = o.track === "civil" ? Game.CIVIL_POSTS : Game.MILITARY_POSTS;
+        Game.log(`吏部考绩：${ch.relation || "族人"}${ch.name}政绩卓异，擢升${Game.GRADES[o.grade]}${posts[o.grade]}，阖家欢喜。`, "good");
+      }
+      return;
+    }
+    if (o.yg >= 3 && o.merit < thr * 0.4 && chance(0.15)) {
+      const posts = o.track === "civil" ? Game.CIVIL_POSTS : Game.MILITARY_POSTS;
+      if (o.grade > 0 && chance(0.6)) {
+        o.grade -= 1; rep(-2);
+        Game.log(`考绩下下：${ch.relation || "族人"}${ch.name}左迁为${Game.GRADES[o.grade]}${posts[o.grade]}。`, "bad");
+      } else {
+        ch.office = null; rep(-4);
+        Game.log(`${ch.relation || "族人"}${ch.name}考绩不堪，罢官归家。`, "bad");
+      }
+    }
+  };
   Game.officeAnnualReview = function (g) {
     Game.ensureOfficeState(g);
     const c = g.char, o = c.office;
@@ -6233,7 +6399,7 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
           <span class="mc-name">${p.name}</span>
           ${relBadge(m)}
         </span>
-        <span class="mc-sub">${p.gender} · ${p.age}岁${p.isSick ? " · <b style='color:var(--vermilion)'>抱病</b>" : ""}</span>
+        <span class="mc-sub">${p.gender} · ${p.age}岁 · ${(p.bm || 1)}月生${p.isSick ? " · <b style='color:var(--vermilion)'>抱病</b>" : ""}</span>
         <span class="mc-status ${st.cls}">${st.text}</span>
         ${memberTraitTag(p)}
         ${p.isSick ? '<span class="mc-trait tr-bad">需延医</span>' : ''}
@@ -6346,17 +6512,18 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
         }).join("")}</div>
         <p class="muted" style="font-size:12px;">游方便宜但看运气，圣手几乎包好还补身子（需声望120）。</p>
       </div>` : "";
+    const isBirthMonth = (p.bm || 1) === Game.G.month;
     const birthdayBlock = (p.age >= 40 && p.alive) ? `
       <div class="dt-birth" style="margin-top:10px;border-top:1px dashed #ccc;padding-top:8px;">
-        <p class="modal-text">寿宴祝寿${p.age >= 50 && p.age % 10 === 0 ? "（今年整寿，声望1.5倍）" : ""}，花钱换声望还收贺礼回血。</p>
-        <div class="btn-row">${(Game.BANQUETS || []).map(b => {
+        <p class="modal-text">寿宴祝寿${p.age >= 50 && p.age % 10 === 0 ? "（今年整寿，声望1.5倍）" : ""}，花钱换声望还收贺礼回血。${isBirthMonth ? `<b style="color:var(--vermilion-dk)">本月正值${p.name}生辰（${p.bm || 1}月），可办！</b>` : `生辰在${p.bm || 1}月（本月${Game.G.month}月），须生辰月再办。`}</p>
+        ${isBirthMonth ? `<div class="btn-row">${(Game.BANQUETS || []).map(b => {
           const locked = (b.needRep || 0) > Game.G.family.reputation;
           return `<button class="btn btn-xs" data-birth-member="${id}" data-birth-kind="${b.key}" ${locked || Game.G.money < b.cost ? "disabled" : ""}>${b.name} ${b.cost}两</button>`;
-        }).join("")}</div>
+        }).join("")}</div>` : ""}
       </div>` : "";
     openModal(`
       <h3 class="modal-title">${p.name} <span class="muted" style="font-size:14px;">· ${m.rel} · 第${genOf(m)}代</span></h3>
-      <p class="modal-text">${p.gender} · ${p.age}岁　身份：<b class="ms-${st.cls}">${st.text}</b>${isTeacher ? "　·　族学西席" : ""}${p.married ? "　·　已婚" : ""}</p>
+      <p class="modal-text">${p.gender} · ${p.age}岁　${Game.birthTxt ? Game.birthTxt(p) : ""}　身份：<b class="ms-${st.cls}">${st.text}</b>${isTeacher ? "　·　族学西席" : ""}${p.married ? "　·　已婚" : ""}</p>
       <div class="dt-stats">${statRows}</div>
       <p class="modal-text" style="margin-top:10px;">
         功名：${p.title ? titleName(p.title) : "无"}${p.honor ? `　·　<b style="color:var(--vermilion-dk)">${p.honor}${p.honor === "进士" ? "" : (p.title === "jinshi" ? "·进士及第" : "")}</b>` : ""}　·　月入：${income} 两${p.age < 16 ? "　·　尚在蒙岁，月耗减半" : ""}
@@ -6484,6 +6651,9 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
     if ($("upgradeAllBtn")) {
       const afford = g.shops.some(x => (x.level || 1) < 3 && g.money >= Game.upgradeCost(x));
       $("upgradeAllBtn").disabled = !afford;
+    }
+    if ($("hireAllBtn")) {
+      $("hireAllBtn").disabled = !g.shops.some(x => (x.clerks || 0) < 2);
     }
 
     const trendTxt = (key) => {
@@ -6655,7 +6825,7 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
     const aliveKids = g.children.filter(x => x.alive).length;
     if (g.spouse && (g.spouse.favor == null)) g.spouse.favor = 65;
     let txt = g.spouse
-      ? `${g.char.gender === "男" ? "妻" : "赘夫"}：${g.spouse.name}（${g.spouse.age}岁）　子嗣 ${aliveKids} 人`
+      ? `${g.char.gender === "男" ? "妻" : "赘夫"}：${g.spouse.name}（${g.spouse.age}岁·${g.spouse.bm || 1}月生）　子嗣 ${aliveKids} 人`
       : "尚未婚配";
     if (g.spouse && g.pregnancy) {
       txt += `　·　有孕${g.pregnancy.month}月（还${g.pregnancy.total - g.pregnancy.month + 1}月临盆）`;
@@ -6672,7 +6842,7 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
         const s = g.spouse;
         const tip = s.favor >= 80 ? "恩爱和美，易得子" : s.favor >= 50 ? "相敬如宾" : s.favor >= 30 ? "渐生龃龉，恐难受孕" : "同床异梦，恐出走";
         host.insertAdjacentHTML("afterbegin", `<div class="spouse-box" id="spouseBox">
-          <div class="spouse-head"><b>${s.name}</b><span class="muted">${g.char.gender === "男" ? "妻" : "赘夫"} · ${s.age}岁 · 门户${s.family || "?"}</span></div>
+          <div class="spouse-head"><b>${s.name}</b><span class="muted">${g.char.gender === "男" ? "妻" : "赘夫"} · ${s.age}岁 · ${(s.bm || 1)}月生 · 门户${s.family || "?"}</span></div>
           <div class="rel-track"><i style="width:${s.favor}%"></i></div>
           <p class="muted">夫妻好感 ${s.favor}/100 · ${tip}（每月-1，多陪伴可增；好感高更易添丁，过低配偶可能出走）</p>
           <p class="muted">子嗣缘：你${Game.fertilityOf ? Game.fertilityOf(g.char) : "?"} · ${s.name}${Game.fertilityOf ? Game.fertilityOf(s) : "?"}${s.infertile || g.char.infertile ? "（一方已难再孕，添丁无望）" : ""}</p>
@@ -6750,12 +6920,13 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
       const needM = Math.max(0, 85 - f), needR = Math.max(0, 90 - f);
       const canOffice = !!(Game.G.char.office);
       const recCd = Game.G.clanRec && Game.G.clanRec[t.key] === Game.G.year;
+      const kin = Game.clanKinOf ? Game.clanKinOf(Game.G, t.key) : null;
       return `
         <div class="tc-card" style="margin-top:6px;border-left:3px solid var(--gold);">
           <div class="tc-head"><b>${t.name}</b><span class="muted">${t.motto} · ${t.desc}</span></div>
           <p class="muted">门户约${t.family[0]}–${t.family[1]} · 子弟天赋更佳（${t.tilt}突出），聘礼约为门户两倍，嫁女须倒贴嫁妆（+声望、惹君忌）</p>
           <div class="rel-track" style="margin:4px 0;"><i style="display:block;height:6px;background:linear-gradient(90deg,#c9a227,#8a6d1f);width:${f}%"></i></div>
-          <p class="muted">阖族好感 ${f}/100（每月-2，更难维持）${f >= 85 ? ' · <b style="color:var(--vermilion-dk)">可提亲！</b>' : ` · 距提亲还差 <b>${needM}</b>`}${f >= 90 ? ' · <b style="color:var(--vermilion-dk)">可举荐！</b>' : ` · 距举荐还差 <b>${needR}</b>`}</p>
+          <p class="muted">阖族好感 ${f}/100${kin ? `（姻亲不断·女${kin.name}在堂，好感不减）` : "（每月-2，更难维持）"}${f >= 85 ? ' · <b style="color:var(--vermilion-dk)">可提亲！</b>' : ` · 距提亲还差 <b>${needM}</b>`}${f >= 90 ? ' · <b style="color:var(--vermilion-dk)">可举荐！</b>' : ` · 距举荐还差 <b>${needR}</b>`}</p>
           <div class="btn-row">
             <button class="btn btn-xs" data-visit-clan="${t.key}" ${(Game.G.ap || 0) <= 0 ? "disabled" : ""}>拜访(1精力+8两)</button>
             <button class="btn btn-xs" data-gift-clan="${t.key}" ${Game.G.money < 30 ? "disabled" : ""}>厚礼30两</button>
@@ -7003,6 +7174,9 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
     const blessTxt = g.riteBuff
       ? `祖佑：科举+${g.riteBuff.examBonus || 0}（${g.riteBuff.exam}月）·收成×${g.riteBuff.harvestMul || 1.1}（${g.riteBuff.harvest}月）`
       : "列祖未显灵——办场祭祖求庇佑";
+    const prayTxt = g.blessing && g.blessing.months > 0
+      ? `香火庇佑（${g.blessing.months}月）：稀有天赋×${(Game.PRAY_TIER_MUL || [])[g.blessing.tier] || 1}·天赋+${(Game.PRAY_TIER_APT || [])[g.blessing.tier] || 0}·易孕`
+      : "佛门未许愿——去寺庙祈福求贵子";
     const caraTxt = (g.caravans && g.caravans.length)
       ? g.caravans.map(v => `${v.name}${v.left}月归`).join("、")
       : "暂无在途商队";
@@ -7020,7 +7194,11 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
       `<div class="btn-row" style="margin:6px 0;">${(Game.CARAVANS || []).map(t =>
         `<button class="btn btn-xs" data-caravan="${t.key}" ${g.money < t.cost ? "disabled" : ""}>遣${t.name} ${t.cost}两</button>`
       ).join("")}</div>` +
-      `<p class="muted panel-hint">祭祖换声望+祖佑，商队以小博大，皆是花钱的去处；赋税修缮应酬每月照纳，钱再也不会堆着发霉。</p>`;
+      `<p class="muted panel-hint">${prayTxt}</p>` +
+      `<div class="btn-row" style="margin:6px 0;">${(Game.PRAYERS || []).map(t =>
+        `<button class="btn btn-xs" data-pray="${t.key}" ${g.money < t.cost ? "disabled" : ""} title="${t.desc}">${t.name} ${t.cost}两</button>`
+      ).join("")}</div>` +
+      `<p class="muted panel-hint">祭祖换声望+祖佑，祈福求贵子结奇缘，商队以小博大，皆是花钱的去处；赋税修缮应酬每月照纳，钱再也不会堆着发霉。</p>`;
   }
 
   /* ---------------- 年度小结（度年收尾） ---------------- */
@@ -7155,11 +7333,11 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
     }
     html += "<p class=\"ac-sub\" style=\"margin-top:10px;\">出阁女（" + outDaus.length + "人）</p>";
     html += outDaus.length
-      ? outDaus.map(x => `<div class="tc-card"><div class="tc-head"><b>${x.name}</b><span class="muted">${x.age}岁 · 配${x.spouseName || "夫家"}</span></div><div class="btn-row"><button class="btn btn-xs" data-member="${x.id}">查看</button></div></div>`).join("")
+      ? outDaus.map(x => `<div class="tc-card"><div class="tc-head"><b>${x.name}</b><span class="muted">${x.age}岁 · ${(x.bm || 1)}月生 · 配${x.spouseName || "夫家"}</span></div><div class="btn-row"><button class="btn btn-xs" data-member="${x.id}">查看</button></div></div>`).join("")
       : '<p class="muted">暂无。</p>';
     html += "<p class=\"ac-sub\" style=\"margin-top:10px;\">宫中女（" + palace.length + "人）</p>";
     html += palace.length
-      ? palace.map(x => `<div class="tc-card"><div class="tc-head"><b>${x.name}</b><span class="muted">${Game.palaceName(x)} · ${x.age}岁</span></div>`
+      ? palace.map(x => `<div class="tc-card"><div class="tc-head"><b>${x.name}</b><span class="muted">${Game.palaceName(x)} · ${x.age}岁 · ${(x.bm || 1)}月生</span></div>`
         + `<p class="muted" style="font-size:12px;">${x.palace.track === "consort" ? "月俸自用；危难时可递话说情（位分越高分量越重），偶或需家中接济" : "月俸自给；熬出位分方能说情荫家"}${Game.topPalace && Game.topPalace(g) === x ? " · 现为家中最大奥援" : ""}</p><div class="btn-row"><button class="btn btn-xs" data-member="${x.id}">查看（可办出宫）</button></div></div>`).join("")
       : '<p class="muted">暂无。女儿入宫不寄家用；高位者危难说情、荫家开铺，偶或需家中接济。</p>';
     /* 宫中皇嗣与夺嫡 */
@@ -7168,7 +7346,7 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
     if (rk.length || sst) {
       html += "<p class=\"ac-sub\" style=\"margin-top:10px;\">宫中皇嗣" + (g.successionWon ? "（已定·你家赢了）" : g.successionDone ? "（已定·落败）" : "（夺嫡未定）") + "</p>";
       html += rk.length
-        ? rk.map(x => `<div class="tc-card"><div class="tc-head"><b>${x.name}</b><span class="muted">${x.gender === "男" ? "皇子" : "公主"} · ${x.age}岁 · 母${(() => { const m = (g.children || []).find(c => c.id === x.motherId); return m ? m.name : "宫中"; })()}</span></div></div>`).join("")
+        ? rk.map(x => `<div class="tc-card"><div class="tc-head"><b>${x.name}</b><span class="muted">${x.gender === "男" ? "皇子" : "公主"} · ${x.age}岁 · ${(x.bm || 1)}月生 · 母${(() => { const m = (g.children || []).find(c => c.id === x.motherId); return m ? m.name : "宫中"; })()}</span></div></div>`).join("")
         : '<p class="muted">妃嫔正当宠，年二十至三十八最易有孕，生下皇子即是夺嫡的本钱。</p>';
       if (sst && !g.successionDone)
         html += `<p class="muted" style="font-size:12px;">夺嫡胜算看：母位（${["秀女","答应","常在","贵人","嫔","妃"][sst.grade] || "秀女"}）· 皇子${sst.sons}位 · 家声。皇子年满十六即见分晓，败则降位抄家。</p>`;
@@ -7245,7 +7423,7 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
       <div class="heir-list">
         ${eligible.map(x => `
           <button class="heir-card" data-match-pick="${x.id}">
-            <span class="heir-info"><b>${x.name}　${x.gender} · ${x.age}岁</b>
+            <span class="heir-info"><b>${x.name}　${x.gender} · ${x.age}岁 · ${(x.bm || 1)}月生</b>
             <p>体${x.stats.体力} · 智${x.stats.智力} · 武${x.stats.武力} · 魅${x.stats.魅力} · 生育${Game.fertilityOf ? Game.fertilityOf(x) : "?"}</p></span>
           </button>`).join("")}
       </div>
@@ -7302,7 +7480,7 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
       <div class="heir-list">
         ${list.map(x => `
           <button class="heir-card" data-heir-pick="${x.id}" data-heir-mode="${mode}" ${mode === "abdicate" && x.age < 15 ? "disabled" : ""}>
-            <span class="heir-info"><b>${x.name}　${x.gender} · ${x.age}岁${g.heirId === x.id ? "（现嗣）" : ""}</b>
+            <span class="heir-info"><b>${x.name}　${x.gender} · ${x.age}岁 · ${(x.bm || 1)}月生${g.heirId === x.id ? "（现嗣）" : ""}</b>
             <p>体${x.stats.体力} · 智${x.stats.智力} · 武${x.stats.武力} · 魅${x.stats.魅力} · 生育${Game.fertilityOf ? Game.fertilityOf(x) : "?"}${x.infertile ? "（难孕）" : ""}</p></span>
           </button>`).join("")}
       </div>
@@ -7559,6 +7737,7 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
       return;
     }
     if (t.closest("[data-upgrade-all]")) return Game.upgradeAllShops();
+    if (t.closest("[data-hire-all]")) return Game.hireAllClerks();
     const hc = t.closest("[data-hire-clerk]");
     if (hc) return Game.hireClerk(hc.dataset.hireClerk);
     const dc2 = t.closest("[data-dismiss-clerk]");
@@ -7631,6 +7810,8 @@ const svKX = Game.palacePleads ? Game.palacePleads(g) : null;
     if (teach) return Game.hireFamilyTeacher(teach.dataset.teach);
     const rite = t.closest("[data-rite]");
     if (rite) return Game.holdRite(rite.dataset.rite);
+    const pr = t.closest("[data-pray]");
+    if (pr) return Game.pray(pr.dataset.pray);
     const cara = t.closest("[data-caravan]");
     if (cara) return Game.sendCaravan(cara.dataset.caravan);
     const don = t.closest("[data-donate]");
@@ -7742,5 +7923,5 @@ if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
   });
 }
 </script>
-<script>window.__CF$cv$params={r:'a507389feaad3d96',t:'MTc5Mjk5NDIyMg==',u:'01a176c8a3ae7126b4f040331af9d005',ut:'ZjsFsyxcChQAKPmkytGKbrRkSEMGxMTXGffs1nC8V1c-1792994223-1.2.1.1-02nIfLfXSQa2CbGXhB6MHvr3CBl1TTUuTFtO9oxzcahmK5N5Mx6aRYVkpGUGXWTpaVxdIWgVMjuLFCaZ9mWNML2fwqzpAIhZ0yPAyS9PHXM',i:60};(function(){if(!document.body)return;var s=document.createElement('script');s.src='/cdn-cgi/challenge-platform/scripts/precursor/main.js';document.head.appendChild(s);})();</script></body>
+<script>window.__CF$cv$params={r:'a509df949cbbaec4',t:'MTc5MzAyMjAzMg==',u:'01a17870fbe077269e92e41d342f2ff2',ut:'JSNEZpc5_KfOB0IRvt.El97U26_XZYaevIOH7sZ5qOw-1793022032-1.2.1.1-.UouCR8Q7AVldwr_Yg.47tshl_fn86ZVlEV.qdVXqC_.SncF6O26zDLnAEiXzenbtr4H5k7YrNDcAmv.TmztPQfMEF0peBaEaz0VbcLAXsc',i:60};(function(){if(!document.body)return;var s=document.createElement('script');s.src='/cdn-cgi/challenge-platform/scripts/precursor/main.js';document.head.appendChild(s);})();</script></body>
 </html>
