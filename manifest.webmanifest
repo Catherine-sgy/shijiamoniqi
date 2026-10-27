@@ -1,0 +1,17 @@
+{
+  "name": "百年宗谱",
+  "short_name": "百年宗谱",
+  "description": "一纸宗谱，话尽兴衰。置田、营商、科举、婚媾、育子，世代相续的家族模拟。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f2ecdd",
+  "theme_color": "#a93226",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
